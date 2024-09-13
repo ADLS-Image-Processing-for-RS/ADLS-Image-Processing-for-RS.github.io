@@ -10,6 +10,12 @@ library(scales)
 # timings <- read_csv("https://raw.githubusercontent.com/kadyb/raster-benchmark/main/timings.csv")
 # write_csv(timings, "timings.csv")
 
+data(wind, package = "gstat")
+data(Produc, package = "plm")
+
+write_csv(wind, "data/wind.csv")
+write_csv(Produc, "data/Produc.csv")
+
 timings <- read_csv("timings.csv")
 
 
