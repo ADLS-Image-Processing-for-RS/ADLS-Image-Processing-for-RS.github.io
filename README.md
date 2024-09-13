@@ -1,8 +1,6 @@
 # RasterDataProcessing
 
-
 # Topics
-
 
 ## Lesson 1
 
