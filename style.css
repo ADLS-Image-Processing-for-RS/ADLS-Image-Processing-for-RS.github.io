@@ -18,3 +18,13 @@ li{
     padding: 4px !important;
     /* margin: 0 !important; */
 }
+
+.center, .caption{
+    text-align: center;
+}
+
+
+
+.smaller-font{
+    font-size: smaller !important;
+}

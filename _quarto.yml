@@ -1,0 +1,7 @@
+
+project:
+  output-dir: docs
+  
+chapters:
+  - index.qmd
+  - lesson-1.qmd
