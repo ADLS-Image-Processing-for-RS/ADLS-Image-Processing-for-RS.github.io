@@ -3,12 +3,14 @@ title: Image Processing for Remote Sensing
 subtitle: ZHAW Applied Digital LifeScience
 format: 
     revealjs:
-        theme: dark
+        theme: white
         css: style.css
 bibliography: bibliography.bib
 execute: 
   warning: false
   message: false
+code-summary: ">"
+freeze: true
 ---
 
 
@@ -36,16 +38,16 @@ library(gt)
 
 *The raster data model*
 
-- Raster vs. Tabular Data <!-- long vs wide data, data cubes, dense vs. sparse -->
-- Raster geodata vs. traditional image data
-- Singleband vs. 3band vs. multiband datasets
-- Raster datatypes and their implications (float / int, pseudo-categorical)
-- Raster `NA` values
-- Raster File formats <!-- (geotif, COG, XYZ → binary vs. non-binary data) -->
+1. From tabular data to raster <!-- long vs wide data, data cubes, dense vs. sparse -->
+1. Raster geodata vs. traditional image data
+1. Singleband vs. multiband datasets
+1. Raster datatypes and their implications (float / int, pseudo-categorical)
+1. Raster `NA` values
+1. Raster File formats <!-- (geotif, COG, XYZ → binary vs. non-binary data) -->
 
 
 
-# Raster vs. Tabular Data
+# From tabuldar data to raster
 
 
 ## Tidy data
@@ -141,8 +143,6 @@ Wide tables have less repetitions.
 To demonstrate we convert a long to wide.
 
 
-
-
 ```{r}
 #| echo: true
 
@@ -152,7 +152,6 @@ Produc_wide <- Produc |>
     pivot_wider(names_from = state, values_from = unemp) |> 
     column_to_rownames("year")
 
-Produc_wide[1:10,1:7]
 
 ```
 
@@ -160,9 +159,29 @@ Produc_wide[1:10,1:7]
 :::{.notes}
 
 We can either omit the column "year", (since this is implicit knowledge, $row_i + 1970$), or use it as a `rowname`.
-
-
 :::
+
+---
+
+
+Long / tidy:
+```{r}
+Produc |> 
+    head(5) |> 
+    kable()
+```
+
+<hr>
+
+Wide / untidy:
+
+```{r}
+Produc_wide |> 
+    head(5) |> 
+    kable()
+
+```
+
 
 ---
 
@@ -234,64 +253,375 @@ Less repetitions / smaller memory footprint is only part of the advantage:
 
 ---
 
-- Missing values are now *explicit* (while being *implicit* before)
-- e.g. the State of Arizona is missing the values for 1971
-
-
-```{r}
-Produc_matrix[1:6, 1:6]
-
-
-```
+- Missing values are now *explicit* 
 
 ```{r}
 #| echo: true
 
-# Now:
 which(is.na(Produc_matrix))
 ```
 
----
-
-Before (notice the missing value?):
+- Before, missing values were *implicit*:
 
 ```{r}
-#| echo: true
+#| echo: false
 
 Produc |> 
-    filter(state == "ARIZONA") |> 
-    head(3)
+    slice(15:20)
 ```
 
 
 ---
 
 
-To make missing values explicit, cases must be made complete:
+To detect missing values, cases must be made complete first:
 
 ```{r}
 #| echo: true
 
 Produc |> 
     complete(state, year) |>                    # ← make cases complete 
-    filter(if_any(everything(), \(x) is.na(x))) # ← filter by NA
+    filter(is.na(pcap)) # ← filter by NA
 
 ```
 
 
 
-## Dense vs. Sparse
+## Limitations
 
-*If matrices are so much better than dataframes, why are they not used by default?*
-
-. . .
-
-- Matrices are only advantages if they are *densely* populated (small amount of missing values)
-- Sparsely populated matrices need a different implementation
+- Matrices are only advantages if they are *densely* populated (little `NA`s)
 - Speed and memory footprint is only relevant if the data is large
 
 
+# Imagery Data
+
+:::{.center}
+![](img/swissimageRS.png){width=60%}
+:::
+
+
 ---
+
+
+- Imagery data is composed of measurements at descrete locations (pixels) along two axes
+- Through its inherent model this data is naturally fits into the *wide* data structure
+
+
+---
+
+::::{#fig-volcano layout="[ 20, 60 ]"}
+
+:::{}
+```{r}
+library(terra)
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+
+spectral <- RColorBrewer::brewer.pal(11, "Spectral") |> rev()
+
+
+volcano_rast <- volcano |> 
+  t() |> 
+  rast() |> 
+  aggregate(5, na.rm = TRUE) |> 
+  as.int()
+
+dims <- dim(volcano_rast)
+
+asp <- dims[1]/dims[2]
+
+```
+
+```{r}
+#| fig.asp = asp
+
+as.data.frame(volcano_rast, xy = TRUE) |> 
+    mutate(val = as.integer(lyr.1)) |> 
+    ggplot(aes(x,y, fill = val, label = val)) +
+    geom_tile(color = "white", lwd = .8) +
+    # geom_text() +
+    scale_fill_gradientn(colors = spectral) +
+    coord_equal() +
+    theme_void() +
+    theme(legend.position = "none")
+
+
+```
+
+:::
+
+
+:::{.smaller-font}
+
+```{r}
+volcano_array <- as.array(volcano_rast)
+
+volcano_array[, 1:8, 1]
+```
+
+:::
+
+Topographic information for Maunga Whau (Auckland)
+
+::::
+
+
+## Multiband Imagery
+
+- Typically, RS imagery consists of more than 1 band
+- In this case, the data is stored in a 3 dimensional *array* (where *band* is the 3rd-dimesion)
+
+
+---
+
+
+```{r}
+l7 <- system.file("tif/L7_ETMs.tif",package = "stars") |> 
+    rast() 
+
+l7_full <- l7  
+
+l7 <- l7 |>   aggregate(20, na.rm = TRUE) |> as.int()
+
+
+l7_rgb <- l7[[c(3,2,1)]]
+
+l7_rgb_array <- as.array(l7_rgb)
+
+
+ou <- capture.output(l7_rgb_array[1:5, 1:5, , drop = F])
+
+# Band 1 Blue (0.45 - 0.52 µm) 30 m
+# Band 2 Green (0.52 - 0.60 µm) 30 m
+# Band 3 Red (0.63 - 0.69 µm) 30 m
+# Band 4 Near-Infrared (0.77 - 0.90 µm) 30 m
+# Band 5 Short-wave Infrared (1.55 - 1.75 µm) 30 m
+# Band 6 Thermal (10.40 - 12.50 µm) 60 m Low Gain / High Gain
+# Band 7 Mid-Infrared (2.08 - 2.35 µm) 30 m
+# Band 8 Panchromatic (PAN) (0.52 - 0.90 µm) 15 m
+
+l7_rgb_df <- as.data.frame(l7_rgb, xy = TRUE)
+
+colnames(l7_rgb_df)[3:5] <- paste0("L7_",c("red","green","blue"))
+
+# l7_rgb_df <- l7_rgb_df |> 
+#     mutate(across(starts_with("L7_"), as.integer))
+
+dims <- dim(l7_rgb_array)
+
+asp <- dims[3]/(dims[1]/dims[1])
+
+l7_rgb_df_wide <- l7_rgb_df |> 
+    pivot_longer(starts_with("L7"), names_prefix = "L7_")
+```
+
+::::{layout="[[20,-5, 75],[20,-5, 75],[20,-5, 75]]" .smaller-fonts}
+
+
+
+```{r}
+#| fig.asp = 1
+
+l7_rgb_df |> 
+ggplot(aes(x,y, fill = L7_red)) +
+    geom_tile(color = "white", lwd = .2) +
+    coord_equal() +
+    theme_void() +
+    scale_fill_gradientn(colors = spectral) +
+    theme(legend.position = "none")
+```
+
+```{r}
+cat(ou[1:8], sep = "\n")
+```
+
+
+```{r}
+#| fig.asp = 1
+
+l7_rgb_df |> 
+ggplot(aes(x,y, fill = L7_green)) +
+    geom_tile(color = "white", lwd = .2) +
+    coord_equal() +
+    theme_void() +
+    scale_fill_gradientn(colors = spectral) +
+    theme(legend.position = "none") 
+```
+
+```{r}
+cat(ou[10:17], sep = "\n")
+```
+
+```{r}
+#| fig.asp = 1
+
+l7_rgb_df |> 
+ggplot(aes(x,y, fill = L7_blue)) +
+    geom_tile(color = "white", lwd = .2) +
+    coord_equal() +
+    theme_void() +
+    scale_fill_gradientn(colors = spectral) +
+    theme(legend.position = "none") 
+```
+
+```{r}
+cat(ou[19:27], sep = "\n")
+```
+::::
+
+
+---
+
+- Multiband datasets usually capture different parts of the EM spectrum
+- E.g. the Landsat image (previous example) has 8 bands capturing the following wavelengths:
+  - **Band 1**: Blue (0.45 - 0.52 µm)
+  - **Band 2**: Green (0.52 - 0.60 µm)
+  - **Band 3**: Red (0.63 - 0.69 µm)
+  - **Band 4**: Near-Infrared (0.77 - 0.90 µm)
+  - **Band 5**: Short-wave Infrared (1.55 - 1.75 µm)
+  - **Band 7**: Mid-Infrared (2.08 - 2.35 µm)
+
+
+---
+
+- A *true color* image is created by using the Red (3), Green (2) and Blue (1) Band and mapping these to RGB
+
+
+```{r}
+plotRGB(l7_full[[c(3,2,1)]], stretch = "histogramm", smooth = FALSE)
+```
+
+---
+
+- A *false color* image is created by mapping other bands to RGB
+
+
+```{r}
+#| label: fig-nirgb
+#| fig-cap: Here is an example of a NirGB Image
+
+plotRGB(l7_full[[c(4,3,2)]], stretch = "histogramm", smooth = FALSE)
+```
+
+
+# Data Types
+
+
+---
+
+| Data type         	| Minimum        	| Maximum       	| Size[^1] |
+|-------------------	|----------------	|---------------	|------	|
+| Byte              	| 0              	| 255           	| 39M  	|
+| UInt16            	| 0              	| 65,535        	| 78M  	|
+| Int16, CInt16     	| -32,768        	| 32,767        	| 78M  	|
+| UInt32            	| 0              	| 4,294,967,295 	| 155M 	|
+| Int32, CInt32     	| -2,147,483,648 	| 2,147,483,647 	| 155M 	|
+| Float32, CFloat32 	| -3.4E38        	| 3.4E38        	| 155M 	|
+| Float64, CFloat64 	| -1.79E308      	| 1.79E308      	| 309M 	|
+
+: The number ranges of different datatypes in `gdal` (source: @amatulli2024)
+
+[^1]: Difference in file size using constant dataset (same values and resolution) and varying the datatype
+
+:::{.notes}
+
+
+- If you store categorical data, use integer datatype and store the corespondence in the metadata
+- Always be minimalistic about which datatype you need. 
+- Question if you have a continuous value from 0 to 1, which datatype do you use?
+  - Not `Float32`! But Multiply by 100 and use `Byte` or by 1000 (if you need more precision) and use `UInt16`
+- Question: if you are measuring temperature, and your values are floating point ranging is -20 to +40 degrees, what datatype are you going to use?
+  - Not CFloat32!
+  - Multiply by 100 and use `CInt16`
+- Question: if you compute NDVI and have values in the range 0 - 1, what datatype do you use?
+  - Not `Float32`, but not `CInt16` either:
+  - Transform the values to 0 - 255
+
+:::
+
+
+---
+
+Transform -1 to +1 to 0 - 254[^maxval]:
+
+<!-- &= a + \frac{(x-(-1))\times(255-0)}{1-(-1)} \\ -->
+
+\begin{align}
+x' &= a + \frac{(x-min(x))\times(b - a)}{max(x)-min(x)} \\
+
+&= 0 + \frac{(x+1)\times 254}{2} \\
+
+&= (x+1)\times 127 \\
+
+x` &= 127x+127 \\
+
+x &= \frac{x'-127}{127}
+\end{align}
+
+
+[^maxval]: 255 is reserved, as we will see later
+
+---
+
+```{r}
+
+# scales::rescale_max(seq(-1,1,.1),to = c(0,255),from = c(-1,1))
+
+# rescale_n <- \(values, from = range(values), to, integer = FALSE){
+#   res <- to[1]+((values-from[1])*(to[2]-to[1]))/(from[2]-from[1])
+#   
+#   if(integer)res <- as.integer(res)
+#   
+#   res
+# }
+
+# x <- seq(-1,1,.1)
+# x_new <- rescale_n(x, c(-1,1),c(0,255), TRUE)
+
+
+x_stored <- 0:254
+x_measured <- (x_stored-127)/127
+
+
+tibble(x_measured, x_stored) |> 
+  ggplot(aes(x_measured,x_stored)) + 
+  geom_line() +
+  labs(x = "Measured NDVI", y = "Stored value") +
+  theme_minimal()
+```
+
+Note: 
+
+- $y = ax + b$
+- a = `scale` and b = `offset`
+
+
+# NoData
+
+
+
+---
+
+
+- Raster *Files* do not have an explicit `NoData` value
+- To specify cells with `NoData`: 
+  1. We must assign this cell any value within Datatypes range of values (typicall the highest possible value)
+  2. Label this value to be interpreted as `NoData`
+
+
+
+```{r}
+
+volcano_rast[volcano_rast < 120] <- NA
+
+plot(volcano_rast)
+
+writeRaster(volcano_rast, "volcano_rast.tif", datatype = "INT1U", overwrite = TRUE)
+
+```
+
+
 
 
 :::{#fig-stevens}
