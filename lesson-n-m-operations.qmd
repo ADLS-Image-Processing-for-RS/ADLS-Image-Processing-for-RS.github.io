@@ -1,0 +1,116 @@
+
+
+
+```{r}
+
+library(terra)
+library(sf)
+library(tmap)
+library(dplyr)
+
+r <- rast(system.file("ex/elev.tif", package="terra"))
+
+
+
+```
+
+
+
+## Global Operation
+
+- What is the mean elevation value of the volcano?
+
+
+```{r}
+p <- tm_shape(r) + 
+    tm_raster(style = "cont", palette = "viridis",legend.show = FALSE) +
+    tm_layout(legend.show = FALSE,frame = FALSE)
+
+p
+```
+
+```{r}
+#| echo: true
+global(r, mean, na.rm = TRUE)
+```
+
+
+## Zonal
+
+
+What is the mean value *per zone*?
+```{r}
+
+
+r2 <- r
+r2[!is.na(r2)] <- 1
+
+r_poly <- as.polygons(r2) |> st_as_sf() |> st_cast("POLYGON")
+
+set.seed(1)
+zones <- r_poly |> 
+    st_sample(10) |> 
+    st_union() |> 
+    st_voronoi() |> 
+    st_collection_extract() |> 
+    st_as_sf() |> 
+    mutate(i = row_number()) |> 
+    st_intersection(r_poly)
+
+p + tm_shape(zones, is.master = TRUE) +
+    tm_borders(col = "white") +
+    tm_text("i", col = "white")
+
+```
+
+
+```{r}
+#| echo: true
+
+mean_vals <- zonal(r, vect(zones), fun = mean, na.rm = TRUE)
+
+mean_vals
+
+zones$mean_elev <- mean_vals[,1]
+
+```
+
+
+```{r}
+p + tm_shape(zones) +
+    tm_polygons("mean_elev", style = "cont", palette = "viridis")
+
+```
+
+## Local
+
+Operations on a per cell basis
+
+
+```{r}
+r_bool <- r
+
+r_bool[r > 333] <- 0
+r_bool[r <= 333] <- 1
+
+``` 
+
+
+```{r}
+p + 
+    tm_shape(r_bool) +
+    tm_raster(breaks = c(0,1,2))
+
+```
+
+```{r}
+quartiles <- global(r, quantile, probs = c(0,.25,.5,.75,1), na.rm = TRUE)
+
+r_classify <- classify(r, as.numeric(quartiles))
+
+levels(r_classify) <- data.frame(ID = 0:3, category = c("0-25", "25-50", "50-75", "75-100"))
+
+p + tm_shape(r_classify) +
+    tm_raster(style = "cat",legend.show = TRUE) +
+    tm_layout(legend.show = TRUE)
+```

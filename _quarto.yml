@@ -5,19 +5,24 @@ project:
 
 book: 
   title: Image Processing for Remote Sensing
+  reader-mode: true
   chapters:
     - index.qmd
-    - part: lesson-1.qmd
+    - part: lesson1.qmd
       chapters: 
-        - lesson1-1.qmd        
-        - lesson1-2.qmd
-        - lesson1-3.qmd
-        - lesson1-4.qmd
+        - lesson1-1-tidy.qmd        
+        - lesson1-2-imagery.qmd
+        - lesson1-3-datatypes.qmd
+        - lesson1-4-nodata.qmd
+    - part: TBD
+      chapters: 
+        - lesson-n-m-operations.qmd
 format: 
   html:
     number-depth: -1
     number-sections: false
-bibliography: bibliography.bib
+    css: aux/style.css
+bibliography: aux/bibliography.bib
 execute: 
   warning: false
   message: false

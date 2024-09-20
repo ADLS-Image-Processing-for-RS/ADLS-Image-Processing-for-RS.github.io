@@ -30,13 +30,14 @@ library(terra)
 
 ```{r}
 
-volcano_rast <- rast("volcano_rast.tif")
+
+volcano_rast <- rast("data/volcano_rast.tif")
 
 volcano_rast[volcano_rast < 120] <- NA
 
 plot(volcano_rast)
 
-writeRaster(volcano_rast, "volcano_rast.tif", datatype = "INT1U", overwrite = TRUE)
+writeRaster(volcano_rast, "data/volcano_rast_NA.tif", datatype = "INT1U", overwrite = TRUE)
 
 ```
 

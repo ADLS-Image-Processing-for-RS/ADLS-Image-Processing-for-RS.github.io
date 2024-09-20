@@ -23,13 +23,16 @@ library(gt)
 ---
 
 
-- Imagery data is composed of measurements at descrete locations (pixels) along two axes
+- Imagery data is composed of measurements at descrete locations (pixels) along two or more axes
 - Through its inherent model this data is naturally fits into the *wide* data structure
 
 
 ---
 
-::::{#fig-volcano layout="[ 20, 60 ]"}
+
+:::::{.column-page}
+
+::::{#fig-volcano layout="[5, 95]"}
 
 :::{}
 ```{r}
@@ -43,9 +46,16 @@ spectral <- RColorBrewer::brewer.pal(11, "Spectral") |> rev()
 
 volcano_rast <- volcano |> 
   t() |> 
-  rast() |> 
+  rast()
+
+writeRaster(volcano_rast, "data/volcano_rast.tif", overwrite = TRUE)
+
+volcano_rast <- volcano_rast |> 
   aggregate(5, na.rm = TRUE) |> 
   as.int()
+
+writeRaster(volcano_rast, "data/volcano_lowres.tif", overwrite = TRUE)
+
 
 dims <- dim(volcano_rast)
 
@@ -77,7 +87,7 @@ as.data.frame(volcano_rast, xy = TRUE) |>
 ```{r}
 volcano_array <- as.array(volcano_rast)
 
-volcano_array[, 1:8, 1]
+volcano_array[, 1:13, 1]
 ```
 
 :::
@@ -86,6 +96,7 @@ Topographic information for Maunga Whau (Auckland)
 
 ::::
 
+:::::
 
 ## Multiband Imagery
 

@@ -19,8 +19,26 @@ library(gt)
 
 ## Tidy data
 
-Tidy tabular data: Each variable is a column, each observation is a row, and each type of observational unit
-is a table [@wickham2014].
+- @wickham2014: Tidy tabular data: Each variable is a column, each observation is a row, and each type of observational unit
+is a table.
+- Below is a dataset from @baltagi2008
+- *Observation* is a state in a perticular year
+- *Variable* is a measured parameter (see below)
+
+:::{.callout-note collapse="true"}
+
+## Parameter
+
+- pcap: public capital stock
+- hwy: highway and streets
+- water: water and sewer facilities
+- util: other public buildings and structures
+- pc: private capital stock
+- gsp: gross state product
+- emp: labor input measured by the employment in non–agricultural payrolls
+- unemp: state unemployment rate
+:::
+
 
 
 ```{r}
@@ -38,34 +56,14 @@ Produc |>
 ```
 
 
-:::{.notes}
-- state: the state
-- year: the year
-- region: the region
-- pcap: public capital stock
-- hwy: highway and streets
-- water: water and sewer facilities
-- util: other public buildings and structures
-- pc: private capital stock
-- gsp: gross state product
-- emp: labor input measured by the employment in non–agricultural payrolls
-- unemp: state unemployment rate
-
-
-
-- What is a variable?
-- What is an observation?
-- What is an observational unit?
-
-
+:::{.callout-note .notes collapse="true"}
 - This is considered a *long* table and is great for modelling and visualisation.
 - Its bad for momory (a lot of repetitions)
-
 :::
 
 ---
 
-Long tables have a lot of repetitions:
+### Long tables have a lot of repetitions:
 
 ```{r}
 #| echo: true
@@ -86,16 +84,20 @@ n_values
 
 ---
 
-:::{#tbl-long}
+### Long tables have a lot of repetitions:
+
+:::{.callout-note collapse="true"}
+
+## Repeating cells are colorized
+
+
 ```{r}
 
 Produc |> 
-    head(17*5) |> 
+    filter(state %in% unique(Produc$state)[1:2]) |> 
     gt() |> 
     data_color(columns = "state", method = "factor", palette = c("Pastel2")) |> 
     data_color(columns = "year", method = "factor", palette = c("RdYlBu"))
-
-
 ```
 
 :::
@@ -104,7 +106,7 @@ Produc |>
 ---
 
 
-Wide tables have less repetitions.
+### Wide tables have less repetitions.
 
 To demonstrate we convert a long to wide.
 
@@ -122,13 +124,14 @@ Produc_wide <- Produc |>
 ```
 
 
-:::{.notes}
+:::{.callout-note .notes collapse="true"}
 
 We can either omit the column "year", (since this is implicit knowledge, $row_i + 1970$), or use it as a `rowname`.
 :::
 
 ---
 
+### Long vs Wide 
 
 Long / tidy:
 ```{r}
