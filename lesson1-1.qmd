@@ -1,0 +1,261 @@
+# From tidy data to raster {#sec-tidy-to-raster}
+
+
+```{r}
+#| echo: false
+
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(kableExtra)
+library(tidyr)
+library(scales)
+library(tibble)
+library(gt)
+
+```
+
+
+
+## Tidy data
+
+Tidy tabular data: Each variable is a column, each observation is a row, and each type of observational unit
+is a table [@wickham2014].
+
+
+```{r}
+Produc <- read_csv("data/Produc.csv") |> 
+    select(-region) |> 
+    filter(!(state == "ARIZONA" & year == 1971))
+
+# Produc[Produc$state == "ARIZONA" & Produc$year == 1971,c("unemp")] <- NA
+
+Produc |> 
+    head() |> 
+    kable()
+
+
+```
+
+
+:::{.notes}
+- state: the state
+- year: the year
+- region: the region
+- pcap: public capital stock
+- hwy: highway and streets
+- water: water and sewer facilities
+- util: other public buildings and structures
+- pc: private capital stock
+- gsp: gross state product
+- emp: labor input measured by the employment in non–agricultural payrolls
+- unemp: state unemployment rate
+
+
+
+- What is a variable?
+- What is an observation?
+- What is an observational unit?
+
+
+- This is considered a *long* table and is great for modelling and visualisation.
+- Its bad for momory (a lot of repetitions)
+
+:::
+
+---
+
+Long tables have a lot of repetitions:
+
+```{r}
+#| echo: true
+#| collapse: true
+
+length(Produc$state)
+n_distinct(Produc$state)
+
+length(Produc$year)
+n_distinct(Produc$year)
+
+
+n_values <- dim(Produc) |> prod()
+
+n_values
+```
+
+
+---
+
+:::{#tbl-long}
+```{r}
+
+Produc |> 
+    head(17*5) |> 
+    gt() |> 
+    data_color(columns = "state", method = "factor", palette = c("Pastel2")) |> 
+    data_color(columns = "year", method = "factor", palette = c("RdYlBu"))
+
+
+```
+
+:::
+
+
+---
+
+
+Wide tables have less repetitions.
+
+To demonstrate we convert a long to wide.
+
+
+```{r}
+#| echo: true
+
+# Pivoting must be done per variable
+Produc_wide <- Produc |> 
+    select(state, year, unemp) |> 
+    pivot_wider(names_from = state, values_from = unemp) |> 
+    column_to_rownames("year")
+
+
+```
+
+
+:::{.notes}
+
+We can either omit the column "year", (since this is implicit knowledge, $row_i + 1970$), or use it as a `rowname`.
+:::
+
+---
+
+
+Long / tidy:
+```{r}
+Produc |> 
+    head(5) |> 
+    kable()
+```
+
+<hr>
+
+Wide / untidy:
+
+```{r}
+Produc_wide |> 
+    head(5) |> 
+    kable()
+
+```
+
+
+---
+
+How many cells / values do we have after this transformation?
+
+```{r}
+#| echo: true
+
+n_values_new <- Produc_wide |> 
+    dim() |> 
+    prod()
+
+# since we have 8 variables, we multiply by 8:
+n_values_new <- n_values_new*8 
+
+n_values_new
+
+# before we had:
+n_values
+```
+
+
+→ This is a reduction of `r scales::percent(1-n_values_new/n_values)`
+
+---
+
+```{r}
+#| eval: false
+
+# this shows that the reduction in cells is more pronounced with low number of variables
+expand_grid(n_obs1 = c(48), n_obs2 = c(17), n_variables = c(1:100)) |> 
+    mutate(
+        n_vals_array = n_obs1 * n_obs2 * n_variables,
+        n_vals_tidy = n_obs1 * n_obs2 * (n_variables+2),
+        frac = 1-n_vals_array/n_vals_tidy
+        ) |> 
+            ggplot(aes(n_variables, frac)) +
+            geom_line() +
+            scale_y_continuous(labels = percent_format())
+
+
+```
+
+```{r}
+Produc_matrix <- as.matrix(Produc_wide)
+
+rownames(Produc_matrix) <- 1970:1986
+
+bm <- bench::mark(
+    matrix = mean(Produc_matrix, na.rm = TRUE),
+    df = mean(Produc_wide |> unlist(),na.rm = TRUE),
+    filter_gc = FALSE
+)
+
+speedup <- round(as.numeric(bm$median[2]/bm$median[1]))
+
+
+# plot(bm)
+
+```
+
+
+Less repetitions / smaller memory footprint is only part of the advantage:
+
+- All columns now have the same datatype (`dbl`)
+  - This means, they can be stored in a matrix / array
+  - This gives us a *big* speed advantage (e.g. calculating the mean over all values is `r speedup`x faster)
+
+
+---
+
+- Missing values are now *explicit* 
+
+```{r}
+#| echo: true
+
+which(is.na(Produc_matrix))
+```
+
+- Before, missing values were *implicit*:
+
+```{r}
+#| echo: false
+
+Produc |> 
+    slice(15:20)
+```
+
+
+---
+
+
+To detect missing values, cases must be made complete first:
+
+```{r}
+#| echo: true
+
+Produc |> 
+    complete(state, year) |>                    # ← make cases complete 
+    filter(is.na(pcap)) # ← filter by NA
+
+```
+
+
+
+## Limitations
+
+- Matrices are only advantages if they are *densely* populated (little `NA`s)
+- Speed and memory footprint is only relevant if the data is large
+
+

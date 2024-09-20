@@ -1,0 +1,227 @@
+# Imagery Data {#sec-imagery-data}
+
+```{r}
+#| echo: false
+
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(kableExtra)
+library(tidyr)
+library(scales)
+library(tibble)
+library(gt)
+
+```
+
+
+:::{.center}
+![](img/swissimageRS.png){width=60%}
+:::
+
+
+---
+
+
+- Imagery data is composed of measurements at descrete locations (pixels) along two axes
+- Through its inherent model this data is naturally fits into the *wide* data structure
+
+
+---
+
+::::{#fig-volcano layout="[ 20, 60 ]"}
+
+:::{}
+```{r}
+library(terra)
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+
+spectral <- RColorBrewer::brewer.pal(11, "Spectral") |> rev()
+
+
+volcano_rast <- volcano |> 
+  t() |> 
+  rast() |> 
+  aggregate(5, na.rm = TRUE) |> 
+  as.int()
+
+dims <- dim(volcano_rast)
+
+asp <- dims[1]/dims[2]
+
+```
+
+```{r}
+#| fig.asp = asp
+
+as.data.frame(volcano_rast, xy = TRUE) |> 
+    mutate(val = as.integer(lyr.1)) |> 
+    ggplot(aes(x,y, fill = val, label = val)) +
+    geom_tile(color = "white", lwd = .8) +
+    # geom_text() +
+    scale_fill_gradientn(colors = spectral) +
+    coord_equal() +
+    theme_void() +
+    theme(legend.position = "none")
+
+
+```
+
+:::
+
+
+:::{.smaller-font}
+
+```{r}
+volcano_array <- as.array(volcano_rast)
+
+volcano_array[, 1:8, 1]
+```
+
+:::
+
+Topographic information for Maunga Whau (Auckland)
+
+::::
+
+
+## Multiband Imagery
+
+- Typically, RS imagery consists of more than 1 band
+- In this case, the data is stored in a 3 dimensional *array* (where *band* is the 3rd-dimesion)
+
+
+---
+
+
+```{r}
+l7 <- system.file("tif/L7_ETMs.tif",package = "stars") |> 
+    rast() 
+
+l7_full <- l7  
+
+l7 <- l7 |>   aggregate(20, na.rm = TRUE) |> as.int()
+
+
+l7_rgb <- l7[[c(3,2,1)]]
+
+l7_rgb_array <- as.array(l7_rgb)
+
+
+ou <- capture.output(l7_rgb_array[1:5, 1:5, , drop = F])
+
+# Band 1 Blue (0.45 - 0.52 µm) 30 m
+# Band 2 Green (0.52 - 0.60 µm) 30 m
+# Band 3 Red (0.63 - 0.69 µm) 30 m
+# Band 4 Near-Infrared (0.77 - 0.90 µm) 30 m
+# Band 5 Short-wave Infrared (1.55 - 1.75 µm) 30 m
+# Band 6 Thermal (10.40 - 12.50 µm) 60 m Low Gain / High Gain
+# Band 7 Mid-Infrared (2.08 - 2.35 µm) 30 m
+# Band 8 Panchromatic (PAN) (0.52 - 0.90 µm) 15 m
+
+l7_rgb_df <- as.data.frame(l7_rgb, xy = TRUE)
+
+colnames(l7_rgb_df)[3:5] <- paste0("L7_",c("red","green","blue"))
+
+# l7_rgb_df <- l7_rgb_df |> 
+#     mutate(across(starts_with("L7_"), as.integer))
+
+dims <- dim(l7_rgb_array)
+
+asp <- dims[3]/(dims[1]/dims[1])
+
+l7_rgb_df_wide <- l7_rgb_df |> 
+    pivot_longer(starts_with("L7"), names_prefix = "L7_")
+```
+
+::::{layout="[[20,-5, 75],[20,-5, 75],[20,-5, 75]]" .smaller-fonts}
+
+
+
+```{r}
+#| fig.asp = 1
+
+l7_rgb_df |> 
+ggplot(aes(x,y, fill = L7_red)) +
+    geom_tile(color = "white", lwd = .2) +
+    coord_equal() +
+    theme_void() +
+    scale_fill_gradientn(colors = spectral) +
+    theme(legend.position = "none")
+```
+
+```{r}
+cat(ou[1:8], sep = "\n")
+```
+
+
+```{r}
+#| fig.asp = 1
+
+l7_rgb_df |> 
+ggplot(aes(x,y, fill = L7_green)) +
+    geom_tile(color = "white", lwd = .2) +
+    coord_equal() +
+    theme_void() +
+    scale_fill_gradientn(colors = spectral) +
+    theme(legend.position = "none") 
+```
+
+```{r}
+cat(ou[10:17], sep = "\n")
+```
+
+```{r}
+#| fig.asp = 1
+
+l7_rgb_df |> 
+ggplot(aes(x,y, fill = L7_blue)) +
+    geom_tile(color = "white", lwd = .2) +
+    coord_equal() +
+    theme_void() +
+    scale_fill_gradientn(colors = spectral) +
+    theme(legend.position = "none") 
+```
+
+```{r}
+cat(ou[19:27], sep = "\n")
+```
+::::
+
+
+---
+
+- Multiband datasets usually capture different parts of the EM spectrum
+- E.g. the Landsat image (previous example) has 8 bands capturing the following wavelengths:
+  - **Band 1**: Blue (0.45 - 0.52 µm)
+  - **Band 2**: Green (0.52 - 0.60 µm)
+  - **Band 3**: Red (0.63 - 0.69 µm)
+  - **Band 4**: Near-Infrared (0.77 - 0.90 µm)
+  - **Band 5**: Short-wave Infrared (1.55 - 1.75 µm)
+  - **Band 7**: Mid-Infrared (2.08 - 2.35 µm)
+
+
+---
+
+- A *true color* image is created by using the Red (3), Green (2) and Blue (1) Band and mapping these to RGB
+
+
+```{r}
+plotRGB(l7_full[[c(3,2,1)]], stretch = "histogramm", smooth = FALSE)
+```
+
+---
+
+- A *false color* image is created by mapping other bands to RGB
+
+
+```{r}
+#| label: fig-nirgb
+#| fig-cap: Here is an example of a NirGB Image
+
+plotRGB(l7_full[[c(4,3,2)]], stretch = "histogramm", smooth = FALSE)
+```
+
+

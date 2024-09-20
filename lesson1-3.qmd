@@ -1,0 +1,107 @@
+# Data Types {#sec-data-types}
+
+```{r}
+#| echo: false
+
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(kableExtra)
+library(tidyr)
+library(scales)
+library(tibble)
+library(gt)
+
+```
+
+
+
+---
+
+| Data type         	| Minimum        	| Maximum       	| Size[^1] |
+|-------------------	|----------------	|---------------	|------	|
+| Byte              	| 0              	| 255           	| 39M  	|
+| UInt16            	| 0              	| 65,535        	| 78M  	|
+| Int16, CInt16     	| -32,768        	| 32,767        	| 78M  	|
+| UInt32            	| 0              	| 4,294,967,295 	| 155M 	|
+| Int32, CInt32     	| -2,147,483,648 	| 2,147,483,647 	| 155M 	|
+| Float32, CFloat32 	| -3.4E38        	| 3.4E38        	| 155M 	|
+| Float64, CFloat64 	| -1.79E308      	| 1.79E308      	| 309M 	|
+
+: The number ranges of different datatypes in `gdal` (source: @amatulli2024)
+
+[^1]: Difference in file size using constant dataset (same values and resolution) and varying the datatype
+
+:::{.notes}
+
+
+- If you store categorical data, use integer datatype and store the corespondence in the metadata
+- Always be minimalistic about which datatype you need. 
+- Question if you have a continuous value from 0 to 1, which datatype do you use?
+  - Not `Float32`! But Multiply by 100 and use `Byte` or by 1000 (if you need more precision) and use `UInt16`
+- Question: if you are measuring temperature, and your values are floating point ranging is -20 to +40 degrees, what datatype are you going to use?
+  - Not CFloat32!
+  - Multiply by 100 and use `CInt16`
+- Question: if you compute NDVI and have values in the range 0 - 1, what datatype do you use?
+  - Not `Float32`, but not `CInt16` either:
+  - Transform the values to 0 - 255
+
+:::
+
+
+---
+
+Transform -1 to +1 to 0 - 254[^maxval]:
+
+<!-- &= a + \frac{(x-(-1))\times(255-0)}{1-(-1)} \\ -->
+
+\begin{align}
+x' &= a + \frac{(x-min(x))\times(b - a)}{max(x)-min(x)} \\
+
+&= 0 + \frac{(x+1)\times 254}{2} \\
+
+&= (x+1)\times 127 \\
+
+x` &= 127x+127 \\
+
+x &= \frac{x'-127}{127}
+\end{align}
+
+
+[^maxval]: 255 is reserved, as we will see later
+
+---
+
+```{r}
+
+# scales::rescale_max(seq(-1,1,.1),to = c(0,255),from = c(-1,1))
+
+# rescale_n <- \(values, from = range(values), to, integer = FALSE){
+#   res <- to[1]+((values-from[1])*(to[2]-to[1]))/(from[2]-from[1])
+#   
+#   if(integer)res <- as.integer(res)
+#   
+#   res
+# }
+
+# x <- seq(-1,1,.1)
+# x_new <- rescale_n(x, c(-1,1),c(0,255), TRUE)
+
+
+x_stored <- 0:254
+x_measured <- (x_stored-127)/127
+
+
+tibble(x_measured, x_stored) |> 
+  ggplot(aes(x_measured,x_stored)) + 
+  geom_line() +
+  labs(x = "Measured NDVI", y = "Stored value") +
+  theme_minimal()
+```
+
+Note: 
+
+- $y = ax + b$
+- a = `scale` and b = `offset`
+
+

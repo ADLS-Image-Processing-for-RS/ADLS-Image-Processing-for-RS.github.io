@@ -1,7 +1,30 @@
 
 project:
+  type: book
   output-dir: docs
-  
-chapters:
-  - index.qmd
-  - lesson-1.qmd
+
+book: 
+  title: Image Processing for Remote Sensing
+  chapters:
+    - index.qmd
+    - part: lesson-1.qmd
+      chapters: 
+        - lesson1-1.qmd        
+        - lesson1-2.qmd
+        - lesson1-3.qmd
+        - lesson1-4.qmd
+format: 
+  html:
+    number-depth: -1
+    number-sections: false
+bibliography: bibliography.bib
+execute: 
+  warning: false
+  message: false
+  echo: false
+code-summary: ">"
+freeze: true
+
+
+
+
