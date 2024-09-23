@@ -12,16 +12,25 @@ book:
       chapters: 
         - lesson1-1-tidy.qmd        
         - lesson1-2-imagery.qmd
+    - part: Lesson 2
+      chapters: 
+        - lesson2-1-operations.qmd 
+    - part: Lesson TBD
+      chapters: 
         - lesson1-3-datatypes.qmd
         - lesson1-4-nodata.qmd
-    - part: TBD
-      chapters: 
-        - lesson-n-m-operations.qmd
+        
+    - part: references.qmd
 format: 
   html:
     number-depth: -1
     number-sections: false
     css: aux/style.css
+    include-in-header:
+      - script.html
+    
+    
+    
 bibliography: aux/bibliography.bib
 execute: 
   warning: false
