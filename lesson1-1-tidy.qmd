@@ -12,6 +12,7 @@ library(tidyr)
 library(scales)
 library(tibble)
 library(gt)
+library(abind)
 
 ```
 
@@ -24,6 +25,8 @@ is a table.
 - Below is a dataset from @baltagi2008
 - *Observation* is a state in a perticular year
 - *Variable* is a measured parameter (see below)
+
+
 
 :::{.callout-note collapse="true"}
 
@@ -262,3 +265,63 @@ Produc |>
 - Speed and memory footprint is only relevant if the data is large
 
 
+
+## Tasks / Exercises
+
+
+1. Import the `Produc` dataset (from the package `plm`) using the following code:
+  ```{.r}
+  data(Produc, package = "plm")
+  ```
+
+2. Calculate the mean value per state over all years
+
+
+```{r}
+#| output: false
+data(Produc, package = "plm")
+
+
+Produc |> 
+  select(-region, -year) |> 
+  group_by(state) |> 
+  summarise(across(everything(),mean))
+
+```
+
+
+
+3. Convert the data into a 3 dimensional array (state, year and parameter)
+
+```{r}
+#| output: false
+params <- tail(colnames(Produc),-3)
+
+Produc_mat <- lapply(params, \(x){
+  # browser()
+  Produc[,c("state", "year", x)] |> 
+    pivot_wider(names_from = state, values_from = matches(x)) |> 
+    column_to_rownames("year") 
+    # 
+}) |> abind(along = 3)
+
+dimnames(Produc_mat)[[3]] <- params
+
+
+```
+
+
+4. Get familiar with `apply` and calculate the mean employment rate per year state
+
+
+```{r}
+#| output: false
+apply(Produc_mat,3,\(x)apply(x,2,\(y)sapply(y, mean)))
+
+apply(Produc_mat, 3, colMeans)
+
+```
+
+
+4. Compare the difference in speed (e.g. using `bench::mark` or `microbenchmark`)
+   

@@ -1,0 +1,354 @@
+
+# Raster Operations / Map algebra
+
+
+- The term ‘map algebra’ was coined in the late 1970s to describe a “set of conventions, capabilities, and techniques” for the analysis of geographic raster data [@tomlin1994].
+- In this context, we define map algebra more narrowly, as operations that modify or summarize raster cell values, with reference to surrounding cells, zones, or statistical functions that apply to every cell.
+- Map algebra divides raster operations into four subclasses:
+  1. Local or per-cell operations
+  2. Focal or neighborhood operations. Most often the output cell value is the result of a 3 x 3 input cell block
+  3. Zonal operations are similar to focal operations, but the surrounding pixel grid on which new values are computed can have irregular sizes and shapes
+  4. Global or per-raster operations. That means the output cell derives its value potentially from one or several entire rasters
+
+
+```{r}
+
+library(terra)
+library(sf)
+library(tmap)
+library(dplyr)
+
+r <- rast(system.file("ex/elev.tif", package="terra"))
+
+
+r <- project(r, "epsg:2169")
+
+r_ext <- terra::ext(r)
+
+r2 <- rast(res = 1000, crs = "epsg:2169", ext = r_ext)
+
+r <- resample(r, r2)
+
+```
+
+
+
+## Global Operation
+
+- The most common global operations are descriptive statistics for the entire raster dataset such as the minimum, maximum or mean value. 
+- For example: What is the mean elevation value for Luxembourg?
+
+
+```{r}
+#| label: fig-elev
+#| fig-cap: Elevation of Luxembourg
+
+
+p0 <- tm_shape(r) + 
+    tm_raster(style = "cont", palette = "viridis",legend.show = FALSE) +
+    tm_layout(frame = FALSE,legend.outside = TRUE)
+
+p0
+
+
+p <- tm_shape(r) + 
+    tm_raster(alpha = 0, legend.show = FALSE) +
+    tm_layout(frame = FALSE,legend.outside = TRUE)
+
+```
+
+```{r}
+#| echo: true
+
+# note: mean(r) does not work, since "mean" is used as a local operator
+mean_elev <- global(r, mean, na.rm = TRUE)
+
+mean_elev
+```
+
+
+## Zonal
+
+- Zonal operations apply an aggregation function to multiple raster cells
+- A second raster with categorical values define the zonal filters (or ‘zones’) 
+
+What is the mean value *per zone*?
+```{r}
+
+
+# set.seed(1)
+# zones <- r_poly |> 
+#     st_sample(10) |> 
+#     st_union() |> 
+#     st_voronoi() |> 
+#     st_collection_extract() |> 
+#     st_as_sf() |> 
+#     mutate(zone = row_number()) |> 
+#     st_intersection(r_poly) |> 
+#     vect() |> 
+#     rasterize(r, field = "zone")
+
+zones <- read_sf("data/Luxembourg_-_Municipalities-shp/Luxembourg_-_Municipalities.shp") |> 
+  transmute(zone = NAME_2) |> 
+  group_by(zone) |> 
+  summarise() |> 
+  st_transform(2169) |> 
+  vect() |> 
+  rasterize(r, field = "zone")
+
+
+
+```
+
+
+```{r}
+#| echo: true
+
+mean_vals <- zonal(r, zones, fun = mean, na.rm = TRUE)
+
+
+```
+
+
+```{r}
+#| label: fig-zonal
+#| column: page
+#| layout-nrow: 1
+#| fig-cap:
+#|   - The original Zones (E.g. communes of Luxembourg)
+#|   - Mean values per Zone
+
+
+mean_vals2 <- mean_vals |> 
+  mutate(ID = row_number()-1, .before = 0) |> 
+  select(-zone)
+zones_int <- as.int(zones)
+
+zones_mean <- classify(zones_int, mean_vals2)
+
+p + 
+  tm_shape(zones, is.master = TRUE) +
+  tm_raster(style = "cat",legend.show = TRUE, palette = "Set1") 
+
+p + tm_shape(zones_mean) + 
+  tm_raster(style = "cont", palette = "viridis", title = "Mean Elevation") 
+```
+
+## Local
+
+- Local operations comprise all cell-by-cell operations in one or several layers.
+- For example, we can classify the elevation into values above and below a certain threshold
+
+
+```{r}
+#| echo: true
+
+# first, create a copy of the raster
+r_bool <- as.logical(r)
+
+mean_elev <- as.numeric(mean_elev)
+mean_elev
+
+r_bool[r > mean_elev] <- FALSE
+r_bool[r <= mean_elev] <- TRUE
+
+
+``` 
+
+
+```{r}
+
+p + 
+  tm_shape(r_bool) +
+  tm_raster(palette = "viridis", title = "Low Elevation")
+
+```
+
+
+- This type of (re-) classification is a very common operation
+- For more than 2 categories, we can use `classify`
+
+
+```{r}
+#| echo: true
+cuts <- global(r, quantile, probs = c(0, .33, .66, 1), na.rm = TRUE)
+
+r_classify <- classify(r, as.numeric(cuts))
+
+# this just a
+levels(r_classify) <- data.frame(ID = 0:2, category = c("low","mid","high"))
+
+p + tm_shape(r_classify) +
+    tm_raster(style = "cat",legend.show = TRUE, palette = "viridis", title = "Elevation") +
+    tm_layout(legend.show = TRUE)
+```
+
+
+## Focal
+
+- While local functions operate on one cell focal operations take into account a central (focal) cell *and its neighbors*. 
+- The neighborhood (also named kernel, filter or moving window) under consideration is typically of size 3-by-3 cells (that is the central cell and its eight surrounding neighbors), but can take on any other size or shape as defined by the user. 
+- A focal operation applies an aggregation function to all cells within the specified neighborhood, uses the corresponding output as the new value for the central cell, and moves on to the next central cell
+
+
+:::{#fig-focal}
+
+![](img/focal.png)
+
+Note how, depnding on the size of your moving window, NA's are produced. Source: @lovelace2019
+:::
+
+
+```{r}
+#| echo: true
+
+
+focal3by3 <- matrix(rep(1,9), ncol = 3)
+
+
+focal11by11 <- matrix(rep(1,141), ncol = 11)
+
+
+r_foc3 <- focal(r, focal3by3, fun = mean, fillNA = TRUE)
+
+r_foc11 <- focal(r, focal11by11, fun = mean, fillNA = TRUE)
+
+
+```
+
+
+```{r}
+#| label: fig-focal2
+#| layout-nrow: 1
+#| fig-cap: 
+#|   - Original values
+#|   - Result of a 3x3 Focal Window
+#|   - Result of a 11x11 Focal Window
+
+
+p0
+
+p + tm_shape(r_foc3) + tm_raster(style = "cont", palette = "viridis") +
+    tm_layout(legend.show = FALSE, frame = FALSE)
+
+p + tm_shape(r_foc11) + tm_raster(style = "cont", palette = "viridis") +
+    tm_layout(legend.show = FALSE, frame = FALSE)
+```
+
+
+
+## Focal weights
+
+- The focal weights we used above were square and evenly weighted
+
+```{r}
+#| echo: true
+focal3by3
+```
+
+```{r}
+#| echo: true
+focal11by11
+```
+
+- However, we can also create uneven weights:
+
+
+
+```{r}
+#| echo: true
+
+# for edge detection:
+
+laplacian <- matrix(c(0,1,0,1,-4,1,0,1,0), nrow=3) 
+
+laplacian
+
+sobel_x <- matrix(c(-1,-2,-1,0,0,0,1,2,1), nrow=3)
+
+sobel_x
+
+sobel_y <- matrix(c(1,0,-1,2,0,-2,1,0,-1), nrow=3)
+
+sobel_y
+
+```
+
+
+```{r}
+#| label: fig-edgedetection
+#| fig-cap: 
+#|   - Laplacian Filter
+#|   - Sobel (x-direction)
+#|   - SObel (y-direction)
+#| column: page
+#| layout-nrow: 1
+focal(r, laplacian) |> plot()
+focal(r, sobel_x) |> plot()
+focal(r, sobel_y) |> plot()
+
+```
+
+- We can also create specific shapes using weights
+
+- We don't need to create these matrices by hand. Rather, we can use the function `focalMat` to create different shapes automatically
+
+```{r}
+#| warning: false
+#| echo: true
+
+# Note 
+# - "d" is evaluated in the units of "x" (in our case: meters)
+# - The sum of all weights equals to 1
+focalMat(x = r, d = 2000, "circle")
+
+
+focalMat(x = r, d = 1000, "Gauss")
+```
+
+
+## Focal functions in terrain processing
+
+- Focal functions are used to calculate the slope of a specific location, e.g. using the algorithm by @horn1981
+- Similarly, calculating the aspect (azimuth) of a location is a very typical task when dealing with elevation data
+- These algorithms are used so often, that they are implemented in a dedicated function (`terrain()`)
+
+
+
+```{r}
+#| echo: true
+#| layout-nrow: 1
+#| label: fig-terrain
+#| fig-cap: 
+#|   - Calculating slope using a predefined algorithm
+#|   - Calculating aspect 
+
+
+terrain(r, "slope") |> plot()
+terrain(r, "aspect") |> plot()
+```
+
+
+## Tasks / Exercises
+
+
+1. Import the elevation dataset as a raster using the following path
+
+    ```{r}
+    #| eval: false
+    #| echo: true
+    
+    rast(system.file("ex/elev.tif", package="terra"))
+    ```
+
+
+2. Caluclate the mean, max and min elevation values
+
+3. Calculate slope and aspect
+
+4. Determine suitable locations of solar panels using the following conditions:
+   - Elevation: above 500 MASL
+   - Slope: Between 1 and 3°
+   - Aspect: Southfaceing (between 135 and 235°)
+
+
