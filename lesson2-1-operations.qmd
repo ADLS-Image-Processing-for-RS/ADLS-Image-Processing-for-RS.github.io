@@ -175,12 +175,57 @@ cuts <- global(r, quantile, probs = c(0, .33, .66, 1), na.rm = TRUE)
 
 r_classify <- classify(r, as.numeric(cuts))
 
-# this just a
+# this next line just replaces the default labels with some custom ones
 levels(r_classify) <- data.frame(ID = 0:2, category = c("low","mid","high"))
 
 p + tm_shape(r_classify) +
     tm_raster(style = "cat",legend.show = TRUE, palette = "viridis", title = "Elevation") +
     tm_layout(legend.show = TRUE)
+```
+
+
+- Local operations are often used with multiple bands
+- For example, we could use the R, G and B band to calculate a grayscale value ($L^*$) using the following formula (from [here](https://stackoverflow.com/a/689547/4139249)):
+
+\begin{aligned}
+
+L^* &= 116 \times Y ^ {\frac{1}{3}} - 16\\
+
+Y &= 0.2126 \times R^\gamma+0.7152 \times G^\gamma+0.0722 \times B^\gamma \\
+
+
+\gamma &= 2.2
+
+\end{aligned}
+
+```{r}
+
+l7 <- rast(system.file("tif/L7_ETMs.tif",package = "stars"))
+
+names(l7) <- c("B", "G", "R", "NIR", "SWIR", "MIR")
+
+```
+
+
+```{r}
+#| echo: true
+
+g <- 2.2
+
+Y <- 0.2126 * l7[["R"]]^g + 0.7152 * l7[["G"]]^g + 0.0722 * l7[["B"]]^g
+
+L <- 116* Y^(1/3)-16
+
+
+```
+
+
+```{r}
+
+tm_shape(L) + tm_raster(style = "cont", palette = grey.colors(255)) +
+  tm_layout(legend.show = FALSE)
+
+
 ```
 
 
@@ -206,7 +251,7 @@ Note how, depnding on the size of your moving window, NA's are produced. Source:
 focal3by3 <- matrix(rep(1,9), ncol = 3)
 
 
-focal11by11 <- matrix(rep(1,141), ncol = 11)
+focal11by11 <- matrix(rep(1,121), ncol = 11)
 
 
 r_foc3 <- focal(r, focal3by3, fun = mean, fillNA = TRUE)
@@ -319,6 +364,7 @@ focalMat(x = r, d = 1000, "Gauss")
 #| echo: true
 #| layout-nrow: 1
 #| label: fig-terrain
+#| column: page
 #| fig-cap: 
 #|   - Calculating slope using a predefined algorithm
 #|   - Calculating aspect 
@@ -334,12 +380,12 @@ terrain(r, "aspect") |> plot()
 
 1. Import the elevation dataset as a raster using the following path
 
-    ```{r}
-    #| eval: false
-    #| echo: true
+   ```{r}
+   #| eval: false
+   #| echo: true
     
-    rast(system.file("ex/elev.tif", package="terra"))
-    ```
+   rast(system.file("ex/elev.tif", package="terra"))
+   ```
 
 
 2. Caluclate the mean, max and min elevation values
@@ -350,5 +396,26 @@ terrain(r, "aspect") |> plot()
    - Elevation: above 500 MASL
    - Slope: Between 1 and 3°
    - Aspect: Southfaceing (between 135 and 235°)
+   
+5. Import the multispectral Landsat 7 as a raster using the following path
+
+   ```{r}
+   #| eval: false
+   #| echo: true
+    
+   system.file("tif/L7_ETMs.tif",package = "stars")
+   ```
+
+5. Calculate the [NDVI](https://en.wikipedia.org/wiki/Normalized_difference_vegetation_index) using the following formula:
+
+$$\text{NDVI} = \frac{\text{NIR}-\text{red}}{\text{NIR}+\text{red}}$$
+
+```{r}
+
+NDVI <- (l7[["NIR"]]-l7[["R"]])/(l7[["NIR"]]+l7[["R"]])
+
+tm_shape(NDVI) + tm_raster(style = "cont", title = "NDVI", midpoint = 0, breaks = c(-1,0,1)) + 
+  tm_layout(legend.outside = TRUE)
+```
 
 

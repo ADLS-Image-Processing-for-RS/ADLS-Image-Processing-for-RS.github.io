@@ -1,0 +1,25 @@
+<!-- loads fontawesome, so that I can create a fontawesome button (see below) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script>
+    
+    // the following function adds padding to all h2 elements, so that I can 
+  // easily present the content of the page in a more readable way
+  function presenter(){
+    var paragraphs = document.querySelectorAll("h2, h3");
+    paragraphs.forEach(function (paragraph) {
+      paragraph.classList.toggle("speaker");
+    });
+  }
+  
+    
+    document.addEventListener('keydown', (event) => {
+      if (event.ctrlKey) {
+         if (event.keyCode == 89) {
+             console.log("Bingo!");
+             presenter()
+         }
+      }
+    }, false);
+
+  
+  </script>

@@ -60,11 +60,12 @@ Produc |>
 
 
 :::{.callout-note .notes collapse="true"}
-- This is considered a *long* table and is great for modelling and visualisation.
-- Its bad for momory (a lot of repetitions)
+- This is considered a *long* table and is great for modelling and visualization.
+- Its bad for memory (a lot of repetitions)
 :::
 
 ---
+
 
 ### Long tables have a lot of repetitions:
 
@@ -79,35 +80,14 @@ length(Produc$year)
 n_distinct(Produc$year)
 
 
-n_values <- dim(Produc) |> prod()
+n_values <- dim(Produc) |> 
+  prod()
 
 n_values
 ```
 
 
 ---
-
-### Long tables have a lot of repetitions:
-
-:::{.callout-note collapse="true"}
-
-## Repeating cells are colorized
-
-
-```{r}
-
-Produc |> 
-    filter(state %in% unique(Produc$state)[1:2]) |> 
-    gt() |> 
-    data_color(columns = "state", method = "factor", palette = c("Pastel2")) |> 
-    data_color(columns = "year", method = "factor", palette = c("RdYlBu"))
-```
-
-:::
-
-
----
-
 
 ### Wide tables have less repetitions.
 
@@ -303,7 +283,8 @@ Produc_mat <- lapply(params, \(x){
     pivot_wider(names_from = state, values_from = matches(x)) |> 
     column_to_rownames("year") 
     # 
-}) |> abind(along = 3)
+}) |> 
+  abind(along = 3)
 
 dimnames(Produc_mat)[[3]] <- params
 
@@ -316,7 +297,6 @@ dimnames(Produc_mat)[[3]] <- params
 
 ```{r}
 #| output: false
-apply(Produc_mat,3,\(x)apply(x,2,\(y)sapply(y, mean)))
 
 apply(Produc_mat, 3, colMeans)
 

@@ -28,13 +28,48 @@ library(gt)
 
 
 
-:::{#fig-raster}
-![](img/raster-intro-plot-1.png)
+```{r}
+#| label: fig-raster-example
+#| layout-nrow: 1
+#| column: page
+#| fig-cap: 
+#|   - Cell offset from origin (lower left)
+#|   - Cell values (for example elevation)
+#|   - Color representation of cell value 
 
 
-From @lovelace2019
+scale_minmax <- \(x){(x-min(x))/(max(x)-min(x))}
+library(ambient)
 
-:::
+grid_size <- 5
+
+df <-expand_grid(x = seq_len(grid_size), y = seq_len(grid_size)) |> 
+  mutate(z = gen_perlin(x,y,frequency = .1,seed = 1)) |> 
+  mutate(z = as.integer(round(scale_minmax(z)*10)))
+
+p0 <- df |> 
+ggplot(aes(x,y)) + 
+    geom_tile(fill = "white", color = "black",lwd = .4) +
+  scale_fill_gradientn(colors = RColorBrewer::brewer.pal(11, "Spectral")) +
+  theme_void() +
+  theme(legend.position = "none") +
+  coord_equal()
+
+library(glue)
+
+p0 +
+  geom_text(aes(label = glue("[{x-1},{y-1}]")))
+
+p0 +
+  geom_text(aes(label = z)) 
+
+
+p0 + 
+  geom_tile(aes(fill = z), color = "black",lwd = .4)
+
+
+```
+
 
 :::{.callout-note collapse="true"}
 
@@ -52,7 +87,7 @@ We will focus on the regular grids only. However, several other types of grids e
 
 
 
-## Elevation
+## A simple example: Elevation
 
 ```{r}
 
@@ -75,12 +110,12 @@ matrix(r, nrow = terra::nrow(r))[50:60,50:60]
 ```
 
 
-## Spectral data
+## A more complex example: Spectral data
 
 - Typically, RS imagery consists of more than 1 band
 - In this case, the data is stored in a 3 dimensional *array* (where *band* is the 3rd-dimesion)
-
-
+- A RS image can contain any number of bands.
+- The most well known type of RS imagery consists of 3 Bands from the red, blue and green spectrum
 
 
 
@@ -88,14 +123,11 @@ matrix(r, nrow = terra::nrow(r))[50:60,50:60]
 l7 <- system.file("tif/L7_ETMs.tif",package = "stars") |> 
     rast() 
 
+
 l7_full <- l7  
 
 l7_full_rgb <- l7_full[[c(3,2,1)]]
 
-l7 <- l7 |>   aggregate(20, na.rm = TRUE) |> as.int()
-
-
-l7_rgb <- l7[[c(3,2,1)]]
 
 ``` 
 
@@ -103,112 +135,145 @@ l7_rgb <- l7[[c(3,2,1)]]
 ```{r}
 #| label: fig-multi
 #| layout-ncol: 2
+#| column: page
 #| fig-cap: 
 #|   - The RGB Composite
 #|   - The bands stored internally
 
+plot(l7_full_rgb, main = paste(c("Red", "Green", "Blue"),"Band"))
+
 plotRGB(l7_full_rgb, stretch = "histogramm", smooth = FALSE)
 
-
-plot(l7_full_rgb, main = paste(c("Red", "Green", "Blue"),"Band"))
 
 ```
 
 
 
-## Each band is a matrix
+## Each band is a 2D matrix
+
 
 ```{r}
+#| fig.asp: 1
+#| layout-nrow: 1
+#| fig-height: 5
+#| column: page
+#| label: fig-raster-composite
+#| fig-cap: 
+#|   - Band values
+#|   - RGB True Color Image
 
-l7_rgb_array <- as.array(l7_rgb)
+
+l7 <- l7 |>   aggregate(60, na.rm = TRUE) |> as.int()
+
+spectral <- RColorBrewer::brewer.pal(11, "Spectral") |> rev()
 
 
-ou <- capture.output(l7_rgb_array[1:5, 1:5, , drop = F])
+l7_rgb <- l7[[c(3,2,1)]]
 
 l7_rgb_df <- as.data.frame(l7_rgb, xy = TRUE)
 
 colnames(l7_rgb_df)[3:5] <- paste0("L7_",c("red","green","blue"))
 
-# l7_rgb_df <- l7_rgb_df |> 
-#     mutate(across(starts_with("L7_"), as.integer))
-
-dims <- dim(l7_rgb_array)
-
-asp <- dims[3]/(dims[1]/dims[1])
-
-l7_rgb_df_wide <- l7_rgb_df |> 
-    pivot_longer(starts_with("L7"), names_prefix = "L7_")
-```
-
-::::{layout="[[20,-5, 75],[20,-5, 75],[20,-5, 75]]" .smaller-fonts}
 
 
+df2 <- l7_rgb_df |> 
+  pivot_longer(cols = starts_with("L7_"),names_prefix = "L7_") |> 
+  mutate(name = factor(name, levels = c("red","green","blue"),ordered = TRUE))
 
-```{r}
-#| fig.asp = 1
-
-
-
-spectral <- RColorBrewer::brewer.pal(11, "Spectral") |> rev()
-
-l7_rgb_df |> 
-ggplot(aes(x,y, fill = L7_red)) +
-    geom_tile(color = "white", lwd = .2) +
+  q0 <- df2 |> 
+  ggplot(aes(x,y)) +
+    geom_tile(color = "black", fill = NA) +
     coord_equal() +
     theme_void() +
     scale_fill_gradientn(colors = spectral) +
+    theme(legend.position = "none")+
+    facet_wrap(~name, ncol = 1)
+
+q0 + 
+  geom_text(aes(label = value))
+
+# q0 + 
+  # geom_tile(aes(fill = value), color = "black", lwd = .2)
+
+
+df2 |> 
+  pivot_wider() |> 
+  mutate(fill = rgb(red, green, blue,maxColorValue = max(df2$value))) |> 
+  ggplot(aes(x,y)) +
+  geom_tile(aes(fill = fill)) +
+  scale_fill_identity() +
+    coord_equal() +
+    theme_void() +
     theme(legend.position = "none")
+    
+
 ```
 
-```{r}
-cat(ou[1:8], sep = "\n")
-```
-
-
-```{r}
-#| fig.asp = 1
-
-l7_rgb_df |> 
-ggplot(aes(x,y, fill = L7_green)) +
-    geom_tile(color = "white", lwd = .2) +
-    coord_equal() +
-    theme_void() +
-    scale_fill_gradientn(colors = spectral) +
-    theme(legend.position = "none") 
-```
-
-```{r}
-cat(ou[10:17], sep = "\n")
-```
-
-```{r}
-#| fig.asp = 1
-
-l7_rgb_df |> 
-ggplot(aes(x,y, fill = L7_blue)) +
-    geom_tile(color = "white", lwd = .2) +
-    coord_equal() +
-    theme_void() +
-    scale_fill_gradientn(colors = spectral) +
-    theme(legend.position = "none") 
-```
-
-```{r}
-cat(ou[19:27], sep = "\n")
-```
-::::
 
 
 ## Multispectral Datasets
 
 - Multiband datasets usually capture different parts of the EM spectrum
-- E.g. the Landsat image (previous example) has 8 bands capturing the following wavelengths:
+- E.g. the Landsat image from the previous example has 6 bands capturing the following wavelengths:
   - **Band 1**: Blue (0.45 - 0.52 µm)
   - **Band 2**: Green (0.52 - 0.60 µm)
   - **Band 3**: Red (0.63 - 0.69 µm)
   - **Band 4**: Near-Infrared (0.77 - 0.90 µm)
   - **Band 5**: Short-wave Infrared (1.55 - 1.75 µm)
   - **Band 7**: Mid-Infrared (2.08 - 2.35 µm)
+
+
+## NirGB Image
+
+```{r}
+#| layout-nrow: 1
+#| label: fig-nirgb
+#| column: page
+#| fig-cap: 
+#|   - Band values
+#|   - NIR-GB False Color Image
+
+l7_nirgb <- l7[[c(4,2,1)]]
+
+l7_nirgb_df <- as.data.frame(l7_nirgb, xy = TRUE)
+
+colnames(l7_nirgb_df)[3:5] <- paste0("L7_",c("NIR","green","blue"))
+
+
+
+df2 <- l7_nirgb_df |> 
+  pivot_longer(cols = starts_with("L7_"),names_prefix = "L7_") |> 
+  mutate(name = factor(name, levels = c("NIR","green","blue"),ordered = TRUE))
+
+q0 <- df2 |> 
+  ggplot(aes(x,y)) +
+    geom_tile(color = "black", fill = NA) +
+    coord_equal() +
+    theme_void() +
+    scale_fill_gradientn(colors = spectral) +
+    theme(legend.position = "none")+
+    facet_wrap(~name, ncol = 1)
+
+q0 + 
+  geom_text(aes(label = value))
+
+# q0 + 
+  # geom_tile(aes(fill = value), color = "black", lwd = .2)
+
+
+df2 |> 
+  pivot_wider() |> 
+  mutate(fill = rgb(NIR, green, blue,maxColorValue = max(df2$value))) |> 
+  ggplot(aes(x,y)) +
+  geom_tile(aes(fill = fill)) +
+  scale_fill_identity() +
+    coord_equal() +
+    theme_void() +
+    theme(legend.position = "none")
+    
+
+```
+
 
 
 ## Representations of multispectral data
