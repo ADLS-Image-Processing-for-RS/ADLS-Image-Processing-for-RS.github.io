@@ -10,46 +10,6 @@
     ]
   },
   {
-    "objectID": "index.html#lesson-1",
-    "href": "index.html#lesson-1",
-    "title": "Image Processing for Remote Sensing",
-    "section": "Lesson 1",
-    "text": "Lesson 1\n\nThe raster data model:\n\nin R (terra) / in python (rioxarray)\nin comparison to classic data-frame type data (long vs wide data, data cubes, dense vs. sparse)\nsingleband and multiband datasets\nraster data types and their implications (float / int, pseudo-categorical)\nraster NA values\n\nRaster file formats (geotif, COG, XYZ → binary vs. non-binary data)",
-    "crumbs": [
-      "Welcome!"
-    ]
-  },
-  {
-    "objectID": "index.html#lesson-2",
-    "href": "index.html#lesson-2",
-    "title": "Image Processing for Remote Sensing",
-    "section": "Lesson 2",
-    "text": "Lesson 2\n\nRaster operations\n\nlocal, zonal, focal, global in theory\n\neach of the above in practice, starting with the easiest and using concrete examples (in R and/or Python)\n\nGlobal: mean canopy cover (?) for the image\nZonal: Mean Canopy cover for the burt area\nlocal: NDVI &gt; 1\nfocal: tbd",
-    "crumbs": [
-      "Welcome!"
-    ]
-  },
-  {
-    "objectID": "index.html#lesson-3",
-    "href": "index.html#lesson-3",
-    "title": "Image Processing for Remote Sensing",
-    "section": "Lesson 3",
-    "text": "Lesson 3\n\nPixel based Supervised classification with categorical data\n\n(e.g. Landuse Classification using Sentinel Data or historical map data)\n\nPixel based unsupervised classification with categorical data\n\nfind some hand annotated maps similar to the flughafen data or other historical data such as this one or this",
-    "crumbs": [
-      "Welcome!"
-    ]
-  },
-  {
-    "objectID": "index.html#lesson-4",
-    "href": "index.html#lesson-4",
-    "title": "Image Processing for Remote Sensing",
-    "section": "Lesson 4",
-    "text": "Lesson 4\n\nFeature engineering using focal methods\nDataChallenge: Forest detection in Ces",
-    "crumbs": [
-      "Welcome!"
-    ]
-  },
-  {
     "objectID": "lesson1-1-tidy.html",
     "href": "lesson1-1-tidy.html",
     "title": "From tidy data to raster",
@@ -65,7 +25,7 @@
     "href": "lesson1-1-tidy.html#tidy-data",
     "title": "From tidy data to raster",
     "section": "",
-    "text": "Wickham (2014): Tidy tabular data: Each variable is a column, each observation is a row, and each type of observational unit is a table.\nBelow is a dataset from Baltagi and Baltagi (2008)\nObservation is a state in a perticular year\nVariable is a measured parameter (see below)\n\n\n\n\n\n\n\nParameter\n\n\n\n\n\n\npcap: public capital stock\nhwy: highway and streets\nwater: water and sewer facilities\nutil: other public buildings and structures\npc: private capital stock\ngsp: gross state product\nemp: labor input measured by the employment in non–agricultural payrolls\nunemp: state unemployment rate\n\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\n\n\n\nThis is considered a long table and is great for modelling and visualisation.\nIts bad for momory (a lot of repetitions)\n\n\n\n\n\n\nLong tables have a lot of repetitions:\n\nlength(Produc$state)\n## [1] 815\nn_distinct(Produc$state)\n## [1] 48\n\nlength(Produc$year)\n## [1] 815\nn_distinct(Produc$year)\n## [1] 17\n\n\nn_values &lt;- dim(Produc) |&gt; prod()\n\nn_values\n## [1] 8150\n\n\n\n\nLong tables have a lot of repetitions:\n\n\n\n\n\n\nRepeating cells are colorized\n\n\n\n\n\n\n\n\n\n\n\n\n\nstate\nyear\npcap\nhwy\nwater\nutil\npc\ngsp\nemp\nunemp\n\n\n\n\nALABAMA\n1970\n15032.67\n7325.80\n1655.68\n6051.20\n35793.80\n28418\n1010.5\n4.7\n\n\nALABAMA\n1971\n15501.94\n7525.94\n1721.02\n6254.98\n37299.91\n29375\n1021.9\n5.2\n\n\nALABAMA\n1972\n15972.41\n7765.42\n1764.75\n6442.23\n38670.30\n31303\n1072.3\n4.7\n\n\nALABAMA\n1973\n16406.26\n7907.66\n1742.41\n6756.19\n40084.01\n33430\n1135.5\n3.9\n\n\nALABAMA\n1974\n16762.67\n8025.52\n1734.85\n7002.29\n42057.31\n33749\n1169.8\n5.5\n\n\nALABAMA\n1975\n17316.26\n8158.23\n1752.27\n7405.76\n43971.71\n33604\n1155.4\n7.7\n\n\nALABAMA\n1976\n17732.86\n8228.19\n1799.74\n7704.93\n50221.57\n35764\n1207.0\n6.8\n\n\nALABAMA\n1977\n18111.93\n8365.67\n1845.11\n7901.15\n51084.99\n37463\n1269.2\n7.4\n\n\nALABAMA\n1978\n18479.74\n8510.64\n1960.51\n8008.59\n52604.05\n39964\n1336.5\n6.3\n\n\nALABAMA\n1979\n18881.49\n8640.61\n2081.91\n8158.97\n54525.86\n40979\n1362.0\n7.1\n\n\nALABAMA\n1980\n19012.34\n8663.50\n2138.52\n8210.33\n56589.16\n40380\n1356.1\n8.8\n\n\nALABAMA\n1981\n19118.52\n8628.83\n2218.91\n8270.79\n56481.93\n41105\n1347.6\n11.0\n\n\nALABAMA\n1982\n19118.25\n8645.14\n2215.84\n8257.26\n58021.69\n40328\n1312.5\n14.0\n\n\nALABAMA\n1983\n19122.00\n8612.47\n2230.91\n8278.63\n58893.97\n42245\n1328.8\n14.0\n\n\nALABAMA\n1984\n19257.47\n8655.94\n2235.16\n8366.37\n59446.86\n45118\n1387.7\n11.0\n\n\nALABAMA\n1985\n19433.36\n8726.24\n2253.03\n8454.09\n60688.04\n46849\n1427.1\n8.9\n\n\nALABAMA\n1986\n19723.37\n8813.24\n2308.99\n8601.14\n61628.88\n48409\n1463.3\n9.8\n\n\nARIZONA\n1970\n10148.42\n4556.81\n1627.87\n3963.75\n23585.99\n19288\n547.4\n4.4\n\n\nARIZONA\n1972\n10977.53\n4847.84\n1614.58\n4515.11\n26058.65\n23289\n646.3\n4.2\n\n\nARIZONA\n1973\n11598.26\n4963.46\n1647.88\n4986.92\n27304.64\n25244\n714.5\n4.1\n\n\nARIZONA\n1974\n12129.06\n5071.38\n1678.00\n5379.69\n28829.44\n25698\n746.0\n5.6\n\n\nARIZONA\n1975\n12929.06\n5163.41\n1764.87\n6000.77\n30243.29\n24915\n729.1\n12.0\n\n\nARIZONA\n1976\n13603.89\n5249.82\n1910.43\n6443.63\n29384.15\n26041\n758.7\n9.8\n\n\nARIZONA\n1977\n14175.42\n5358.45\n1973.48\n6843.50\n30072.60\n28110\n809.3\n8.2\n\n\nARIZONA\n1978\n14812.04\n5470.00\n2038.30\n7303.73\n31139.49\n31062\n895.4\n6.1\n\n\nARIZONA\n1979\n15547.62\n5603.12\n2132.49\n7812.01\n32377.41\n33943\n979.9\n5.1\n\n\nARIZONA\n1980\n16344.90\n5720.38\n2165.64\n8458.88\n33769.92\n34708\n1014.0\n6.7\n\n\nARIZONA\n1981\n17088.30\n5816.05\n2265.42\n9006.84\n36387.15\n35244\n1040.8\n6.1\n\n\nARIZONA\n1982\n17650.57\n5918.50\n2377.20\n9354.87\n37332.09\n33603\n1029.8\n9.9\n\n\nARIZONA\n1983\n18108.24\n6019.87\n2513.38\n9574.99\n37829.83\n35963\n1077.8\n9.1\n\n\nARIZONA\n1984\n18792.09\n6101.45\n2574.78\n10115.86\n38330.02\n40010\n1181.9\n5.0\n\n\nARIZONA\n1985\n19414.85\n6282.51\n2737.37\n10394.97\n39246.83\n43350\n1278.6\n6.5\n\n\nARIZONA\n1986\n20212.42\n6553.40\n2923.15\n10735.88\n44189.19\n46058\n1337.8\n6.9\n\n\n\n\n\n\n\n\n\n\n\n\n\nWide tables have less repetitions.\nTo demonstrate we convert a long to wide.\n\n# Pivoting must be done per variable\nProduc_wide &lt;- Produc |&gt; \n    select(state, year, unemp) |&gt; \n    pivot_wider(names_from = state, values_from = unemp) |&gt; \n    column_to_rownames(\"year\")\n\n\n\n\n\n\n\nNote\n\n\n\n\n\nWe can either omit the column “year”, (since this is implicit knowledge, \\(row_i + 1970\\)), or use it as a rowname.\n\n\n\n\n\n\nLong vs Wide\nLong / tidy:\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nstate\nyear\npcap\nhwy\nwater\nutil\npc\ngsp\nemp\nunemp\n\n\n\n\nALABAMA\n1970\n15032.67\n7325.80\n1655.68\n6051.20\n35793.80\n28418\n1010.5\n4.7\n\n\nALABAMA\n1971\n15501.94\n7525.94\n1721.02\n6254.98\n37299.91\n29375\n1021.9\n5.2\n\n\nALABAMA\n1972\n15972.41\n7765.42\n1764.75\n6442.23\n38670.30\n31303\n1072.3\n4.7\n\n\nALABAMA\n1973\n16406.26\n7907.66\n1742.41\n6756.19\n40084.01\n33430\n1135.5\n3.9\n\n\nALABAMA\n1974\n16762.67\n8025.52\n1734.85\n7002.29\n42057.31\n33749\n1169.8\n5.5\n\n\n\n\n\n\nWide / untidy:\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nALABAMA\nARIZONA\nARKANSAS\nCALIFORNIA\nCOLORADO\nCONNECTICUT\nDELAWARE\nFLORIDA\nGEORGIA\nIDAHO\nILLINOIS\nINDIANA\nIOWA\nKANSAS\nKENTUCKY\nLOUISIANA\nMAINE\nMARYLAND\nMASSACHUSETTS\nMICHIGAN\nMINNESOTA\nMISSISSIPPI\nMISSOURI\nMONTANA\nNEBRASKA\nNEVADA\nNEW_HAMPSHIRE\nNEW_JERSEY\nNEW_MEXICO\nNEW_YORK\nNORTH_CAROLINA\nNORTH_DAKOTA\nOHIO\nOKLAHOMA\nOREGON\nPENNSYLVANIA\nRHODE_ISLAND\nSOUTH_CAROLINA\nSOUTH_DAKOTA\nTENNESSE\nTEXAS\nUTAH\nVERMONT\nVIRGINIA\nWASHINGTON\nWEST_VIRGINIA\nWISCONSIN\nWYOMING\n\n\n\n\n1970\n4.7\n4.4\n5.0\n7.2\n4.4\n5.6\n4.8\n4.4\n4.1\n5.8\n4.1\n5.0\n3.7\n4.8\n5.0\n6.6\n5.7\n3.3\n4.6\n6.7\n4.2\n4.8\n3.3\n5.5\n3.1\n5.9\n3.3\n4.6\n5.9\n4.5\n4.3\n4.6\n5.4\n4.4\n6.2\n4.5\n5.2\n5.0\n3.3\n4.8\n4.4\n6.1\n4.9\n3.4\n9.1\n6.1\n3.9\n4.5\n\n\n1971\n5.2\nNA\n5.4\n8.8\n4.0\n8.9\n5.7\n4.9\n3.9\n6.3\n5.1\n5.7\n4.2\n5.5\n5.5\n7.0\n7.6\n4.2\n6.6\n7.6\n4.4\n4.8\n4.9\n6.3\n3.6\n7.0\n4.7\n5.7\n6.2\n6.6\n4.8\n5.3\n6.5\n4.9\n6.6\n5.4\n6.8\n5.3\n3.7\n5.0\n4.9\n6.4\n6.8\n3.6\n10.0\n6.5\n4.5\n4.5\n\n\n1972\n4.7\n4.2\n4.6\n7.6\n3.6\n8.2\n4.7\n4.5\n4.1\n6.2\n5.1\n4.5\n3.6\n4.0\n4.8\n6.1\n7.0\n4.7\n6.4\n7.0\n4.3\n3.9\n4.2\n6.2\n3.4\n7.0\n4.5\n5.8\n5.8\n6.7\n4.0\n4.9\n5.5\n4.5\n5.7\n5.4\n6.5\n4.2\n3.7\n3.6\n4.5\n6.1\n6.5\n3.6\n9.5\n6.5\n4.2\n4.0\n\n\n1973\n3.9\n4.1\n4.1\n7.0\n3.4\n5.7\n4.6\n4.3\n3.9\n5.6\n4.1\n4.2\n2.9\n3.1\n4.4\n6.0\n5.9\n3.5\n6.7\n5.8\n4.4\n3.6\n3.7\n6.3\n3.3\n6.2\n3.9\n5.6\n5.7\n5.4\n3.5\n5.1\n4.3\n4.2\n5.3\n4.8\n6.2\n3.7\n3.3\n3.0\n3.9\n5.7\n5.6\n3.6\n7.7\n5.7\n4.1\n3.5\n\n\n1974\n5.5\n5.6\n4.8\n7.7\n3.8\n6.2\n6.0\n6.2\n5.0\n6.0\n4.5\n5.9\n3.0\n3.5\n4.5\n6.7\n6.7\n3.7\n7.2\n8.7\n4.3\n4.1\n4.5\n6.7\n3.8\n7.5\n3.6\n6.9\n6.3\n6.3\n4.5\n3.0\n5.0\n4.4\n7.5\n5.1\n7.3\n4.5\n3.5\n3.9\n4.3\n5.9\n6.9\n4.0\n7.2\n5.9\n4.6\n3.6\n\n\n\n\n\n\nHow many cells / values do we have after this transformation?\n\nn_values_new &lt;- Produc_wide |&gt; \n    dim() |&gt; \n    prod()\n\n# since we have 8 variables, we multiply by 8:\nn_values_new &lt;- n_values_new*8 \n\nn_values_new\n\n[1] 6528\n\n# before we had:\nn_values\n\n[1] 8150\n\n\n→ This is a reduction of 20%\n\nLess repetitions / smaller memory footprint is only part of the advantage:\n\nAll columns now have the same datatype (dbl)\n\nThis means, they can be stored in a matrix / array\nThis gives us a big speed advantage (e.g. calculating the mean over all values is 12x faster)\n\n\n\n\nMissing values are now explicit\n\n\nwhich(is.na(Produc_matrix))\n\n[1] 19\n\n\n\nBefore, missing values were implicit:\n\n\n\n# A tibble: 6 × 10\n  state    year   pcap   hwy water  util     pc   gsp   emp unemp\n  &lt;chr&gt;   &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;\n1 ALABAMA  1984 19257. 8656. 2235. 8366. 59447. 45118 1388.  11  \n2 ALABAMA  1985 19433. 8726. 2253. 8454. 60688. 46849 1427.   8.9\n3 ALABAMA  1986 19723. 8813. 2309. 8601. 61629. 48409 1463.   9.8\n4 ARIZONA  1970 10148. 4557. 1628. 3964. 23586. 19288  547.   4.4\n5 ARIZONA  1972 10978. 4848. 1615. 4515. 26059. 23289  646.   4.2\n6 ARIZONA  1973 11598. 4963. 1648. 4987. 27305. 25244  714.   4.1\n\n\n\nTo detect missing values, cases must be made complete first:\n\nProduc |&gt; \n    complete(state, year) |&gt;                    # ← make cases complete \n    filter(is.na(pcap)) # ← filter by NA\n\n# A tibble: 1 × 10\n  state    year  pcap   hwy water  util    pc   gsp   emp unemp\n  &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;\n1 ARIZONA  1971    NA    NA    NA    NA    NA    NA    NA    NA",
+    "text": "Wickham (2014): Tidy tabular data: Each variable is a column, each observation is a row, and each type of observational unit is a table.\nBelow is a dataset from Baltagi and Baltagi (2008)\nObservation is a state in a perticular year\nVariable is a measured parameter (see below)\n\n\n\n\n\n\n\nParameter\n\n\n\n\n\n\npcap: public capital stock\nhwy: highway and streets\nwater: water and sewer facilities\nutil: other public buildings and structures\npc: private capital stock\ngsp: gross state product\nemp: labor input measured by the employment in non–agricultural payrolls\nunemp: state unemployment rate\n\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\n\n\n\nThis is considered a long table and is great for modelling and visualization.\nIts bad for memory (a lot of repetitions)\n\n\n\n\n\n\nLong tables have a lot of repetitions:\n\nlength(Produc$state)\n## [1] 815\nn_distinct(Produc$state)\n## [1] 48\n\nlength(Produc$year)\n## [1] 815\nn_distinct(Produc$year)\n## [1] 17\n\n\nn_values &lt;- dim(Produc) |&gt; \n  prod()\n\nn_values\n## [1] 8150\n\n\n\n\nWide tables have less repetitions.\nTo demonstrate we convert a long to wide.\n\n# Pivoting must be done per variable\nProduc_wide &lt;- Produc |&gt; \n    select(state, year, unemp) |&gt; \n    pivot_wider(names_from = state, values_from = unemp) |&gt; \n    column_to_rownames(\"year\")\n\n\n\n\n\n\n\nNote\n\n\n\n\n\nWe can either omit the column “year”, (since this is implicit knowledge, \\(row_i + 1970\\)), or use it as a rowname.\n\n\n\n\n\n\nLong vs Wide\nLong / tidy:\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nstate\nyear\npcap\nhwy\nwater\nutil\npc\ngsp\nemp\nunemp\n\n\n\n\nALABAMA\n1970\n15032.67\n7325.80\n1655.68\n6051.20\n35793.80\n28418\n1010.5\n4.7\n\n\nALABAMA\n1971\n15501.94\n7525.94\n1721.02\n6254.98\n37299.91\n29375\n1021.9\n5.2\n\n\nALABAMA\n1972\n15972.41\n7765.42\n1764.75\n6442.23\n38670.30\n31303\n1072.3\n4.7\n\n\nALABAMA\n1973\n16406.26\n7907.66\n1742.41\n6756.19\n40084.01\n33430\n1135.5\n3.9\n\n\nALABAMA\n1974\n16762.67\n8025.52\n1734.85\n7002.29\n42057.31\n33749\n1169.8\n5.5\n\n\n\n\n\n\nWide / untidy:\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nALABAMA\nARIZONA\nARKANSAS\nCALIFORNIA\nCOLORADO\nCONNECTICUT\nDELAWARE\nFLORIDA\nGEORGIA\nIDAHO\nILLINOIS\nINDIANA\nIOWA\nKANSAS\nKENTUCKY\nLOUISIANA\nMAINE\nMARYLAND\nMASSACHUSETTS\nMICHIGAN\nMINNESOTA\nMISSISSIPPI\nMISSOURI\nMONTANA\nNEBRASKA\nNEVADA\nNEW_HAMPSHIRE\nNEW_JERSEY\nNEW_MEXICO\nNEW_YORK\nNORTH_CAROLINA\nNORTH_DAKOTA\nOHIO\nOKLAHOMA\nOREGON\nPENNSYLVANIA\nRHODE_ISLAND\nSOUTH_CAROLINA\nSOUTH_DAKOTA\nTENNESSE\nTEXAS\nUTAH\nVERMONT\nVIRGINIA\nWASHINGTON\nWEST_VIRGINIA\nWISCONSIN\nWYOMING\n\n\n\n\n1970\n4.7\n4.4\n5.0\n7.2\n4.4\n5.6\n4.8\n4.4\n4.1\n5.8\n4.1\n5.0\n3.7\n4.8\n5.0\n6.6\n5.7\n3.3\n4.6\n6.7\n4.2\n4.8\n3.3\n5.5\n3.1\n5.9\n3.3\n4.6\n5.9\n4.5\n4.3\n4.6\n5.4\n4.4\n6.2\n4.5\n5.2\n5.0\n3.3\n4.8\n4.4\n6.1\n4.9\n3.4\n9.1\n6.1\n3.9\n4.5\n\n\n1971\n5.2\nNA\n5.4\n8.8\n4.0\n8.9\n5.7\n4.9\n3.9\n6.3\n5.1\n5.7\n4.2\n5.5\n5.5\n7.0\n7.6\n4.2\n6.6\n7.6\n4.4\n4.8\n4.9\n6.3\n3.6\n7.0\n4.7\n5.7\n6.2\n6.6\n4.8\n5.3\n6.5\n4.9\n6.6\n5.4\n6.8\n5.3\n3.7\n5.0\n4.9\n6.4\n6.8\n3.6\n10.0\n6.5\n4.5\n4.5\n\n\n1972\n4.7\n4.2\n4.6\n7.6\n3.6\n8.2\n4.7\n4.5\n4.1\n6.2\n5.1\n4.5\n3.6\n4.0\n4.8\n6.1\n7.0\n4.7\n6.4\n7.0\n4.3\n3.9\n4.2\n6.2\n3.4\n7.0\n4.5\n5.8\n5.8\n6.7\n4.0\n4.9\n5.5\n4.5\n5.7\n5.4\n6.5\n4.2\n3.7\n3.6\n4.5\n6.1\n6.5\n3.6\n9.5\n6.5\n4.2\n4.0\n\n\n1973\n3.9\n4.1\n4.1\n7.0\n3.4\n5.7\n4.6\n4.3\n3.9\n5.6\n4.1\n4.2\n2.9\n3.1\n4.4\n6.0\n5.9\n3.5\n6.7\n5.8\n4.4\n3.6\n3.7\n6.3\n3.3\n6.2\n3.9\n5.6\n5.7\n5.4\n3.5\n5.1\n4.3\n4.2\n5.3\n4.8\n6.2\n3.7\n3.3\n3.0\n3.9\n5.7\n5.6\n3.6\n7.7\n5.7\n4.1\n3.5\n\n\n1974\n5.5\n5.6\n4.8\n7.7\n3.8\n6.2\n6.0\n6.2\n5.0\n6.0\n4.5\n5.9\n3.0\n3.5\n4.5\n6.7\n6.7\n3.7\n7.2\n8.7\n4.3\n4.1\n4.5\n6.7\n3.8\n7.5\n3.6\n6.9\n6.3\n6.3\n4.5\n3.0\n5.0\n4.4\n7.5\n5.1\n7.3\n4.5\n3.5\n3.9\n4.3\n5.9\n6.9\n4.0\n7.2\n5.9\n4.6\n3.6\n\n\n\n\n\n\nHow many cells / values do we have after this transformation?\n\nn_values_new &lt;- Produc_wide |&gt; \n    dim() |&gt; \n    prod()\n\n# since we have 8 variables, we multiply by 8:\nn_values_new &lt;- n_values_new*8 \n\nn_values_new\n\n[1] 6528\n\n# before we had:\nn_values\n\n[1] 8150\n\n\n→ This is a reduction of 20%\n\nLess repetitions / smaller memory footprint is only part of the advantage:\n\nAll columns now have the same datatype (dbl)\n\nThis means, they can be stored in a matrix / array\nThis gives us a big speed advantage (e.g. calculating the mean over all values is 7x faster)\n\n\n\n\nMissing values are now explicit\n\n\nwhich(is.na(Produc_matrix))\n\n[1] 19\n\n\n\nBefore, missing values were implicit:\n\n\n\n# A tibble: 6 × 10\n  state    year   pcap   hwy water  util     pc   gsp   emp unemp\n  &lt;chr&gt;   &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;\n1 ALABAMA  1984 19257. 8656. 2235. 8366. 59447. 45118 1388.  11  \n2 ALABAMA  1985 19433. 8726. 2253. 8454. 60688. 46849 1427.   8.9\n3 ALABAMA  1986 19723. 8813. 2309. 8601. 61629. 48409 1463.   9.8\n4 ARIZONA  1970 10148. 4557. 1628. 3964. 23586. 19288  547.   4.4\n5 ARIZONA  1972 10978. 4848. 1615. 4515. 26059. 23289  646.   4.2\n6 ARIZONA  1973 11598. 4963. 1648. 4987. 27305. 25244  714.   4.1\n\n\n\nTo detect missing values, cases must be made complete first:\n\nProduc |&gt; \n    complete(state, year) |&gt;                    # ← make cases complete \n    filter(is.na(pcap)) # ← filter by NA\n\n# A tibble: 1 × 10\n  state    year  pcap   hwy water  util    pc   gsp   emp unemp\n  &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;\n1 ARIZONA  1971    NA    NA    NA    NA    NA    NA    NA    NA",
     "crumbs": [
       "Lesson 1",
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>From tidy data to raster</span>"
@@ -116,33 +76,33 @@
     ]
   },
   {
-    "objectID": "lesson1-2-imagery.html#elevation",
-    "href": "lesson1-2-imagery.html#elevation",
+    "objectID": "lesson1-2-imagery.html#a-simple-example-elevation",
+    "href": "lesson1-2-imagery.html#a-simple-example-elevation",
     "title": "Imagery Data",
-    "section": "Elevation",
-    "text": "Elevation\n\n\n\n\n\n\n\n\n\n\n\n      [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10] [,11]\n [1,]  275  282  373  342  357  326  372  318  400   243   303\n [2,]  230  318  316  351  345  346  359  331  395   225   288\n [3,]  164  337  258  342  363  350  349  320  395   280   321\n [4,]  168  337  261  354  358  364  339  377  368   309   284\n [5,]  202  322  250  380  362  373  327  393  360   379   326\n [6,]   NA  310  270  361  370  363  368  368  385   383   297\n [7,]   NA  277  310  291  375  365  375  355  343   407   220\n [8,]   NA  181  325  264  381  373  389  341  305   395   252\n [9,]   NA   NA  313  264  370  384  392  328  357   376   289\n[10,]   NA   NA  298  285  370  380  386  354  349   385   311\n[11,]  402   NA  333  293  356  382  376  391  329   352   361",
+    "section": "A simple example: Elevation",
+    "text": "A simple example: Elevation\n\n\n\n\n\n\n\n\n\n\n\n      [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10] [,11]\n [1,]  275  282  373  342  357  326  372  318  400   243   303\n [2,]  230  318  316  351  345  346  359  331  395   225   288\n [3,]  164  337  258  342  363  350  349  320  395   280   321\n [4,]  168  337  261  354  358  364  339  377  368   309   284\n [5,]  202  322  250  380  362  373  327  393  360   379   326\n [6,]   NA  310  270  361  370  363  368  368  385   383   297\n [7,]   NA  277  310  291  375  365  375  355  343   407   220\n [8,]   NA  181  325  264  381  373  389  341  305   395   252\n [9,]   NA   NA  313  264  370  384  392  328  357   376   289\n[10,]   NA   NA  298  285  370  380  386  354  349   385   311\n[11,]  402   NA  333  293  356  382  376  391  329   352   361",
     "crumbs": [
       "Lesson 1",
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>Imagery Data</span>"
     ]
   },
   {
-    "objectID": "lesson1-2-imagery.html#spectral-data",
-    "href": "lesson1-2-imagery.html#spectral-data",
+    "objectID": "lesson1-2-imagery.html#a-more-complex-example-spectral-data",
+    "href": "lesson1-2-imagery.html#a-more-complex-example-spectral-data",
     "title": "Imagery Data",
-    "section": "Spectral data",
-    "text": "Spectral data\n\nTypically, RS imagery consists of more than 1 band\nIn this case, the data is stored in a 3 dimensional array (where band is the 3rd-dimesion)\n\n\n\n\n\n\n\n\n\n\n\n\n\nFigure 2.2: The RGB Composite\n\n\n\n\n\n\n\n\n\n\n\nFigure 2.3: The bands stored internally",
+    "section": "A more complex example: Spectral data",
+    "text": "A more complex example: Spectral data\n\nTypically, RS imagery consists of more than 1 band\nIn this case, the data is stored in a 3 dimensional array (where band is the 3rd-dimesion)\nA RS image can contain any number of bands.\nThe most well known type of RS imagery consists of 3 Bands from the red, blue and green spectrum\n\n\n\n\n\n\n\n\n\n\n\n\n\nFigure 2.4: The RGB Composite\n\n\n\n\n\n\n\n\n\n\n\nFigure 2.5: The bands stored internally",
     "crumbs": [
       "Lesson 1",
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>Imagery Data</span>"
     ]
   },
   {
-    "objectID": "lesson1-2-imagery.html#each-band-is-a-matrix",
-    "href": "lesson1-2-imagery.html#each-band-is-a-matrix",
+    "objectID": "lesson1-2-imagery.html#each-band-is-a-2d-matrix",
+    "href": "lesson1-2-imagery.html#each-band-is-a-2d-matrix",
     "title": "Imagery Data",
-    "section": "Each band is a matrix",
-    "text": "Each band is a matrix\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n \n\n\n\n, , 1\n\n     [,1] [,2] [,3] [,4] [,5]\n[1,]   42   43   52   74   69\n[2,]   47   31   37   57   58\n[3,]   58   33   33   48   48\n[4,]   43   42   41   46   53\n[5,]   43   43   49   49   41\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n \n\n\n\n, , 2\n\n     [,1] [,2] [,3] [,4] [,5]\n[1,]   51   51   55   69   66\n[2,]   54   42   48   59   59\n[3,]   62   43   44   54   53\n[4,]   51   50   50   53   57\n[5,]   50   51   54   54   50\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n \n\n\n\n, , 3\n\n     [,1] [,2] [,3] [,4] [,5]\n[1,]   63   64   68   80   77\n[2,]   66   58   61   70   71\n[3,]   74   59   59   66   66\n[4,]   63   62   62   64   69\n[5,]   62   63   65   66   62",
+    "section": "Each band is a 2D matrix",
+    "text": "Each band is a 2D matrix\n\n\n\n\n\n\n\n\n\n\n\n\nFigure 2.6: Band values\n\n\n\n\n\n\n\n\n\n\n\nFigure 2.7: RGB True Color Image",
     "crumbs": [
       "Lesson 1",
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>Imagery Data</span>"
@@ -153,7 +113,18 @@
     "href": "lesson1-2-imagery.html#multispectral-datasets",
     "title": "Imagery Data",
     "section": "Multispectral Datasets",
-    "text": "Multispectral Datasets\n\nMultiband datasets usually capture different parts of the EM spectrum\nE.g. the Landsat image (previous example) has 8 bands capturing the following wavelengths:\n\nBand 1: Blue (0.45 - 0.52 µm)\nBand 2: Green (0.52 - 0.60 µm)\nBand 3: Red (0.63 - 0.69 µm)\nBand 4: Near-Infrared (0.77 - 0.90 µm)\nBand 5: Short-wave Infrared (1.55 - 1.75 µm)\nBand 7: Mid-Infrared (2.08 - 2.35 µm)",
+    "text": "Multispectral Datasets\n\nMultiband datasets usually capture different parts of the EM spectrum\nE.g. the Landsat image from the previous example has 6 bands capturing the following wavelengths:\n\nBand 1: Blue (0.45 - 0.52 µm)\nBand 2: Green (0.52 - 0.60 µm)\nBand 3: Red (0.63 - 0.69 µm)\nBand 4: Near-Infrared (0.77 - 0.90 µm)\nBand 5: Short-wave Infrared (1.55 - 1.75 µm)\nBand 7: Mid-Infrared (2.08 - 2.35 µm)",
+    "crumbs": [
+      "Lesson 1",
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Imagery Data</span>"
+    ]
+  },
+  {
+    "objectID": "lesson1-2-imagery.html#nirgb-image",
+    "href": "lesson1-2-imagery.html#nirgb-image",
+    "title": "Imagery Data",
+    "section": "NirGB Image",
+    "text": "NirGB Image\n\n\n\n\n\n\n\n\n\n\n\n\nFigure 2.8: Band values\n\n\n\n\n\n\n\n\n\n\n\nFigure 2.9: NIR-GB False Color Image",
     "crumbs": [
       "Lesson 1",
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>Imagery Data</span>"
@@ -164,7 +135,7 @@
     "href": "lesson1-2-imagery.html#representations-of-multispectral-data",
     "title": "Imagery Data",
     "section": "Representations of multispectral data",
-    "text": "Representations of multispectral data\n\nA true color image is created by using the Red (3), Green (2) and Blue (1) Band and mapping these to RGB\nA false color image is created by mapping other bands to RGB\n\n\n\n\n\n\n\n\n\n\n\n\n\nFigure 2.4: The R, G and B bands mapped to RGB\n\n\n\n\n\n\n\n\n\n\n\nFigure 2.5: NIR, G and B bands mapped to RGB",
+    "text": "Representations of multispectral data\n\nA true color image is created by using the Red (3), Green (2) and Blue (1) Band and mapping these to RGB\nA false color image is created by mapping other bands to RGB\n\n\n\n\n\n\n\n\n\n\n\n\n\nFigure 2.10: The R, G and B bands mapped to RGB\n\n\n\n\n\n\n\n\n\n\n\nFigure 2.11: NIR, G and B bands mapped to RGB",
     "crumbs": [
       "Lesson 1",
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>Imagery Data</span>"
@@ -175,151 +146,10 @@
     "href": "lesson1-2-imagery.html#tasks-exercises",
     "title": "Imagery Data",
     "section": "Tasks / Exercises",
-    "text": "Tasks / Exercises\n\nThe following command returns the path to a tif file on your hard drive:\n\nsystem.file(\"ex/elev.tif\", package=\"terra\")\n\nUse this path to import the tif file using rast(), store it as r.\nExplore this object:\n\nDetermine the minimum and maximum eleveation values\nMake a static map using base plot and tmap\nMake an interactive map using tmap (tmap_mode(\"view\"))\nUsing tmap, explore different styles and palettes.\n\nThe following command returns the path to a tif file on your hard drive:\n\nsystem.file(\"tif/L7_ETMs.tif\",package = \"stars\")\n\nUse this path to import the tif file using rast(), store it as l7.\nExplore this object:\n\nSpot the differences to the object r\nPlot the available layers individually\nRename the layers to: c(\"B\", \"G\", \"R\", \"NIR\", \"SWIR\", \"MIR\") (see here)\n\nSelect the Red Green and Blue bands to create a true color map (plotRGB and tm_rgb)\n\n\nSelect the NIR, Green and Blue bands to create a false color composite\n\n\n\n\n\nLovelace, Robin, Jakub Nowosad, and Jannes Muenchow. 2019. Geocomputation with r. Chapman; Hall/CRC.\n\n\nPebesma, Edzer, and Roger Bivand. 2023. Spatial Data Science: With Applications in R. Boca Raton: Chapman; Hall/CRC. https://doi.org/10.1201/9780429459016.",
+    "text": "Tasks / Exercises\n\nThe following command returns the path to a tif file on your hard drive:\n\nsystem.file(\"ex/elev.tif\", package=\"terra\")\n\nUse this path to import the tif file using rast(), store it as r.\nExplore this object:\n\nDetermine the minimum and maximum eleveation values\nMake a static map using base plot and tmap\nMake an interactive map using tmap (tmap_mode(\"view\"))\nUsing tmap, explore different styles and palettes.\n\nThe following command returns the path to a tif file on your hard drive:\n\nsystem.file(\"tif/L7_ETMs.tif\",package = \"stars\")\n\nUse this path to import the tif file using rast(), store it as l7.\nExplore this object:\n\nSpot the differences to the object r\nPlot the available layers individually\nRename the layers to: c(\"B\", \"G\", \"R\", \"NIR\", \"SWIR\", \"MIR\") (see here)\n\nSelect the Red Green and Blue bands to create a true color map (plotRGB and tm_rgb)\n\n\nSelect the NIR, Green and Blue bands to create a false color composite\n\n\n\n\n\nPebesma, Edzer, and Roger Bivand. 2023. Spatial Data Science: With Applications in R. Boca Raton: Chapman; Hall/CRC. https://doi.org/10.1201/9780429459016.",
     "crumbs": [
       "Lesson 1",
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>Imagery Data</span>"
-    ]
-  },
-  {
-    "objectID": "lesson2-1-operations.html",
-    "href": "lesson2-1-operations.html",
-    "title": "Raster Operations / Map algebra",
-    "section": "",
-    "text": "Global Operation\nFigure 3.1: Elevation of Luxembourg\n# note: mean(r) does not work, since \"mean\" is used as a local operator\nmean_elev &lt;- global(r, mean, na.rm = TRUE)\n\nmean_elev\n\n              mean\nelevation 347.6488",
-    "crumbs": [
-      "Lesson 2",
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Raster Operations / Map algebra</span>"
-    ]
-  },
-  {
-    "objectID": "lesson2-1-operations.html#global-operation",
-    "href": "lesson2-1-operations.html#global-operation",
-    "title": "Raster Operations / Map algebra",
-    "section": "",
-    "text": "The most common global operations are descriptive statistics for the entire raster dataset such as the minimum, maximum or mean value.\nFor example: What is the mean elevation value for Luxembourg?",
-    "crumbs": [
-      "Lesson 2",
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Raster Operations / Map algebra</span>"
-    ]
-  },
-  {
-    "objectID": "lesson2-1-operations.html#zonal",
-    "href": "lesson2-1-operations.html#zonal",
-    "title": "Raster Operations / Map algebra",
-    "section": "Zonal",
-    "text": "Zonal\n\nZonal operations apply an aggregation function to multiple raster cells\nA second raster with categorical values define the zonal filters (or ‘zones’)\n\nWhat is the mean value per zone?\n\nmean_vals &lt;- zonal(r, zones, fun = mean, na.rm = TRUE)\n\n\n\n\n\n\n\n\n\n\n\n\n\nFigure 3.2: The original Zones (E.g. communes of Luxembourg)\n\n\n\n\n\n\n\n\n\n\n\nFigure 3.3: Mean values per Zone",
-    "crumbs": [
-      "Lesson 2",
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Raster Operations / Map algebra</span>"
-    ]
-  },
-  {
-    "objectID": "lesson2-1-operations.html#local",
-    "href": "lesson2-1-operations.html#local",
-    "title": "Raster Operations / Map algebra",
-    "section": "Local",
-    "text": "Local\n\nLocal operations comprise all cell-by-cell operations in one or several layers.\nFor example, we can classify the elevation into values above and below a certain threshold\n\n\n# first, create a copy of the raster\nr_bool &lt;- as.logical(r)\n\nmean_elev &lt;- as.numeric(mean_elev)\nmean_elev\n\n[1] 347.6488\n\nr_bool[r &gt; mean_elev] &lt;- FALSE\nr_bool[r &lt;= mean_elev] &lt;- TRUE\n\n\n\n\n\n\n\n\n\n\n\nThis type of (re-) classification is a very common operation\nFor more than 2 categories, we can use classify\n\n\ncuts &lt;- global(r, quantile, probs = c(0, .33, .66, 1), na.rm = TRUE)\n\nr_classify &lt;- classify(r, as.numeric(cuts))\n\n# this next line just replaces the default labels with some custom ones\nlevels(r_classify) &lt;- data.frame(ID = 0:2, category = c(\"low\",\"mid\",\"high\"))\n\np + tm_shape(r_classify) +\n    tm_raster(style = \"cat\",legend.show = TRUE, palette = \"viridis\", title = \"Elevation\") +\n    tm_layout(legend.show = TRUE)\n\n\n\n\n\n\n\n\n\nLocal operations are often used with multiple bands\nFor example, we could use the R, G and B band to calculate a grayscale value (\\(L^*\\)) using the following formula (from here):\n\n\\[\\begin{aligned}\n\nL^* &= 116 \\times Y ^ {\\frac{1}{3}} - 16\\\\\n\nY &= 0.2126 \\times R^\\gamma+0.7152 \\times G^\\gamma+0.0722 \\times B^\\gamma \\\\\n\n\n\\gamma &= 2.2\n\n\\end{aligned}\\]\n\ng &lt;- 2.2\n\nY &lt;- 0.2126 * l7[[\"R\"]]^g + 0.7152 * l7[[\"G\"]]^g + 0.0722 * l7[[\"B\"]]^g\n\nL &lt;- 116* Y^(1/3)-16",
-    "crumbs": [
-      "Lesson 2",
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Raster Operations / Map algebra</span>"
-    ]
-  },
-  {
-    "objectID": "lesson2-1-operations.html#focal",
-    "href": "lesson2-1-operations.html#focal",
-    "title": "Raster Operations / Map algebra",
-    "section": "Focal",
-    "text": "Focal\n\nWhile local functions operate on one cell focal operations take into account a central (focal) cell and its neighbors.\nThe neighborhood (also named kernel, filter or moving window) under consideration is typically of size 3-by-3 cells (that is the central cell and its eight surrounding neighbors), but can take on any other size or shape as defined by the user.\nA focal operation applies an aggregation function to all cells within the specified neighborhood, uses the corresponding output as the new value for the central cell, and moves on to the next central cell\n\n\n\n\n\n\n\nFigure 3.4: Note how, depnding on the size of your moving window, NA’s are produced. Source: Lovelace, Nowosad, and Muenchow (2019)\n\n\n\n\nfocal3by3 &lt;- matrix(rep(1,9), ncol = 3)\n\n\nfocal11by11 &lt;- matrix(rep(1,121), ncol = 11)\n\n\nr_foc3 &lt;- focal(r, focal3by3, fun = mean, fillNA = TRUE)\n\nr_foc11 &lt;- focal(r, focal11by11, fun = mean, fillNA = TRUE)\n\n\n\n\n\n\n\n\n\n\n\n\n\nFigure 3.5: Original values\n\n\n\n\n\n\n\n\n\n\n\nFigure 3.6: Result of a 3x3 Focal Window\n\n\n\n\n\n\n\n\n\n\n\nFigure 3.7: Result of a 11x11 Focal Window",
-    "crumbs": [
-      "Lesson 2",
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Raster Operations / Map algebra</span>"
-    ]
-  },
-  {
-    "objectID": "lesson2-1-operations.html#focal-weights",
-    "href": "lesson2-1-operations.html#focal-weights",
-    "title": "Raster Operations / Map algebra",
-    "section": "Focal weights",
-    "text": "Focal weights\n\nThe focal weights we used above were square and evenly weighted\n\n\nfocal3by3\n\n     [,1] [,2] [,3]\n[1,]    1    1    1\n[2,]    1    1    1\n[3,]    1    1    1\n\n\n\nfocal11by11\n\n      [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10] [,11]\n [1,]    1    1    1    1    1    1    1    1    1     1     1\n [2,]    1    1    1    1    1    1    1    1    1     1     1\n [3,]    1    1    1    1    1    1    1    1    1     1     1\n [4,]    1    1    1    1    1    1    1    1    1     1     1\n [5,]    1    1    1    1    1    1    1    1    1     1     1\n [6,]    1    1    1    1    1    1    1    1    1     1     1\n [7,]    1    1    1    1    1    1    1    1    1     1     1\n [8,]    1    1    1    1    1    1    1    1    1     1     1\n [9,]    1    1    1    1    1    1    1    1    1     1     1\n[10,]    1    1    1    1    1    1    1    1    1     1     1\n[11,]    1    1    1    1    1    1    1    1    1     1     1\n\n\n\nHowever, we can also create uneven weights:\n\n\n# for edge detection:\n\nlaplacian &lt;- matrix(c(0,1,0,1,-4,1,0,1,0), nrow=3) \n\nlaplacian\n\n     [,1] [,2] [,3]\n[1,]    0    1    0\n[2,]    1   -4    1\n[3,]    0    1    0\n\nsobel_x &lt;- matrix(c(-1,-2,-1,0,0,0,1,2,1), nrow=3)\n\nsobel_x\n\n     [,1] [,2] [,3]\n[1,]   -1    0    1\n[2,]   -2    0    2\n[3,]   -1    0    1\n\nsobel_y &lt;- matrix(c(1,0,-1,2,0,-2,1,0,-1), nrow=3)\n\nsobel_y\n\n     [,1] [,2] [,3]\n[1,]    1    2    1\n[2,]    0    0    0\n[3,]   -1   -2   -1\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nFigure 3.8: Laplacian Filter\n\n\n\n\n\n\n\n\n\n\n\nFigure 3.9: Sobel (x-direction)\n\n\n\n\n\n\n\n\n\n\n\nFigure 3.10: SObel (y-direction)\n\n\n\n\n\n\n\nWe can also create specific shapes using weights\nWe don’t need to create these matrices by hand. Rather, we can use the function focalMat to create different shapes automatically\n\n\n# Note \n# - \"d\" is evaluated in the units of \"x\" (in our case: meters)\n# - The sum of all weights equals to 1\nfocalMat(x = r, d = 2000, \"circle\")\n\n           [,1]       [,2]       [,3]\n[1,] 0.00000000 0.09090909 0.00000000\n[2,] 0.09090909 0.09090909 0.09090909\n[3,] 0.09090909 0.09090909 0.09090909\n[4,] 0.09090909 0.09090909 0.09090909\n[5,] 0.00000000 0.09090909 0.00000000\n\nfocalMat(x = r, d = 1000, \"Gauss\")\n\n            [,1]        [,2]        [,3]        [,4]        [,5]\n[1,] 0.000241551 0.001082556 0.001784834 0.001082556 0.000241551\n[2,] 0.002942693 0.013188236 0.021743725 0.013188236 0.002942693\n[3,] 0.013188236 0.059105572 0.097448614 0.059105572 0.013188236\n[4,] 0.021743725 0.097448614 0.160665602 0.097448614 0.021743725\n[5,] 0.013188236 0.059105572 0.097448614 0.059105572 0.013188236\n[6,] 0.002942693 0.013188236 0.021743725 0.013188236 0.002942693\n[7,] 0.000241551 0.001082556 0.001784834 0.001082556 0.000241551",
-    "crumbs": [
-      "Lesson 2",
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Raster Operations / Map algebra</span>"
-    ]
-  },
-  {
-    "objectID": "lesson2-1-operations.html#focal-functions-in-terrain-processing",
-    "href": "lesson2-1-operations.html#focal-functions-in-terrain-processing",
-    "title": "Raster Operations / Map algebra",
-    "section": "Focal functions in terrain processing",
-    "text": "Focal functions in terrain processing\n\nFocal functions are used to calculate the slope of a specific location, e.g. using the algorithm by Horn (1981)\nSimilarly, calculating the aspect (azimuth) of a location is a very typical task when dealing with elevation data\nThese algorithms are used so often, that they are implemented in a dedicated function (terrain())\n\nterrain(r, \"slope\") |&gt; plot()\nterrain(r, \"aspect\") |&gt; plot()\n\n\n\n\n\n\n\n\n\nFigure 3.11: Calculating slope using a predefined algorithm\n\n\n\n\n\n\n\n\n\n\n\nFigure 3.12: Calculating aspect",
-    "crumbs": [
-      "Lesson 2",
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Raster Operations / Map algebra</span>"
-    ]
-  },
-  {
-    "objectID": "lesson2-1-operations.html#tasks-exercises",
-    "href": "lesson2-1-operations.html#tasks-exercises",
-    "title": "Raster Operations / Map algebra",
-    "section": "Tasks / Exercises",
-    "text": "Tasks / Exercises\n\nImport the elevation dataset as a raster using the following path\n\nrast(system.file(\"ex/elev.tif\", package=\"terra\"))\n\nCaluclate the mean, max and min elevation values\nCalculate slope and aspect\nDetermine suitable locations of solar panels using the following conditions:\n\nElevation: above 500 MASL\nSlope: Between 1 and 3°\nAspect: Southfaceing (between 135 and 235°)\n\nImport the multispectral Landsat 7 as a raster using the following path\n\nsystem.file(\"tif/L7_ETMs.tif\",package = \"stars\")\n\nCalculate the NDVI using the following formula:\n\n\\[\\text{NDVI} = \\frac{\\text{NIR}-\\text{red}}{\\text{NIR}+\\text{red}}\\]\n\n\n\n\n\n\n\n\n\n\n\n\n\nHorn, Berthold KP. 1981. “Hill Shading and the Reflectance Map.” Proceedings of the IEEE 69 (1): 14–47.\n\n\nLovelace, Robin, Jakub Nowosad, and Jannes Muenchow. 2019. Geocomputation with r. Chapman; Hall/CRC.\n\n\nTomlin, C.Dana. 1994. “Map Algebra: One Perspective.” Landscape and Urban Planning 30 (1): 3–12. https://doi.org/https://doi.org/10.1016/0169-2046(94)90063-9.",
-    "crumbs": [
-      "Lesson 2",
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Raster Operations / Map algebra</span>"
-    ]
-  },
-  {
-    "objectID": "lesson1-3-datatypes.html#footnotes",
-    "href": "lesson1-3-datatypes.html#footnotes",
-    "title": "Data Types",
-    "section": "",
-    "text": "Difference in file size using constant dataset (same values and resolution) and varying the datatype↩︎\n255 is reserved, as we will see later↩︎",
-    "crumbs": [
-      "Lesson TBD",
-      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Data Types</span>"
-    ]
-  },
-  {
-    "objectID": "lesson1-4-nodata.html",
-    "href": "lesson1-4-nodata.html",
-    "title": "NoData",
-    "section": "",
-    "text": "Bibliography",
-    "crumbs": [
-      "Lesson TBD",
-      "<span class='chapter-number'>5</span>  <span class='chapter-title'>NoData</span>"
-    ]
-  },
-  {
-    "objectID": "lesson1-4-nodata.html#bibliography",
-    "href": "lesson1-4-nodata.html#bibliography",
-    "title": "NoData",
-    "section": "",
-    "text": "Stevens, Stanley Smith. 1946. “On the Theory of Scales of Measurement.” Science 103 (2684): 677–80.",
-    "crumbs": [
-      "Lesson TBD",
-      "<span class='chapter-number'>5</span>  <span class='chapter-title'>NoData</span>"
-    ]
-  },
-  {
-    "objectID": "lesson1.html",
-    "href": "lesson1.html",
-    "title": "Lesson 1",
-    "section": "",
-    "text": "Welcome",
-    "crumbs": [
-      "Lesson 1"
-    ]
-  },
-  {
-    "objectID": "lesson1.html#topics",
-    "href": "lesson1.html#topics",
-    "title": "Lesson 1",
-    "section": "Topics",
-    "text": "Topics\nThe raster data model\n\nFrom tidy data to raster \nImagery Data \nData Types \nNoData\nRaster File formats",
-    "crumbs": [
-      "Lesson 1"
     ]
   },
   {
@@ -327,7 +157,7 @@
     "href": "references.html",
     "title": "References",
     "section": "",
-    "text": "Amatulli, Giuseppe. “Geocomputation and Machine Learning for\nEnvironmental Applications.” http://spatial-ecology.net/docs/build/html/GDAL/gdal_osgeo.html.\n\n\nBaltagi, Badi Hani, and Badi H Baltagi. 2008. Econometric Analysis\nof Panel Data. Vol. 4. Springer. https://bcs.wiley.com/he-bcs/Books?action=resource&bcsId=4338&itemId=1118672321&resourceId=13452.\n\n\nHorn, Berthold KP. 1981. “Hill Shading and the Reflectance\nMap.” Proceedings of the IEEE 69 (1): 14–47.\n\n\nLovelace, Robin, Jakub Nowosad, and Jannes Muenchow. 2019.\nGeocomputation with r. Chapman; Hall/CRC.\n\n\nPebesma, Edzer, and Roger Bivand. 2023. Spatial Data Science: With\nApplications in R. Boca Raton: Chapman; Hall/CRC. https://doi.org/10.1201/9780429459016.\n\n\nStevens, Stanley Smith. 1946. “On the Theory of Scales of\nMeasurement.” Science 103 (2684): 677–80.\n\n\nTomlin, C.Dana. 1994. “Map Algebra: One Perspective.”\nLandscape and Urban Planning 30 (1): 3–12. https://doi.org/https://doi.org/10.1016/0169-2046(94)90063-9.\n\n\nWickham, Hadley. 2014. “Tidy Data.” Journal of\nStatistical Software 59 (10): 1–23. https://doi.org/10.18637/jss.v059.i10.",
+    "text": "Baltagi, Badi Hani, and Badi H Baltagi. 2008. Econometric Analysis\nof Panel Data. Vol. 4. Springer. https://bcs.wiley.com/he-bcs/Books?action=resource&bcsId=4338&itemId=1118672321&resourceId=13452.\n\n\nPebesma, Edzer, and Roger Bivand. 2023. Spatial Data Science: With\nApplications in R. Boca Raton: Chapman; Hall/CRC. https://doi.org/10.1201/9780429459016.\n\n\nWickham, Hadley. 2014. “Tidy Data.” Journal of\nStatistical Software 59 (10): 1–23. https://doi.org/10.18637/jss.v059.i10.",
     "crumbs": [
       "References"
     ]

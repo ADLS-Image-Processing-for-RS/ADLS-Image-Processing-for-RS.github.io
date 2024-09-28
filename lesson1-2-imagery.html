@@ -84,7 +84,7 @@ div.csl-indent {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./lesson2-1-operations.html" rel="next">
+<link href="./references.html" rel="next">
 <link href="./lesson1-1-tidy.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -135,25 +135,16 @@ div.csl-indent {
     });
   }
   
-  // once the page is loaded, the button is injected into the sidebar. This button
-  // calls the presenter function (see above)
-    window.onload = function() {
-      // create the button (similar to the buttons already availables)
-      const linkElement = document.createElement('a');
-      
-      linkElement.classList.add('quarto-navigation-tool');
-      linkElement.classList.add('px-1');
-      linkElement.innerHTML = '<i class="fa-solid fa-person-chalkboard"></i>';
-      linkElement.href = '#';
-      linkElement.addEventListener('click', function(event) {
-        event.preventDefault(); // Prevent the default link behavior
-        presenter();
-      });
-      
-      // Find the target element by its class name
-      const sidebar_tools = document.querySelector(".sidebar-tools-main")
-      sidebar_tools.appendChild(linkElement);
-    };
+    
+    document.addEventListener('keydown', (event) => {
+      if (event.ctrlKey) {
+         if (event.keyCode == 89) {
+             console.log("Bingo!");
+             presenter()
+         }
+      }
+    }, false);
+
   
   </script>
 
@@ -170,7 +161,7 @@ div.csl-indent {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./lesson1.html">Lesson 1</a></li><li class="breadcrumb-item"><a href="./lesson1-2-imagery.html"><span class="chapter-title">Imagery Data</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./lesson1-1-tidy.html">Lesson 1</a></li><li class="breadcrumb-item"><a href="./lesson1-2-imagery.html"><span class="chapter-title">Imagery Data</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -210,7 +201,7 @@ div.csl-indent {
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="./lesson1.html" class="sidebar-item-text sidebar-link">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
  <span class="menu-text">Lesson 1</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
@@ -230,43 +221,6 @@ div.csl-indent {
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
- <span class="menu-text">Lesson 2</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./lesson2-1-operations.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Raster Operations / Map algebra</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
- <span class="menu-text">Lesson TBD</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./lesson1-3-datatypes.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Data Types</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./lesson1-4-nodata.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">NoData</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
-        <li class="sidebar-item sidebar-item-section">
       <span class="sidebar-item-text sidebar-link text-start">
  <span class="menu-text">References</span></span>
   </li>
@@ -281,19 +235,20 @@ div.csl-indent {
    
   <ul>
   <li><a href="#types-of-raster-data" id="toc-types-of-raster-data" class="nav-link active" data-scroll-target="#types-of-raster-data">Types of raster data</a></li>
-  <li><a href="#elevation" id="toc-elevation" class="nav-link" data-scroll-target="#elevation">Elevation</a></li>
-  <li><a href="#spectral-data" id="toc-spectral-data" class="nav-link" data-scroll-target="#spectral-data">Spectral data</a></li>
-  <li><a href="#each-band-is-a-matrix" id="toc-each-band-is-a-matrix" class="nav-link" data-scroll-target="#each-band-is-a-matrix">Each band is a matrix</a></li>
+  <li><a href="#a-simple-example-elevation" id="toc-a-simple-example-elevation" class="nav-link" data-scroll-target="#a-simple-example-elevation">A simple example: Elevation</a></li>
+  <li><a href="#a-more-complex-example-spectral-data" id="toc-a-more-complex-example-spectral-data" class="nav-link" data-scroll-target="#a-more-complex-example-spectral-data">A more complex example: Spectral data</a></li>
+  <li><a href="#each-band-is-a-2d-matrix" id="toc-each-band-is-a-2d-matrix" class="nav-link" data-scroll-target="#each-band-is-a-2d-matrix">Each band is a 2D matrix</a></li>
   <li><a href="#multispectral-datasets" id="toc-multispectral-datasets" class="nav-link" data-scroll-target="#multispectral-datasets">Multispectral Datasets</a></li>
+  <li><a href="#nirgb-image" id="toc-nirgb-image" class="nav-link" data-scroll-target="#nirgb-image">NirGB Image</a></li>
   <li><a href="#representations-of-multispectral-data" id="toc-representations-of-multispectral-data" class="nav-link" data-scroll-target="#representations-of-multispectral-data">Representations of multispectral data</a></li>
   <li><a href="#tasks-exercises" id="toc-tasks-exercises" class="nav-link" data-scroll-target="#tasks-exercises">Tasks / Exercises</a></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content page-columns page-full" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./lesson1.html">Lesson 1</a></li><li class="breadcrumb-item"><a href="./lesson1-2-imagery.html"><span class="chapter-title">Imagery Data</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./lesson1-1-tidy.html">Lesson 1</a></li><li class="breadcrumb-item"><a href="./lesson1-2-imagery.html"><span class="chapter-title">Imagery Data</span></a></li></ol></nav>
 <div class="quarto-title">
 <h1 class="title"><span id="sec-imagery-data" class="quarto-section-identifier"><span class="chapter-title">Imagery Data</span></span></h1>
 </div>
@@ -321,15 +276,48 @@ div.csl-indent {
 <li>This data model often refers to so-called regular grids, in which each cell has the same, constant size</li>
 <li>Through its inherent model this data is naturally fits into the <em>wide</em> data structure</li>
 </ul>
-<div id="fig-raster" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-raster-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="img/raster-intro-plot-1.png" class="img-fluid figure-img">
+<div>
+
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-raster-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2.1: From <span class="citation" data-cites="lovelace2019">Lovelace, Nowosad, and Muenchow (<a href="references.html#ref-lovelace2019" role="doc-biblioref">2019</a>)</span>
+<div class="cell column-page quarto-layout-panel" data-layout-nrow="1">
+<div class="quarto-layout-row">
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: flex-start;">
+<div id="fig-raster-example-1" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-raster-example-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="lesson1-2-imagery_files/figure-html/fig-raster-example-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-raster-example-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2.1: Cell offset from origin (lower left)
 </figcaption>
 </figure>
+</div>
+</div>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: flex-start;">
+<div id="fig-raster-example-2" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-raster-example-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="lesson1-2-imagery_files/figure-html/fig-raster-example-2.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-raster-example-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2.2: Cell values (for example elevation)
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: flex-start;">
+<div id="fig-raster-example-3" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-raster-example-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="lesson1-2-imagery_files/figure-html/fig-raster-example-3.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-raster-example-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2.3: Color representation of cell value
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
 </div>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
@@ -355,13 +343,13 @@ Note
 <li>Discrete features such as soil or land-cover classes can also be represented in the raster data model</li>
 </ul>
 </section>
-<section id="elevation" class="level2">
-<h2 class="anchored" data-anchor-id="elevation">Elevation</h2>
+<section id="a-simple-example-elevation" class="level2">
+<h2 class="anchored" data-anchor-id="a-simple-example-elevation">A simple example: Elevation</h2>
 <div class="cell">
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="lesson1-2-imagery_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="lesson1-2-imagery_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -383,16 +371,18 @@ Note
 </div>
 </div>
 </section>
-<section id="spectral-data" class="level2">
-<h2 class="anchored" data-anchor-id="spectral-data">Spectral data</h2>
+<section id="a-more-complex-example-spectral-data" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="a-more-complex-example-spectral-data">A more complex example: Spectral data</h2>
 <ul>
 <li>Typically, RS imagery consists of more than 1 band</li>
 <li>In this case, the data is stored in a 3 dimensional <em>array</em> (where <em>band</em> is the 3rd-dimesion)</li>
+<li>A RS image can contain any number of bands.</li>
+<li>The most well known type of RS imagery consists of 3 Bands from the red, blue and green spectrum</li>
 </ul>
 <div>
 
 </div>
-<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="cell column-page quarto-layout-panel" data-layout-ncol="2">
 <div class="quarto-layout-row">
 <div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
 <div id="fig-multi-1" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -401,7 +391,7 @@ Note
 <img src="lesson1-2-imagery_files/figure-html/fig-multi-1.png" class="img-fluid figure-img" width="672">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-multi-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2.2: The RGB Composite
+Figure&nbsp;2.4: The RGB Composite
 </figcaption>
 </figure>
 </div>
@@ -413,7 +403,7 @@ Figure&nbsp;2.2: The RGB Composite
 <img src="lesson1-2-imagery_files/figure-html/fig-multi-2.png" class="img-fluid figure-img" width="672">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-multi-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2.3: The bands stored internally
+Figure&nbsp;2.5: The bands stored internally
 </figcaption>
 </figure>
 </div>
@@ -421,87 +411,35 @@ Figure&nbsp;2.3: The bands stored internally
 </div>
 </div>
 </section>
-<section id="each-band-is-a-matrix" class="level2">
-<h2 class="anchored" data-anchor-id="each-band-is-a-matrix">Each band is a matrix</h2>
+<section id="each-band-is-a-2d-matrix" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="each-band-is-a-2d-matrix">Each band is a 2D matrix</h2>
 <div>
 
 </div>
-<div class="smaller-fonts quarto-layout-panel" data-layout="[[20,-5, 75],[20,-5, 75],[20,-5, 75]]">
+<div class="cell column-page quarto-layout-panel" data-layout-nrow="1">
 <div class="quarto-layout-row">
-<div class="cell quarto-layout-cell" style="flex-basis: 20.0%;justify-content: flex-start;">
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="lesson1-2-imagery_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-raster-composite-1" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-raster-composite-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="lesson1-2-imagery_files/figure-html/fig-raster-composite-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-raster-composite-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2.6: Band values
+</figcaption>
 </figure>
 </div>
 </div>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-raster-composite-2" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-raster-composite-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="lesson1-2-imagery_files/figure-html/fig-raster-composite-2.png" class="img-fluid figure-img" width="672">
 </div>
-<div class="quarto-figure-spacer quarto-layout-cell" style="flex-basis: 5.0%;justify-content: flex-start;">
-<p>&nbsp;</p>
-</div>
-<div class="cell quarto-layout-cell" style="flex-basis: 75.0%;justify-content: flex-start;">
-<div class="cell-output cell-output-stdout">
-<pre><code>, , 1
-
-     [,1] [,2] [,3] [,4] [,5]
-[1,]   42   43   52   74   69
-[2,]   47   31   37   57   58
-[3,]   58   33   33   48   48
-[4,]   43   42   41   46   53
-[5,]   43   43   49   49   41</code></pre>
-</div>
-</div>
-</div>
-<div class="quarto-layout-row">
-<div class="cell quarto-layout-cell" style="flex-basis: 20.0%;justify-content: flex-start;">
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="lesson1-2-imagery_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-raster-composite-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2.7: RGB True Color Image
+</figcaption>
 </figure>
-</div>
-</div>
-</div>
-<div class="quarto-figure-spacer quarto-layout-cell" style="flex-basis: 5.0%;justify-content: flex-start;">
-<p>&nbsp;</p>
-</div>
-<div class="cell quarto-layout-cell" style="flex-basis: 75.0%;justify-content: flex-start;">
-<div class="cell-output cell-output-stdout">
-<pre><code>, , 2
-
-     [,1] [,2] [,3] [,4] [,5]
-[1,]   51   51   55   69   66
-[2,]   54   42   48   59   59
-[3,]   62   43   44   54   53
-[4,]   51   50   50   53   57
-[5,]   50   51   54   54   50</code></pre>
-</div>
-</div>
-</div>
-<div class="quarto-layout-row">
-<div class="cell quarto-layout-cell" style="flex-basis: 20.0%;justify-content: flex-start;">
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="lesson1-2-imagery_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-<div class="quarto-figure-spacer quarto-layout-cell" style="flex-basis: 5.0%;justify-content: flex-start;">
-<p>&nbsp;</p>
-</div>
-<div class="cell quarto-layout-cell" style="flex-basis: 75.0%;justify-content: flex-start;">
-<div class="cell-output cell-output-stdout">
-<pre><code>, , 3
-
-     [,1] [,2] [,3] [,4] [,5]
-[1,]   63   64   68   80   77
-[2,]   66   58   61   70   71
-[3,]   74   59   59   66   66
-[4,]   63   62   62   64   69
-[5,]   62   63   65   66   62</code></pre>
 </div>
 </div>
 </div>
@@ -511,7 +449,7 @@ Figure&nbsp;2.3: The bands stored internally
 <h2 class="anchored" data-anchor-id="multispectral-datasets">Multispectral Datasets</h2>
 <ul>
 <li>Multiband datasets usually capture different parts of the EM spectrum</li>
-<li>E.g. the Landsat image (previous example) has 8 bands capturing the following wavelengths:
+<li>E.g. the Landsat image from the previous example has 6 bands capturing the following wavelengths:
 <ul>
 <li><strong>Band 1</strong>: Blue (0.45 - 0.52 µm)</li>
 <li><strong>Band 2</strong>: Green (0.52 - 0.60 µm)</li>
@@ -521,6 +459,40 @@ Figure&nbsp;2.3: The bands stored internally
 <li><strong>Band 7</strong>: Mid-Infrared (2.08 - 2.35 µm)</li>
 </ul></li>
 </ul>
+</section>
+<section id="nirgb-image" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="nirgb-image">NirGB Image</h2>
+<div>
+
+</div>
+<div class="cell column-page quarto-layout-panel" data-layout-nrow="1">
+<div class="quarto-layout-row">
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-nirgb-1" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-nirgb-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="lesson1-2-imagery_files/figure-html/fig-nirgb-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-nirgb-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2.8: Band values
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-nirgb-2" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-nirgb-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="lesson1-2-imagery_files/figure-html/fig-nirgb-2.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-nirgb-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2.9: NIR-GB False Color Image
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
 </section>
 <section id="representations-of-multispectral-data" class="level2">
 <h2 class="anchored" data-anchor-id="representations-of-multispectral-data">Representations of multispectral data</h2>
@@ -540,7 +512,7 @@ Figure&nbsp;2.3: The bands stored internally
 <img src="lesson1-2-imagery_files/figure-html/fig-rgb-nirgb-1.png" class="img-fluid figure-img" width="672">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-rgb-nirgb-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2.4: The R, G and B bands mapped to RGB
+Figure&nbsp;2.10: The R, G and B bands mapped to RGB
 </figcaption>
 </figure>
 </div>
@@ -552,7 +524,7 @@ Figure&nbsp;2.4: The R, G and B bands mapped to RGB
 <img src="lesson1-2-imagery_files/figure-html/fig-rgb-nirgb-2.png" class="img-fluid figure-img" width="672">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-rgb-nirgb-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2.5: NIR, G and B bands mapped to RGB
+Figure&nbsp;2.11: NIR, G and B bands mapped to RGB
 </figcaption>
 </figure>
 </div>
@@ -565,7 +537,7 @@ Figure&nbsp;2.5: NIR, G and B bands mapped to RGB
 <ol type="1">
 <li><p>The following command returns the path to a tif file on your hard drive:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">system.file</span>(<span class="st">"ex/elev.tif"</span>, <span class="at">package=</span><span class="st">"terra"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">system.file</span>(<span class="st">"ex/elev.tif"</span>, <span class="at">package=</span><span class="st">"terra"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Use this path to import the tif file using <code>rast()</code>, store it as <code>r</code>.</p></li>
 <li><p>Explore this object:</p>
@@ -577,7 +549,7 @@ Figure&nbsp;2.5: NIR, G and B bands mapped to RGB
 </ul></li>
 <li><p>The following command returns the path to a tif file on your hard drive:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">system.file</span>(<span class="st">"tif/L7_ETMs.tif"</span>,<span class="at">package =</span> <span class="st">"stars"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">system.file</span>(<span class="st">"tif/L7_ETMs.tif"</span>,<span class="at">package =</span> <span class="st">"stars"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Use this path to import the tif file using <code>rast()</code>, store it as <code>l7</code>.</p></li>
 <li><p>Explore this object:</p>
@@ -594,9 +566,6 @@ Figure&nbsp;2.5: NIR, G and B bands mapped to RGB
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
-<div id="ref-lovelace2019" class="csl-entry" role="listitem">
-Lovelace, Robin, Jakub Nowosad, and Jannes Muenchow. 2019. <em>Geocomputation with r</em>. Chapman; Hall/CRC.
-</div>
 <div id="ref-edzer2023" class="csl-entry" role="listitem">
 Pebesma, Edzer, and Roger Bivand. 2023. <em>Spatial Data Science: With Applications in <span>R</span></em>. Boca Raton: Chapman; Hall/CRC. <a href="https://doi.org/10.1201/9780429459016">https://doi.org/10.1201/9780429459016</a>.
 </div>
@@ -1031,8 +1000,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./lesson2-1-operations.html" class="pagination-link" aria-label="Raster Operations / Map algebra">
-        <span class="nav-page-text"><span class="chapter-title">Raster Operations / Map algebra</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./references.html" class="pagination-link" aria-label="References">
+        <span class="nav-page-text">References</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

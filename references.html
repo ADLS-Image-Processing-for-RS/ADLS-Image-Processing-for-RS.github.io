@@ -49,7 +49,7 @@ div.csl-indent {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./lesson1-4-nodata.html" rel="prev">
+<link href="./lesson1-2-imagery.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -99,25 +99,16 @@ div.csl-indent {
     });
   }
   
-  // once the page is loaded, the button is injected into the sidebar. This button
-  // calls the presenter function (see above)
-    window.onload = function() {
-      // create the button (similar to the buttons already availables)
-      const linkElement = document.createElement('a');
-      
-      linkElement.classList.add('quarto-navigation-tool');
-      linkElement.classList.add('px-1');
-      linkElement.innerHTML = '<i class="fa-solid fa-person-chalkboard"></i>';
-      linkElement.href = '#';
-      linkElement.addEventListener('click', function(event) {
-        event.preventDefault(); // Prevent the default link behavior
-        presenter();
-      });
-      
-      // Find the target element by its class name
-      const sidebar_tools = document.querySelector(".sidebar-tools-main")
-      sidebar_tools.appendChild(linkElement);
-    };
+    
+    document.addEventListener('keydown', (event) => {
+      if (event.ctrlKey) {
+         if (event.keyCode == 89) {
+             console.log("Bingo!");
+             presenter()
+         }
+      }
+    }, false);
+
   
   </script>
 
@@ -174,7 +165,7 @@ div.csl-indent {
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="./lesson1.html" class="sidebar-item-text sidebar-link">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
  <span class="menu-text">Lesson 1</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
@@ -189,43 +180,6 @@ div.csl-indent {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./lesson1-2-imagery.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Imagery Data</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
- <span class="menu-text">Lesson 2</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./lesson2-1-operations.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Raster Operations / Map algebra</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
- <span class="menu-text">Lesson TBD</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./lesson1-3-datatypes.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Data Types</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./lesson1-4-nodata.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">NoData</span></a>
   </div>
 </li>
       </ul>
@@ -265,33 +219,13 @@ div.csl-indent {
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
-<div id="ref-amatulli2024" class="csl-entry" role="listitem">
-Amatulli, Giuseppe. <span>“Geocomputation and Machine Learning for
-Environmental Applications.”</span> <a href="http://spatial-ecology.net/docs/build/html/GDAL/gdal_osgeo.html" class="uri">http://spatial-ecology.net/docs/build/html/GDAL/gdal_osgeo.html</a>.
-</div>
 <div id="ref-baltagi2008" class="csl-entry" role="listitem">
 Baltagi, Badi Hani, and Badi H Baltagi. 2008. <em>Econometric Analysis
 of Panel Data</em>. Vol. 4. Springer. <a href="https://bcs.wiley.com/he-bcs/Books?action=resource&amp;bcsId=4338&amp;itemId=1118672321&amp;resourceId=13452">https://bcs.wiley.com/he-bcs/Books?action=resource&amp;bcsId=4338&amp;itemId=1118672321&amp;resourceId=13452</a>.
 </div>
-<div id="ref-horn1981" class="csl-entry" role="listitem">
-Horn, Berthold KP. 1981. <span>“Hill Shading and the Reflectance
-Map.”</span> <em>Proceedings of the IEEE</em> 69 (1): 14–47.
-</div>
-<div id="ref-lovelace2019" class="csl-entry" role="listitem">
-Lovelace, Robin, Jakub Nowosad, and Jannes Muenchow. 2019.
-<em>Geocomputation with r</em>. Chapman; Hall/CRC.
-</div>
 <div id="ref-edzer2023" class="csl-entry" role="listitem">
 Pebesma, Edzer, and Roger Bivand. 2023. <em>Spatial Data Science: With
 Applications in <span>R</span></em>. Boca Raton: Chapman; Hall/CRC. <a href="https://doi.org/10.1201/9780429459016">https://doi.org/10.1201/9780429459016</a>.
-</div>
-<div id="ref-stevens1946" class="csl-entry" role="listitem">
-Stevens, Stanley Smith. 1946. <span>“On the Theory of Scales of
-Measurement.”</span> <em>Science</em> 103 (2684): 677–80.
-</div>
-<div id="ref-tomlin1994" class="csl-entry" role="listitem">
-Tomlin, C.Dana. 1994. <span>“Map Algebra: One Perspective.”</span>
-<em>Landscape and Urban Planning</em> 30 (1): 3–12. https://doi.org/<a href="https://doi.org/10.1016/0169-2046(94)90063-9">https://doi.org/10.1016/0169-2046(94)90063-9</a>.
 </div>
 <div id="ref-wickham2014" class="csl-entry" role="listitem">
 Wickham, Hadley. 2014. <span>“Tidy Data.”</span> <em>Journal of
@@ -724,8 +658,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./lesson1-4-nodata.html" class="pagination-link" aria-label="NoData">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">NoData</span></span>
+      <a href="./lesson1-2-imagery.html" class="pagination-link" aria-label="Imagery Data">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Imagery Data</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">

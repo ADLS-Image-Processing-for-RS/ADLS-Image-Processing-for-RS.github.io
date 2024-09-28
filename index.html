@@ -30,7 +30,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./lesson1.html" rel="next">
+<link href="./lesson1-1-tidy.html" rel="next">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -80,25 +80,16 @@ ul.task-list li input[type="checkbox"] {
     });
   }
   
-  // once the page is loaded, the button is injected into the sidebar. This button
-  // calls the presenter function (see above)
-    window.onload = function() {
-      // create the button (similar to the buttons already availables)
-      const linkElement = document.createElement('a');
-      
-      linkElement.classList.add('quarto-navigation-tool');
-      linkElement.classList.add('px-1');
-      linkElement.innerHTML = '<i class="fa-solid fa-person-chalkboard"></i>';
-      linkElement.href = '#';
-      linkElement.addEventListener('click', function(event) {
-        event.preventDefault(); // Prevent the default link behavior
-        presenter();
-      });
-      
-      // Find the target element by its class name
-      const sidebar_tools = document.querySelector(".sidebar-tools-main")
-      sidebar_tools.appendChild(linkElement);
-    };
+    
+    document.addEventListener('keydown', (event) => {
+      if (event.ctrlKey) {
+         if (event.keyCode == 89) {
+             console.log("Bingo!");
+             presenter()
+         }
+      }
+    }, false);
+
   
   </script>
 
@@ -155,7 +146,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="./lesson1.html" class="sidebar-item-text sidebar-link">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
  <span class="menu-text">Lesson 1</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
@@ -170,43 +161,6 @@ ul.task-list li input[type="checkbox"] {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./lesson1-2-imagery.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Imagery Data</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
- <span class="menu-text">Lesson 2</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./lesson2-1-operations.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Raster Operations / Map algebra</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
- <span class="menu-text">Lesson TBD</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./lesson1-3-datatypes.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Data Types</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./lesson1-4-nodata.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">NoData</span></a>
   </div>
 </li>
       </ul>
@@ -245,61 +199,8 @@ ul.task-list li input[type="checkbox"] {
 
 <section id="welcome" class="level1 unnumbered unlisted">
 <h1 class="unnumbered unlisted">Welcome!</h1>
-</section>
-<section id="topics" class="level1">
-<h1>Topics</h1>
-<section id="lesson-1" class="level2">
-<h2 class="anchored" data-anchor-id="lesson-1">Lesson 1</h2>
-<ul>
-<li>The raster data model:
-<ul>
-<li>in R (terra) / in python (rioxarray)</li>
-<li>in comparison to classic data-frame type data (long vs wide data, data cubes, dense vs.&nbsp;sparse)</li>
-<li>singleband and multiband datasets</li>
-<li>raster data types and their implications (float / int, pseudo-categorical)</li>
-<li>raster NA values</li>
-</ul></li>
-<li>Raster file formats (geotif, COG, XYZ → binary vs.&nbsp;non-binary data)</li>
-</ul>
-</section>
-<section id="lesson-2" class="level2">
-<h2 class="anchored" data-anchor-id="lesson-2">Lesson 2</h2>
-<ul>
-<li>Raster operations
-<ul>
-<li>local, zonal, focal, global in theory</li>
-</ul></li>
-<li>each of the above in practice, starting with the easiest and using concrete examples (in R and/or Python)
-<ul>
-<li>Global: mean canopy cover (?) for the image</li>
-<li>Zonal: Mean Canopy cover for the burt area</li>
-<li>local: NDVI &gt; 1</li>
-<li>focal: tbd</li>
-</ul></li>
-</ul>
-</section>
-<section id="lesson-3" class="level2">
-<h2 class="anchored" data-anchor-id="lesson-3">Lesson 3</h2>
-<ul>
-<li>Pixel based Supervised classification with categorical data
-<ul>
-<li>(e.g.&nbsp;Landuse Classification using Sentinel Data or historical map data)</li>
-</ul></li>
-<li>Pixel based unsupervised classification with categorical data
-<ul>
-<li>find some hand annotated maps similar to the flughafen data or other historical data such as <a href="https://www.usgs.gov/programs/national-geospatial-program/historical-topographic-maps-preserving-past">this one</a> or <a href="https://map.geo.admin.ch/#/map?lang=en&amp;center=2660000,1190000&amp;z=1&amp;bgLayer=ch.swisstopo.pixelkarte-farbe&amp;topic=ech&amp;layers=ch.swisstopo.zeitreihen@year=1864;ch.bfs.gebaeude_wohnungs_register,f;ch.bav.haltestellen-oev,f;ch.swisstopo.swisstlm3d-wanderwege,f;ch.vbs.schiessanzeigen,f;ch.astra.wanderland-sperrungen_umleitungen,f">this</a></li>
-</ul></li>
-</ul>
-</section>
-<section id="lesson-4" class="level2">
-<h2 class="anchored" data-anchor-id="lesson-4">Lesson 4</h2>
-<ul>
-<li>Feature engineering using focal methods</li>
-<li>DataChallenge: Forest detection in Ces</li>
-</ul>
 
 
-</section>
 </section>
 
 </main> <!-- /main -->
@@ -727,8 +628,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   <div class="nav-page nav-page-previous">
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./lesson1.html" class="pagination-link" aria-label="Lesson 1">
-        <span class="nav-page-text">Lesson 1</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./lesson1-1-tidy.html" class="pagination-link" aria-label="From tidy data to raster">
+        <span class="nav-page-text"><span class="chapter-title">From tidy data to raster</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

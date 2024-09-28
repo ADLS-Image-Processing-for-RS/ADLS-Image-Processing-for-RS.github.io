@@ -85,7 +85,7 @@ div.csl-indent {
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
 <link href="./lesson1-2-imagery.html" rel="next">
-<link href="./lesson1.html" rel="prev">
+<link href="./index.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -135,25 +135,16 @@ div.csl-indent {
     });
   }
   
-  // once the page is loaded, the button is injected into the sidebar. This button
-  // calls the presenter function (see above)
-    window.onload = function() {
-      // create the button (similar to the buttons already availables)
-      const linkElement = document.createElement('a');
-      
-      linkElement.classList.add('quarto-navigation-tool');
-      linkElement.classList.add('px-1');
-      linkElement.innerHTML = '<i class="fa-solid fa-person-chalkboard"></i>';
-      linkElement.href = '#';
-      linkElement.addEventListener('click', function(event) {
-        event.preventDefault(); // Prevent the default link behavior
-        presenter();
-      });
-      
-      // Find the target element by its class name
-      const sidebar_tools = document.querySelector(".sidebar-tools-main")
-      sidebar_tools.appendChild(linkElement);
-    };
+    
+    document.addEventListener('keydown', (event) => {
+      if (event.ctrlKey) {
+         if (event.keyCode == 89) {
+             console.log("Bingo!");
+             presenter()
+         }
+      }
+    }, false);
+
   
   </script>
 
@@ -199,7 +190,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./lesson1.html">Lesson 1</a></li><li class="breadcrumb-item"><a href="./lesson1-1-tidy.html"><span class="chapter-title">From tidy data to raster</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./lesson1-1-tidy.html">Lesson 1</a></li><li class="breadcrumb-item"><a href="./lesson1-1-tidy.html"><span class="chapter-title">From tidy data to raster</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -239,7 +230,7 @@ window.Quarto = {
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="./lesson1.html" class="sidebar-item-text sidebar-link">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
  <span class="menu-text">Lesson 1</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
@@ -254,43 +245,6 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./lesson1-2-imagery.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Imagery Data</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
- <span class="menu-text">Lesson 2</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./lesson2-1-operations.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Raster Operations / Map algebra</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
- <span class="menu-text">Lesson TBD</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./lesson1-3-datatypes.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Data Types</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./lesson1-4-nodata.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">NoData</span></a>
   </div>
 </li>
       </ul>
@@ -312,7 +266,6 @@ window.Quarto = {
   <li><a href="#tidy-data" id="toc-tidy-data" class="nav-link active" data-scroll-target="#tidy-data">Tidy data</a>
   <ul class="collapse">
   <li><a href="#long-tables-have-a-lot-of-repetitions" id="toc-long-tables-have-a-lot-of-repetitions" class="nav-link" data-scroll-target="#long-tables-have-a-lot-of-repetitions">Long tables have a lot of repetitions:</a></li>
-  <li><a href="#long-tables-have-a-lot-of-repetitions-1" id="toc-long-tables-have-a-lot-of-repetitions-1" class="nav-link" data-scroll-target="#long-tables-have-a-lot-of-repetitions-1">Long tables have a lot of repetitions:</a></li>
   <li><a href="#wide-tables-have-less-repetitions." id="toc-wide-tables-have-less-repetitions." class="nav-link" data-scroll-target="#wide-tables-have-less-repetitions.">Wide tables have less repetitions.</a></li>
   <li><a href="#long-vs-wide" id="toc-long-vs-wide" class="nav-link" data-scroll-target="#long-vs-wide">Long vs Wide</a></li>
   </ul></li>
@@ -324,7 +277,7 @@ window.Quarto = {
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./lesson1.html">Lesson 1</a></li><li class="breadcrumb-item"><a href="./lesson1-1-tidy.html"><span class="chapter-title">From tidy data to raster</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./lesson1-1-tidy.html">Lesson 1</a></li><li class="breadcrumb-item"><a href="./lesson1-1-tidy.html"><span class="chapter-title">From tidy data to raster</span></a></li></ol></nav>
 <div class="quarto-title">
 <h1 class="title"><span id="sec-tidy-to-raster" class="quarto-section-identifier"><span class="chapter-title">From tidy data to raster</span></span></h1>
 </div>
@@ -495,8 +448,8 @@ Note
 <div id="callout-2" class="callout-2-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <ul>
-<li>This is considered a <em>long</em> table and is great for modelling and visualisation.</li>
-<li>Its bad for momory (a lot of repetitions)</li>
+<li>This is considered a <em>long</em> table and is great for modelling and visualization.</li>
+<li>Its bad for memory (a lot of repetitions)</li>
 </ul>
 </div>
 </div>
@@ -516,899 +469,11 @@ Note
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 17</span></span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>n_values <span class="ot">&lt;-</span> <span class="fu">dim</span>(Produc) <span class="sc">|&gt;</span> <span class="fu">prod</span>()</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>n_values</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 8150</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<hr>
-</section>
-<section id="long-tables-have-a-lot-of-repetitions-1" class="level3">
-<h3 class="anchored" data-anchor-id="long-tables-have-a-lot-of-repetitions-1">Long tables have a lot of repetitions:</h3>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Repeating cells are colorized
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-3" class="callout-3-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<div class="cell">
-<div class="cell-output-display">
-<div id="jzshjyqwur" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#jzshjyqwur table {
-  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-#jzshjyqwur thead, #jzshjyqwur tbody, #jzshjyqwur tfoot, #jzshjyqwur tr, #jzshjyqwur td, #jzshjyqwur th {
-  border-style: none;
-}
-
-#jzshjyqwur p {
-  margin: 0;
-  padding: 0;
-}
-
-#jzshjyqwur .gt_table {
-  display: table;
-  border-collapse: collapse;
-  line-height: normal;
-  margin-left: auto;
-  margin-right: auto;
-  color: #333333;
-  font-size: 16px;
-  font-weight: normal;
-  font-style: normal;
-  background-color: #FFFFFF;
-  width: auto;
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #A8A8A8;
-  border-right-style: none;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #A8A8A8;
-  border-left-style: none;
-  border-left-width: 2px;
-  border-left-color: #D3D3D3;
-}
-
-#jzshjyqwur .gt_caption {
-  padding-top: 4px;
-  padding-bottom: 4px;
-}
-
-#jzshjyqwur .gt_title {
-  color: #333333;
-  font-size: 125%;
-  font-weight: initial;
-  padding-top: 4px;
-  padding-bottom: 4px;
-  padding-left: 5px;
-  padding-right: 5px;
-  border-bottom-color: #FFFFFF;
-  border-bottom-width: 0;
-}
-
-#jzshjyqwur .gt_subtitle {
-  color: #333333;
-  font-size: 85%;
-  font-weight: initial;
-  padding-top: 3px;
-  padding-bottom: 5px;
-  padding-left: 5px;
-  padding-right: 5px;
-  border-top-color: #FFFFFF;
-  border-top-width: 0;
-}
-
-#jzshjyqwur .gt_heading {
-  background-color: #FFFFFF;
-  text-align: center;
-  border-bottom-color: #FFFFFF;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
-}
-
-#jzshjyqwur .gt_bottom_border {
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-}
-
-#jzshjyqwur .gt_col_headings {
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #D3D3D3;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
-}
-
-#jzshjyqwur .gt_col_heading {
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: normal;
-  text-transform: inherit;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
-  vertical-align: bottom;
-  padding-top: 5px;
-  padding-bottom: 6px;
-  padding-left: 5px;
-  padding-right: 5px;
-  overflow-x: hidden;
-}
-
-#jzshjyqwur .gt_column_spanner_outer {
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: normal;
-  text-transform: inherit;
-  padding-top: 0;
-  padding-bottom: 0;
-  padding-left: 4px;
-  padding-right: 4px;
-}
-
-#jzshjyqwur .gt_column_spanner_outer:first-child {
-  padding-left: 0;
-}
-
-#jzshjyqwur .gt_column_spanner_outer:last-child {
-  padding-right: 0;
-}
-
-#jzshjyqwur .gt_column_spanner {
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  vertical-align: bottom;
-  padding-top: 5px;
-  padding-bottom: 5px;
-  overflow-x: hidden;
-  display: inline-block;
-  width: 100%;
-}
-
-#jzshjyqwur .gt_spanner_row {
-  border-bottom-style: hidden;
-}
-
-#jzshjyqwur .gt_group_heading {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: initial;
-  text-transform: inherit;
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #D3D3D3;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
-  vertical-align: middle;
-  text-align: left;
-}
-
-#jzshjyqwur .gt_empty_group_heading {
-  padding: 0.5px;
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: initial;
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #D3D3D3;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  vertical-align: middle;
-}
-
-#jzshjyqwur .gt_from_md > :first-child {
-  margin-top: 0;
-}
-
-#jzshjyqwur .gt_from_md > :last-child {
-  margin-bottom: 0;
-}
-
-#jzshjyqwur .gt_row {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-  margin: 10px;
-  border-top-style: solid;
-  border-top-width: 1px;
-  border-top-color: #D3D3D3;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
-  vertical-align: middle;
-  overflow-x: hidden;
-}
-
-#jzshjyqwur .gt_stub {
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: initial;
-  text-transform: inherit;
-  border-right-style: solid;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-#jzshjyqwur .gt_stub_row_group {
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: initial;
-  text-transform: inherit;
-  border-right-style: solid;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
-  padding-left: 5px;
-  padding-right: 5px;
-  vertical-align: top;
-}
-
-#jzshjyqwur .gt_row_group_first td {
-  border-top-width: 2px;
-}
-
-#jzshjyqwur .gt_row_group_first th {
-  border-top-width: 2px;
-}
-
-#jzshjyqwur .gt_summary_row {
-  color: #333333;
-  background-color: #FFFFFF;
-  text-transform: inherit;
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-#jzshjyqwur .gt_first_summary_row {
-  border-top-style: solid;
-  border-top-color: #D3D3D3;
-}
-
-#jzshjyqwur .gt_first_summary_row.thick {
-  border-top-width: 2px;
-}
-
-#jzshjyqwur .gt_last_summary_row {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-}
-
-#jzshjyqwur .gt_grand_summary_row {
-  color: #333333;
-  background-color: #FFFFFF;
-  text-transform: inherit;
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-#jzshjyqwur .gt_first_grand_summary_row {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-  border-top-style: double;
-  border-top-width: 6px;
-  border-top-color: #D3D3D3;
-}
-
-#jzshjyqwur .gt_last_grand_summary_row_top {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-  border-bottom-style: double;
-  border-bottom-width: 6px;
-  border-bottom-color: #D3D3D3;
-}
-
-#jzshjyqwur .gt_striped {
-  background-color: rgba(128, 128, 128, 0.05);
-}
-
-#jzshjyqwur .gt_table_body {
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #D3D3D3;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-}
-
-#jzshjyqwur .gt_footnotes {
-  color: #333333;
-  background-color: #FFFFFF;
-  border-bottom-style: none;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  border-left-style: none;
-  border-left-width: 2px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
-}
-
-#jzshjyqwur .gt_footnote {
-  margin: 0px;
-  font-size: 90%;
-  padding-top: 4px;
-  padding-bottom: 4px;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-#jzshjyqwur .gt_sourcenotes {
-  color: #333333;
-  background-color: #FFFFFF;
-  border-bottom-style: none;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  border-left-style: none;
-  border-left-width: 2px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
-}
-
-#jzshjyqwur .gt_sourcenote {
-  font-size: 90%;
-  padding-top: 4px;
-  padding-bottom: 4px;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-#jzshjyqwur .gt_left {
-  text-align: left;
-}
-
-#jzshjyqwur .gt_center {
-  text-align: center;
-}
-
-#jzshjyqwur .gt_right {
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-}
-
-#jzshjyqwur .gt_font_normal {
-  font-weight: normal;
-}
-
-#jzshjyqwur .gt_font_bold {
-  font-weight: bold;
-}
-
-#jzshjyqwur .gt_font_italic {
-  font-style: italic;
-}
-
-#jzshjyqwur .gt_super {
-  font-size: 65%;
-}
-
-#jzshjyqwur .gt_footnote_marks {
-  font-size: 75%;
-  vertical-align: 0.4em;
-  position: initial;
-}
-
-#jzshjyqwur .gt_asterisk {
-  font-size: 100%;
-  vertical-align: 0;
-}
-
-#jzshjyqwur .gt_indent_1 {
-  text-indent: 5px;
-}
-
-#jzshjyqwur .gt_indent_2 {
-  text-indent: 10px;
-}
-
-#jzshjyqwur .gt_indent_3 {
-  text-indent: 15px;
-}
-
-#jzshjyqwur .gt_indent_4 {
-  text-indent: 20px;
-}
-
-#jzshjyqwur .gt_indent_5 {
-  text-indent: 25px;
-}
-
-#jzshjyqwur .katex-display {
-  display: inline-flex !important;
-  margin-bottom: 0.75em !important;
-}
-
-#jzshjyqwur div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
-  height: 0px !important;
-}
-</style>
-
-<table class="gt_table caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
-<thead>
-<tr class="header gt_col_headings">
-<th id="state" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">state</th>
-<th id="year" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">year</th>
-<th id="pcap" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">pcap</th>
-<th id="hwy" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">hwy</th>
-<th id="water" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">water</th>
-<th id="util" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">util</th>
-<th id="pc" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">pc</th>
-<th id="gsp" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">gsp</th>
-<th id="emp" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">emp</th>
-<th id="unemp" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">unemp</th>
-</tr>
-</thead>
-<tbody class="gt_table_body">
-<tr class="odd">
-<td class="gt_row gt_left" headers="state" style="background-color: #B3E2CD; color: #000000">ALABAMA</td>
-<td class="gt_row gt_right" headers="year" style="background-color: #A50026; color: #FFFFFF">1970</td>
-<td class="gt_row gt_right" headers="pcap">15032.67</td>
-<td class="gt_row gt_right" headers="hwy">7325.80</td>
-<td class="gt_row gt_right" headers="water">1655.68</td>
-<td class="gt_row gt_right" headers="util">6051.20</td>
-<td class="gt_row gt_right" headers="pc">35793.80</td>
-<td class="gt_row gt_right" headers="gsp">28418</td>
-<td class="gt_row gt_right" headers="emp">1010.5</td>
-<td class="gt_row gt_right" headers="unemp">4.7</td>
-</tr>
-<tr class="even">
-<td class="gt_row gt_left" headers="state" style="background-color: #B3E2CD; color: #000000">ALABAMA</td>
-<td class="gt_row gt_right" headers="year" style="background-color: #C42227; color: #FFFFFF">1971</td>
-<td class="gt_row gt_right" headers="pcap">15501.94</td>
-<td class="gt_row gt_right" headers="hwy">7525.94</td>
-<td class="gt_row gt_right" headers="water">1721.02</td>
-<td class="gt_row gt_right" headers="util">6254.98</td>
-<td class="gt_row gt_right" headers="pc">37299.91</td>
-<td class="gt_row gt_right" headers="gsp">29375</td>
-<td class="gt_row gt_right" headers="emp">1021.9</td>
-<td class="gt_row gt_right" headers="unemp">5.2</td>
-</tr>
-<tr class="odd">
-<td class="gt_row gt_left" headers="state" style="background-color: #B3E2CD; color: #000000">ALABAMA</td>
-<td class="gt_row gt_right" headers="year" style="background-color: #DE422E; color: #FFFFFF">1972</td>
-<td class="gt_row gt_right" headers="pcap">15972.41</td>
-<td class="gt_row gt_right" headers="hwy">7765.42</td>
-<td class="gt_row gt_right" headers="water">1764.75</td>
-<td class="gt_row gt_right" headers="util">6442.23</td>
-<td class="gt_row gt_right" headers="pc">38670.30</td>
-<td class="gt_row gt_right" headers="gsp">31303</td>
-<td class="gt_row gt_right" headers="emp">1072.3</td>
-<td class="gt_row gt_right" headers="unemp">4.7</td>
-</tr>
-<tr class="even">
-<td class="gt_row gt_left" headers="state" style="background-color: #B3E2CD; color: #000000">ALABAMA</td>
-<td class="gt_row gt_right" headers="year" style="background-color: #F0663F; color: #FFFFFF">1973</td>
-<td class="gt_row gt_right" headers="pcap">16406.26</td>
-<td class="gt_row gt_right" headers="hwy">7907.66</td>
-<td class="gt_row gt_right" headers="water">1742.41</td>
-<td class="gt_row gt_right" headers="util">6756.19</td>
-<td class="gt_row gt_right" headers="pc">40084.01</td>
-<td class="gt_row gt_right" headers="gsp">33430</td>
-<td class="gt_row gt_right" headers="emp">1135.5</td>
-<td class="gt_row gt_right" headers="unemp">3.9</td>
-</tr>
-<tr class="odd">
-<td class="gt_row gt_left" headers="state" style="background-color: #B3E2CD; color: #000000">ALABAMA</td>
-<td class="gt_row gt_right" headers="year" style="background-color: #F98F52; color: #000000">1974</td>
-<td class="gt_row gt_right" headers="pcap">16762.67</td>
-<td class="gt_row gt_right" headers="hwy">8025.52</td>
-<td class="gt_row gt_right" headers="water">1734.85</td>
-<td class="gt_row gt_right" headers="util">7002.29</td>
-<td class="gt_row gt_right" headers="pc">42057.31</td>
-<td class="gt_row gt_right" headers="gsp">33749</td>
-<td class="gt_row gt_right" headers="emp">1169.8</td>
-<td class="gt_row gt_right" headers="unemp">5.5</td>
-</tr>
-<tr class="even">
-<td class="gt_row gt_left" headers="state" style="background-color: #B3E2CD; color: #000000">ALABAMA</td>
-<td class="gt_row gt_right" headers="year" style="background-color: #FEB467; color: #000000">1975</td>
-<td class="gt_row gt_right" headers="pcap">17316.26</td>
-<td class="gt_row gt_right" headers="hwy">8158.23</td>
-<td class="gt_row gt_right" headers="water">1752.27</td>
-<td class="gt_row gt_right" headers="util">7405.76</td>
-<td class="gt_row gt_right" headers="pc">43971.71</td>
-<td class="gt_row gt_right" headers="gsp">33604</td>
-<td class="gt_row gt_right" headers="emp">1155.4</td>
-<td class="gt_row gt_right" headers="unemp">7.7</td>
-</tr>
-<tr class="odd">
-<td class="gt_row gt_left" headers="state" style="background-color: #B3E2CD; color: #000000">ALABAMA</td>
-<td class="gt_row gt_right" headers="year" style="background-color: #FED484; color: #000000">1976</td>
-<td class="gt_row gt_right" headers="pcap">17732.86</td>
-<td class="gt_row gt_right" headers="hwy">8228.19</td>
-<td class="gt_row gt_right" headers="water">1799.74</td>
-<td class="gt_row gt_right" headers="util">7704.93</td>
-<td class="gt_row gt_right" headers="pc">50221.57</td>
-<td class="gt_row gt_right" headers="gsp">35764</td>
-<td class="gt_row gt_right" headers="emp">1207.0</td>
-<td class="gt_row gt_right" headers="unemp">6.8</td>
-</tr>
-<tr class="even">
-<td class="gt_row gt_left" headers="state" style="background-color: #B3E2CD; color: #000000">ALABAMA</td>
-<td class="gt_row gt_right" headers="year" style="background-color: #FFECA2; color: #000000">1977</td>
-<td class="gt_row gt_right" headers="pcap">18111.93</td>
-<td class="gt_row gt_right" headers="hwy">8365.67</td>
-<td class="gt_row gt_right" headers="water">1845.11</td>
-<td class="gt_row gt_right" headers="util">7901.15</td>
-<td class="gt_row gt_right" headers="pc">51084.99</td>
-<td class="gt_row gt_right" headers="gsp">37463</td>
-<td class="gt_row gt_right" headers="emp">1269.2</td>
-<td class="gt_row gt_right" headers="unemp">7.4</td>
-</tr>
-<tr class="odd">
-<td class="gt_row gt_left" headers="state" style="background-color: #B3E2CD; color: #000000">ALABAMA</td>
-<td class="gt_row gt_right" headers="year" style="background-color: #FFFFBF; color: #000000">1978</td>
-<td class="gt_row gt_right" headers="pcap">18479.74</td>
-<td class="gt_row gt_right" headers="hwy">8510.64</td>
-<td class="gt_row gt_right" headers="water">1960.51</td>
-<td class="gt_row gt_right" headers="util">8008.59</td>
-<td class="gt_row gt_right" headers="pc">52604.05</td>
-<td class="gt_row gt_right" headers="gsp">39964</td>
-<td class="gt_row gt_right" headers="emp">1336.5</td>
-<td class="gt_row gt_right" headers="unemp">6.3</td>
-</tr>
-<tr class="even">
-<td class="gt_row gt_left" headers="state" style="background-color: #B3E2CD; color: #000000">ALABAMA</td>
-<td class="gt_row gt_right" headers="year" style="background-color: #EDF7E3; color: #000000">1979</td>
-<td class="gt_row gt_right" headers="pcap">18881.49</td>
-<td class="gt_row gt_right" headers="hwy">8640.61</td>
-<td class="gt_row gt_right" headers="water">2081.91</td>
-<td class="gt_row gt_right" headers="util">8158.97</td>
-<td class="gt_row gt_right" headers="pc">54525.86</td>
-<td class="gt_row gt_right" headers="gsp">40979</td>
-<td class="gt_row gt_right" headers="emp">1362.0</td>
-<td class="gt_row gt_right" headers="unemp">7.1</td>
-</tr>
-<tr class="odd">
-<td class="gt_row gt_left" headers="state" style="background-color: #B3E2CD; color: #000000">ALABAMA</td>
-<td class="gt_row gt_right" headers="year" style="background-color: #D3ECF4; color: #000000">1980</td>
-<td class="gt_row gt_right" headers="pcap">19012.34</td>
-<td class="gt_row gt_right" headers="hwy">8663.50</td>
-<td class="gt_row gt_right" headers="water">2138.52</td>
-<td class="gt_row gt_right" headers="util">8210.33</td>
-<td class="gt_row gt_right" headers="pc">56589.16</td>
-<td class="gt_row gt_right" headers="gsp">40380</td>
-<td class="gt_row gt_right" headers="emp">1356.1</td>
-<td class="gt_row gt_right" headers="unemp">8.8</td>
-</tr>
-<tr class="even">
-<td class="gt_row gt_left" headers="state" style="background-color: #B3E2CD; color: #000000">ALABAMA</td>
-<td class="gt_row gt_right" headers="year" style="background-color: #B2DCEB; color: #000000">1981</td>
-<td class="gt_row gt_right" headers="pcap">19118.52</td>
-<td class="gt_row gt_right" headers="hwy">8628.83</td>
-<td class="gt_row gt_right" headers="water">2218.91</td>
-<td class="gt_row gt_right" headers="util">8270.79</td>
-<td class="gt_row gt_right" headers="pc">56481.93</td>
-<td class="gt_row gt_right" headers="gsp">41105</td>
-<td class="gt_row gt_right" headers="emp">1347.6</td>
-<td class="gt_row gt_right" headers="unemp">11.0</td>
-</tr>
-<tr class="odd">
-<td class="gt_row gt_left" headers="state" style="background-color: #B3E2CD; color: #000000">ALABAMA</td>
-<td class="gt_row gt_right" headers="year" style="background-color: #90C3DD; color: #000000">1982</td>
-<td class="gt_row gt_right" headers="pcap">19118.25</td>
-<td class="gt_row gt_right" headers="hwy">8645.14</td>
-<td class="gt_row gt_right" headers="water">2215.84</td>
-<td class="gt_row gt_right" headers="util">8257.26</td>
-<td class="gt_row gt_right" headers="pc">58021.69</td>
-<td class="gt_row gt_right" headers="gsp">40328</td>
-<td class="gt_row gt_right" headers="emp">1312.5</td>
-<td class="gt_row gt_right" headers="unemp">14.0</td>
-</tr>
-<tr class="even">
-<td class="gt_row gt_left" headers="state" style="background-color: #B3E2CD; color: #000000">ALABAMA</td>
-<td class="gt_row gt_right" headers="year" style="background-color: #6FA6CD; color: #FFFFFF">1983</td>
-<td class="gt_row gt_right" headers="pcap">19122.00</td>
-<td class="gt_row gt_right" headers="hwy">8612.47</td>
-<td class="gt_row gt_right" headers="water">2230.91</td>
-<td class="gt_row gt_right" headers="util">8278.63</td>
-<td class="gt_row gt_right" headers="pc">58893.97</td>
-<td class="gt_row gt_right" headers="gsp">42245</td>
-<td class="gt_row gt_right" headers="emp">1328.8</td>
-<td class="gt_row gt_right" headers="unemp">14.0</td>
-</tr>
-<tr class="odd">
-<td class="gt_row gt_left" headers="state" style="background-color: #B3E2CD; color: #000000">ALABAMA</td>
-<td class="gt_row gt_right" headers="year" style="background-color: #5283BB; color: #FFFFFF">1984</td>
-<td class="gt_row gt_right" headers="pcap">19257.47</td>
-<td class="gt_row gt_right" headers="hwy">8655.94</td>
-<td class="gt_row gt_right" headers="water">2235.16</td>
-<td class="gt_row gt_right" headers="util">8366.37</td>
-<td class="gt_row gt_right" headers="pc">59446.86</td>
-<td class="gt_row gt_right" headers="gsp">45118</td>
-<td class="gt_row gt_right" headers="emp">1387.7</td>
-<td class="gt_row gt_right" headers="unemp">11.0</td>
-</tr>
-<tr class="even">
-<td class="gt_row gt_left" headers="state" style="background-color: #B3E2CD; color: #000000">ALABAMA</td>
-<td class="gt_row gt_right" headers="year" style="background-color: #405DA8; color: #FFFFFF">1985</td>
-<td class="gt_row gt_right" headers="pcap">19433.36</td>
-<td class="gt_row gt_right" headers="hwy">8726.24</td>
-<td class="gt_row gt_right" headers="water">2253.03</td>
-<td class="gt_row gt_right" headers="util">8454.09</td>
-<td class="gt_row gt_right" headers="pc">60688.04</td>
-<td class="gt_row gt_right" headers="gsp">46849</td>
-<td class="gt_row gt_right" headers="emp">1427.1</td>
-<td class="gt_row gt_right" headers="unemp">8.9</td>
-</tr>
-<tr class="odd">
-<td class="gt_row gt_left" headers="state" style="background-color: #B3E2CD; color: #000000">ALABAMA</td>
-<td class="gt_row gt_right" headers="year" style="background-color: #313695; color: #FFFFFF">1986</td>
-<td class="gt_row gt_right" headers="pcap">19723.37</td>
-<td class="gt_row gt_right" headers="hwy">8813.24</td>
-<td class="gt_row gt_right" headers="water">2308.99</td>
-<td class="gt_row gt_right" headers="util">8601.14</td>
-<td class="gt_row gt_right" headers="pc">61628.88</td>
-<td class="gt_row gt_right" headers="gsp">48409</td>
-<td class="gt_row gt_right" headers="emp">1463.3</td>
-<td class="gt_row gt_right" headers="unemp">9.8</td>
-</tr>
-<tr class="even">
-<td class="gt_row gt_left" headers="state" style="background-color: #FDCDAC; color: #000000">ARIZONA</td>
-<td class="gt_row gt_right" headers="year" style="background-color: #A50026; color: #FFFFFF">1970</td>
-<td class="gt_row gt_right" headers="pcap">10148.42</td>
-<td class="gt_row gt_right" headers="hwy">4556.81</td>
-<td class="gt_row gt_right" headers="water">1627.87</td>
-<td class="gt_row gt_right" headers="util">3963.75</td>
-<td class="gt_row gt_right" headers="pc">23585.99</td>
-<td class="gt_row gt_right" headers="gsp">19288</td>
-<td class="gt_row gt_right" headers="emp">547.4</td>
-<td class="gt_row gt_right" headers="unemp">4.4</td>
-</tr>
-<tr class="odd">
-<td class="gt_row gt_left" headers="state" style="background-color: #FDCDAC; color: #000000">ARIZONA</td>
-<td class="gt_row gt_right" headers="year" style="background-color: #DE422E; color: #FFFFFF">1972</td>
-<td class="gt_row gt_right" headers="pcap">10977.53</td>
-<td class="gt_row gt_right" headers="hwy">4847.84</td>
-<td class="gt_row gt_right" headers="water">1614.58</td>
-<td class="gt_row gt_right" headers="util">4515.11</td>
-<td class="gt_row gt_right" headers="pc">26058.65</td>
-<td class="gt_row gt_right" headers="gsp">23289</td>
-<td class="gt_row gt_right" headers="emp">646.3</td>
-<td class="gt_row gt_right" headers="unemp">4.2</td>
-</tr>
-<tr class="even">
-<td class="gt_row gt_left" headers="state" style="background-color: #FDCDAC; color: #000000">ARIZONA</td>
-<td class="gt_row gt_right" headers="year" style="background-color: #F0663F; color: #FFFFFF">1973</td>
-<td class="gt_row gt_right" headers="pcap">11598.26</td>
-<td class="gt_row gt_right" headers="hwy">4963.46</td>
-<td class="gt_row gt_right" headers="water">1647.88</td>
-<td class="gt_row gt_right" headers="util">4986.92</td>
-<td class="gt_row gt_right" headers="pc">27304.64</td>
-<td class="gt_row gt_right" headers="gsp">25244</td>
-<td class="gt_row gt_right" headers="emp">714.5</td>
-<td class="gt_row gt_right" headers="unemp">4.1</td>
-</tr>
-<tr class="odd">
-<td class="gt_row gt_left" headers="state" style="background-color: #FDCDAC; color: #000000">ARIZONA</td>
-<td class="gt_row gt_right" headers="year" style="background-color: #F98F52; color: #000000">1974</td>
-<td class="gt_row gt_right" headers="pcap">12129.06</td>
-<td class="gt_row gt_right" headers="hwy">5071.38</td>
-<td class="gt_row gt_right" headers="water">1678.00</td>
-<td class="gt_row gt_right" headers="util">5379.69</td>
-<td class="gt_row gt_right" headers="pc">28829.44</td>
-<td class="gt_row gt_right" headers="gsp">25698</td>
-<td class="gt_row gt_right" headers="emp">746.0</td>
-<td class="gt_row gt_right" headers="unemp">5.6</td>
-</tr>
-<tr class="even">
-<td class="gt_row gt_left" headers="state" style="background-color: #FDCDAC; color: #000000">ARIZONA</td>
-<td class="gt_row gt_right" headers="year" style="background-color: #FEB467; color: #000000">1975</td>
-<td class="gt_row gt_right" headers="pcap">12929.06</td>
-<td class="gt_row gt_right" headers="hwy">5163.41</td>
-<td class="gt_row gt_right" headers="water">1764.87</td>
-<td class="gt_row gt_right" headers="util">6000.77</td>
-<td class="gt_row gt_right" headers="pc">30243.29</td>
-<td class="gt_row gt_right" headers="gsp">24915</td>
-<td class="gt_row gt_right" headers="emp">729.1</td>
-<td class="gt_row gt_right" headers="unemp">12.0</td>
-</tr>
-<tr class="odd">
-<td class="gt_row gt_left" headers="state" style="background-color: #FDCDAC; color: #000000">ARIZONA</td>
-<td class="gt_row gt_right" headers="year" style="background-color: #FED484; color: #000000">1976</td>
-<td class="gt_row gt_right" headers="pcap">13603.89</td>
-<td class="gt_row gt_right" headers="hwy">5249.82</td>
-<td class="gt_row gt_right" headers="water">1910.43</td>
-<td class="gt_row gt_right" headers="util">6443.63</td>
-<td class="gt_row gt_right" headers="pc">29384.15</td>
-<td class="gt_row gt_right" headers="gsp">26041</td>
-<td class="gt_row gt_right" headers="emp">758.7</td>
-<td class="gt_row gt_right" headers="unemp">9.8</td>
-</tr>
-<tr class="even">
-<td class="gt_row gt_left" headers="state" style="background-color: #FDCDAC; color: #000000">ARIZONA</td>
-<td class="gt_row gt_right" headers="year" style="background-color: #FFECA2; color: #000000">1977</td>
-<td class="gt_row gt_right" headers="pcap">14175.42</td>
-<td class="gt_row gt_right" headers="hwy">5358.45</td>
-<td class="gt_row gt_right" headers="water">1973.48</td>
-<td class="gt_row gt_right" headers="util">6843.50</td>
-<td class="gt_row gt_right" headers="pc">30072.60</td>
-<td class="gt_row gt_right" headers="gsp">28110</td>
-<td class="gt_row gt_right" headers="emp">809.3</td>
-<td class="gt_row gt_right" headers="unemp">8.2</td>
-</tr>
-<tr class="odd">
-<td class="gt_row gt_left" headers="state" style="background-color: #FDCDAC; color: #000000">ARIZONA</td>
-<td class="gt_row gt_right" headers="year" style="background-color: #FFFFBF; color: #000000">1978</td>
-<td class="gt_row gt_right" headers="pcap">14812.04</td>
-<td class="gt_row gt_right" headers="hwy">5470.00</td>
-<td class="gt_row gt_right" headers="water">2038.30</td>
-<td class="gt_row gt_right" headers="util">7303.73</td>
-<td class="gt_row gt_right" headers="pc">31139.49</td>
-<td class="gt_row gt_right" headers="gsp">31062</td>
-<td class="gt_row gt_right" headers="emp">895.4</td>
-<td class="gt_row gt_right" headers="unemp">6.1</td>
-</tr>
-<tr class="even">
-<td class="gt_row gt_left" headers="state" style="background-color: #FDCDAC; color: #000000">ARIZONA</td>
-<td class="gt_row gt_right" headers="year" style="background-color: #EDF7E3; color: #000000">1979</td>
-<td class="gt_row gt_right" headers="pcap">15547.62</td>
-<td class="gt_row gt_right" headers="hwy">5603.12</td>
-<td class="gt_row gt_right" headers="water">2132.49</td>
-<td class="gt_row gt_right" headers="util">7812.01</td>
-<td class="gt_row gt_right" headers="pc">32377.41</td>
-<td class="gt_row gt_right" headers="gsp">33943</td>
-<td class="gt_row gt_right" headers="emp">979.9</td>
-<td class="gt_row gt_right" headers="unemp">5.1</td>
-</tr>
-<tr class="odd">
-<td class="gt_row gt_left" headers="state" style="background-color: #FDCDAC; color: #000000">ARIZONA</td>
-<td class="gt_row gt_right" headers="year" style="background-color: #D3ECF4; color: #000000">1980</td>
-<td class="gt_row gt_right" headers="pcap">16344.90</td>
-<td class="gt_row gt_right" headers="hwy">5720.38</td>
-<td class="gt_row gt_right" headers="water">2165.64</td>
-<td class="gt_row gt_right" headers="util">8458.88</td>
-<td class="gt_row gt_right" headers="pc">33769.92</td>
-<td class="gt_row gt_right" headers="gsp">34708</td>
-<td class="gt_row gt_right" headers="emp">1014.0</td>
-<td class="gt_row gt_right" headers="unemp">6.7</td>
-</tr>
-<tr class="even">
-<td class="gt_row gt_left" headers="state" style="background-color: #FDCDAC; color: #000000">ARIZONA</td>
-<td class="gt_row gt_right" headers="year" style="background-color: #B2DCEB; color: #000000">1981</td>
-<td class="gt_row gt_right" headers="pcap">17088.30</td>
-<td class="gt_row gt_right" headers="hwy">5816.05</td>
-<td class="gt_row gt_right" headers="water">2265.42</td>
-<td class="gt_row gt_right" headers="util">9006.84</td>
-<td class="gt_row gt_right" headers="pc">36387.15</td>
-<td class="gt_row gt_right" headers="gsp">35244</td>
-<td class="gt_row gt_right" headers="emp">1040.8</td>
-<td class="gt_row gt_right" headers="unemp">6.1</td>
-</tr>
-<tr class="odd">
-<td class="gt_row gt_left" headers="state" style="background-color: #FDCDAC; color: #000000">ARIZONA</td>
-<td class="gt_row gt_right" headers="year" style="background-color: #90C3DD; color: #000000">1982</td>
-<td class="gt_row gt_right" headers="pcap">17650.57</td>
-<td class="gt_row gt_right" headers="hwy">5918.50</td>
-<td class="gt_row gt_right" headers="water">2377.20</td>
-<td class="gt_row gt_right" headers="util">9354.87</td>
-<td class="gt_row gt_right" headers="pc">37332.09</td>
-<td class="gt_row gt_right" headers="gsp">33603</td>
-<td class="gt_row gt_right" headers="emp">1029.8</td>
-<td class="gt_row gt_right" headers="unemp">9.9</td>
-</tr>
-<tr class="even">
-<td class="gt_row gt_left" headers="state" style="background-color: #FDCDAC; color: #000000">ARIZONA</td>
-<td class="gt_row gt_right" headers="year" style="background-color: #6FA6CD; color: #FFFFFF">1983</td>
-<td class="gt_row gt_right" headers="pcap">18108.24</td>
-<td class="gt_row gt_right" headers="hwy">6019.87</td>
-<td class="gt_row gt_right" headers="water">2513.38</td>
-<td class="gt_row gt_right" headers="util">9574.99</td>
-<td class="gt_row gt_right" headers="pc">37829.83</td>
-<td class="gt_row gt_right" headers="gsp">35963</td>
-<td class="gt_row gt_right" headers="emp">1077.8</td>
-<td class="gt_row gt_right" headers="unemp">9.1</td>
-</tr>
-<tr class="odd">
-<td class="gt_row gt_left" headers="state" style="background-color: #FDCDAC; color: #000000">ARIZONA</td>
-<td class="gt_row gt_right" headers="year" style="background-color: #5283BB; color: #FFFFFF">1984</td>
-<td class="gt_row gt_right" headers="pcap">18792.09</td>
-<td class="gt_row gt_right" headers="hwy">6101.45</td>
-<td class="gt_row gt_right" headers="water">2574.78</td>
-<td class="gt_row gt_right" headers="util">10115.86</td>
-<td class="gt_row gt_right" headers="pc">38330.02</td>
-<td class="gt_row gt_right" headers="gsp">40010</td>
-<td class="gt_row gt_right" headers="emp">1181.9</td>
-<td class="gt_row gt_right" headers="unemp">5.0</td>
-</tr>
-<tr class="even">
-<td class="gt_row gt_left" headers="state" style="background-color: #FDCDAC; color: #000000">ARIZONA</td>
-<td class="gt_row gt_right" headers="year" style="background-color: #405DA8; color: #FFFFFF">1985</td>
-<td class="gt_row gt_right" headers="pcap">19414.85</td>
-<td class="gt_row gt_right" headers="hwy">6282.51</td>
-<td class="gt_row gt_right" headers="water">2737.37</td>
-<td class="gt_row gt_right" headers="util">10394.97</td>
-<td class="gt_row gt_right" headers="pc">39246.83</td>
-<td class="gt_row gt_right" headers="gsp">43350</td>
-<td class="gt_row gt_right" headers="emp">1278.6</td>
-<td class="gt_row gt_right" headers="unemp">6.5</td>
-</tr>
-<tr class="odd">
-<td class="gt_row gt_left" headers="state" style="background-color: #FDCDAC; color: #000000">ARIZONA</td>
-<td class="gt_row gt_right" headers="year" style="background-color: #313695; color: #FFFFFF">1986</td>
-<td class="gt_row gt_right" headers="pcap">20212.42</td>
-<td class="gt_row gt_right" headers="hwy">6553.40</td>
-<td class="gt_row gt_right" headers="water">2923.15</td>
-<td class="gt_row gt_right" headers="util">10735.88</td>
-<td class="gt_row gt_right" headers="pc">44189.19</td>
-<td class="gt_row gt_right" headers="gsp">46058</td>
-<td class="gt_row gt_right" headers="emp">1337.8</td>
-<td class="gt_row gt_right" headers="unemp">6.9</td>
-</tr>
-</tbody>
-</table>
-
-</div>
-</div>
-</div>
-</div>
-</div>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>n_values <span class="ot">&lt;-</span> <span class="fu">dim</span>(Produc) <span class="sc">|&gt;</span> </span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">prod</span>()</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>n_values</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 8150</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <hr>
 </section>
@@ -1423,7 +488,7 @@ Repeating cells are colorized
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">column_to_rownames</span>(<span class="st">"year"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="notes callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1432,7 +497,7 @@ Note
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>We can either omit the column “year”, (since this is implicit knowledge, <span class="math inline">\(row_i + 1970\)</span>), or use it as a <code>rowname</code>.</p>
 </div>
@@ -1933,7 +998,7 @@ Note
 <li>All columns now have the same datatype (<code>dbl</code>)
 <ul>
 <li>This means, they can be stored in a matrix / array</li>
-<li>This gives us a <em>big</em> speed advantage (e.g.&nbsp;calculating the mean over all values is 12x faster)</li>
+<li>This gives us a <em>big</em> speed advantage (e.g.&nbsp;calculating the mean over all values is 7x faster)</li>
 </ul></li>
 </ul>
 <hr>
@@ -2437,8 +1502,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./lesson1.html" class="pagination-link" aria-label="Lesson 1">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Lesson 1</span>
+      <a href="./index.html" class="pagination-link" aria-label="Welcome!">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Welcome!</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
