@@ -67,7 +67,7 @@ Produc |>
 ---
 
 
-### Long tables have a lot of repetitions:
+## Long tables have a lot of repetitions:
 
 ```{r}
 #| echo: true
@@ -89,7 +89,7 @@ n_values
 
 ---
 
-### Wide tables have less repetitions.
+## Wide tables have less repetitions.
 
 To demonstrate we convert a long to wide.
 
@@ -114,7 +114,7 @@ We can either omit the column "year", (since this is implicit knowledge, $row_i 
 
 ---
 
-### Long vs Wide 
+## Long vs Wide 
 
 Long / tidy:
 ```{r}
