@@ -267,6 +267,10 @@ window.Quarto = {
   <li><a href="#long-tables-have-a-lot-of-repetitions" id="toc-long-tables-have-a-lot-of-repetitions" class="nav-link" data-scroll-target="#long-tables-have-a-lot-of-repetitions">Long tables have a lot of repetitions:</a></li>
   <li><a href="#wide-tables-have-less-repetitions." id="toc-wide-tables-have-less-repetitions." class="nav-link" data-scroll-target="#wide-tables-have-less-repetitions.">Wide tables have less repetitions.</a></li>
   <li><a href="#long-vs-wide" id="toc-long-vs-wide" class="nav-link" data-scroll-target="#long-vs-wide">Long vs Wide</a></li>
+  <li><a href="#long-vs.-wide-number-of-cells" id="toc-long-vs.-wide-number-of-cells" class="nav-link" data-scroll-target="#long-vs.-wide-number-of-cells">Long vs.&nbsp;Wide: Number of cells</a></li>
+  <li><a href="#dataframe-matrix" id="toc-dataframe-matrix" class="nav-link" data-scroll-target="#dataframe-matrix">Dataframe → Matrix</a></li>
+  <li><a href="#dataframe-matrix-1" id="toc-dataframe-matrix-1" class="nav-link" data-scroll-target="#dataframe-matrix-1">Dataframe → Matrix</a></li>
+  <li><a href="#dataframe-matrix-2" id="toc-dataframe-matrix-2" class="nav-link" data-scroll-target="#dataframe-matrix-2">Dataframe → Matrix</a></li>
   <li><a href="#limitations" id="toc-limitations" class="nav-link" data-scroll-target="#limitations">Limitations</a></li>
   <li><a href="#tasks-exercises" id="toc-tasks-exercises" class="nav-link" data-scroll-target="#tasks-exercises">Tasks / Exercises</a></li>
   </ul>
@@ -452,7 +456,6 @@ Note
 </div>
 </div>
 </div>
-<hr>
 </section>
 <section id="long-tables-have-a-lot-of-repetitions" class="level2">
 <h2 class="anchored" data-anchor-id="long-tables-have-a-lot-of-repetitions">Long tables have a lot of repetitions:</h2>
@@ -474,7 +477,6 @@ Note
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>n_values</span>
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 8150</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<hr>
 </section>
 <section id="wide-tables-have-less-repetitions." class="level2">
 <h2 class="anchored" data-anchor-id="wide-tables-have-less-repetitions.">Wide tables have less repetitions.</h2>
@@ -502,7 +504,6 @@ Note
 </div>
 </div>
 </div>
-<hr>
 </section>
 <section id="long-vs-wide" class="level2">
 <h2 class="anchored" data-anchor-id="long-vs-wide">Long vs Wide</h2>
@@ -970,7 +971,9 @@ Note
 </table>
 </div>
 </div>
-<hr>
+</section>
+<section id="long-vs.-wide-number-of-cells" class="level2">
+<h2 class="anchored" data-anchor-id="long-vs.-wide-number-of-cells">Long vs.&nbsp;Wide: Number of cells</h2>
 <p>How many cells / values do we have after this transformation?</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>n_values_new <span class="ot">&lt;-</span> Produc_wide <span class="sc">|&gt;</span> </span>
@@ -991,16 +994,20 @@ Note
 </div>
 </div>
 <p>→ This is a reduction of 20%</p>
-<hr>
+</section>
+<section id="dataframe-matrix" class="level2">
+<h2 class="anchored" data-anchor-id="dataframe-matrix">Dataframe → Matrix</h2>
 <p>Less repetitions / smaller memory footprint is only part of the advantage:</p>
 <ul>
 <li>All columns now have the same datatype (<code>dbl</code>)
 <ul>
 <li>This means, they can be stored in a matrix / array</li>
-<li>This gives us a <em>big</em> speed advantage (e.g.&nbsp;calculating the mean over all values is 12x faster)</li>
+<li>This gives us a <em>big</em> speed advantage (e.g.&nbsp;calculating the mean over all values is 7x faster)</li>
 </ul></li>
 </ul>
-<hr>
+</section>
+<section id="dataframe-matrix-1" class="level2">
+<h2 class="anchored" data-anchor-id="dataframe-matrix-1">Dataframe → Matrix</h2>
 <ul>
 <li>Missing values are now <em>explicit</em></li>
 </ul>
@@ -1026,7 +1033,9 @@ Note
 6 ARIZONA  1973 11598. 4963. 1648. 4987. 27305. 25244  714.   4.1</code></pre>
 </div>
 </div>
-<hr>
+</section>
+<section id="dataframe-matrix-2" class="level2">
+<h2 class="anchored" data-anchor-id="dataframe-matrix-2">Dataframe → Matrix</h2>
 <p>To detect missing values, cases must be made complete first:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>Produc <span class="sc">|&gt;</span> </span>
@@ -1054,16 +1063,9 @@ Note
 </ol>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(Produc, <span class="at">package =</span> <span class="st">"plm"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <ol start="2" type="1">
-<li>Calculate the mean value per state over all years</li>
-</ol>
-<ol start="3" type="1">
-<li>Convert the data into a 3 dimensional array (state, year and parameter)</li>
-</ol>
-<ol start="4" type="1">
-<li>Get familiar with <code>apply</code> and calculate the mean employment rate per year state</li>
-</ol>
-<ol start="4" type="1">
-<li>Compare the difference in speed (e.g.&nbsp;using <code>bench::mark</code> or <code>microbenchmark</code>)</li>
+<li><p>Convert the data from long to wide</p></li>
+<li><p>Convert the data to a matrix</p></li>
+<li><p>Calculate mean unemployment first using the original dataframe, then the new matrix. Compare the speed difference.</p></li>
 </ol>
 
 
