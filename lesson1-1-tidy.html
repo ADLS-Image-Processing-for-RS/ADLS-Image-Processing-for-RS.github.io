@@ -263,12 +263,10 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#tidy-data" id="toc-tidy-data" class="nav-link active" data-scroll-target="#tidy-data">Tidy data</a>
-  <ul class="collapse">
+  <li><a href="#tidy-data" id="toc-tidy-data" class="nav-link active" data-scroll-target="#tidy-data">Tidy data</a></li>
   <li><a href="#long-tables-have-a-lot-of-repetitions" id="toc-long-tables-have-a-lot-of-repetitions" class="nav-link" data-scroll-target="#long-tables-have-a-lot-of-repetitions">Long tables have a lot of repetitions:</a></li>
   <li><a href="#wide-tables-have-less-repetitions." id="toc-wide-tables-have-less-repetitions." class="nav-link" data-scroll-target="#wide-tables-have-less-repetitions.">Wide tables have less repetitions.</a></li>
   <li><a href="#long-vs-wide" id="toc-long-vs-wide" class="nav-link" data-scroll-target="#long-vs-wide">Long vs Wide</a></li>
-  </ul></li>
   <li><a href="#limitations" id="toc-limitations" class="nav-link" data-scroll-target="#limitations">Limitations</a></li>
   <li><a href="#tasks-exercises" id="toc-tasks-exercises" class="nav-link" data-scroll-target="#tasks-exercises">Tasks / Exercises</a></li>
   </ul>
@@ -455,8 +453,9 @@ Note
 </div>
 </div>
 <hr>
-<section id="long-tables-have-a-lot-of-repetitions" class="level3">
-<h3 class="anchored" data-anchor-id="long-tables-have-a-lot-of-repetitions">Long tables have a lot of repetitions:</h3>
+</section>
+<section id="long-tables-have-a-lot-of-repetitions" class="level2">
+<h2 class="anchored" data-anchor-id="long-tables-have-a-lot-of-repetitions">Long tables have a lot of repetitions:</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(Produc<span class="sc">$</span>state)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 815</span></span>
@@ -477,8 +476,8 @@ Note
 </div>
 <hr>
 </section>
-<section id="wide-tables-have-less-repetitions." class="level3">
-<h3 class="anchored" data-anchor-id="wide-tables-have-less-repetitions.">Wide tables have less repetitions.</h3>
+<section id="wide-tables-have-less-repetitions." class="level2">
+<h2 class="anchored" data-anchor-id="wide-tables-have-less-repetitions.">Wide tables have less repetitions.</h2>
 <p>To demonstrate we convert a long to wide.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Pivoting must be done per variable</span></span>
@@ -505,8 +504,8 @@ Note
 </div>
 <hr>
 </section>
-<section id="long-vs-wide" class="level3">
-<h3 class="anchored" data-anchor-id="long-vs-wide">Long vs Wide</h3>
+<section id="long-vs-wide" class="level2">
+<h2 class="anchored" data-anchor-id="long-vs-wide">Long vs Wide</h2>
 <p>Long / tidy:</p>
 <div class="cell">
 <div class="cell-output-display">
@@ -998,7 +997,7 @@ Note
 <li>All columns now have the same datatype (<code>dbl</code>)
 <ul>
 <li>This means, they can be stored in a matrix / array</li>
-<li>This gives us a <em>big</em> speed advantage (e.g.&nbsp;calculating the mean over all values is 7x faster)</li>
+<li>This gives us a <em>big</em> speed advantage (e.g.&nbsp;calculating the mean over all values is 12x faster)</li>
 </ul></li>
 </ul>
 <hr>
@@ -1040,7 +1039,6 @@ Note
 1 ARIZONA  1971    NA    NA    NA    NA    NA    NA    NA    NA</code></pre>
 </div>
 </div>
-</section>
 </section>
 <section id="limitations" class="level2">
 <h2 class="anchored" data-anchor-id="limitations">Limitations</h2>
