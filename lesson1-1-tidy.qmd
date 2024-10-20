@@ -64,7 +64,6 @@ Produc |>
 - Its bad for memory (a lot of repetitions)
 :::
 
----
 
 
 ## Long tables have a lot of repetitions:
@@ -87,7 +86,6 @@ n_values
 ```
 
 
----
 
 ## Wide tables have less repetitions.
 
@@ -112,7 +110,7 @@ Produc_wide <- Produc |>
 We can either omit the column "year", (since this is implicit knowledge, $row_i + 1970$), or use it as a `rowname`.
 :::
 
----
+
 
 ## Long vs Wide 
 
@@ -135,7 +133,7 @@ Produc_wide |>
 ```
 
 
----
+## Long vs. Wide: Number of cells
 
 How many cells / values do we have after this transformation?
 
@@ -158,7 +156,7 @@ n_values
 
 → This is a reduction of `r scales::percent(1-n_values_new/n_values)`
 
----
+
 
 ```{r}
 #| eval: false
@@ -196,6 +194,8 @@ speedup <- round(as.numeric(bm$median[2]/bm$median[1]))
 ```
 
 
+## Dataframe → Matrix
+
 Less repetitions / smaller memory footprint is only part of the advantage:
 
 - All columns now have the same datatype (`dbl`)
@@ -203,7 +203,7 @@ Less repetitions / smaller memory footprint is only part of the advantage:
   - This gives us a *big* speed advantage (e.g. calculating the mean over all values is `r speedup`x faster)
 
 
----
+## Dataframe → Matrix
 
 - Missing values are now *explicit* 
 
@@ -223,8 +223,7 @@ Produc |>
 ```
 
 
----
-
+## Dataframe → Matrix
 
 To detect missing values, cases must be made complete first:
 
@@ -245,7 +244,6 @@ Produc |>
 - Speed and memory footprint is only relevant if the data is large
 
 
-
 ## Tasks / Exercises
 
 
@@ -254,54 +252,8 @@ Produc |>
   data(Produc, package = "plm")
   ```
 
-2. Calculate the mean value per state over all years
+2. Convert the data from long to wide
 
+3. Convert the data to a matrix
 
-```{r}
-#| output: false
-data(Produc, package = "plm")
-
-
-Produc |> 
-  select(-region, -year) |> 
-  group_by(state) |> 
-  summarise(across(everything(),mean))
-
-```
-
-
-
-3. Convert the data into a 3 dimensional array (state, year and parameter)
-
-```{r}
-#| output: false
-params <- tail(colnames(Produc),-3)
-
-Produc_mat <- lapply(params, \(x){
-  # browser()
-  Produc[,c("state", "year", x)] |> 
-    pivot_wider(names_from = state, values_from = matches(x)) |> 
-    column_to_rownames("year") 
-    # 
-}) |> 
-  abind(along = 3)
-
-dimnames(Produc_mat)[[3]] <- params
-
-
-```
-
-
-4. Get familiar with `apply` and calculate the mean employment rate per year state
-
-
-```{r}
-#| output: false
-
-apply(Produc_mat, 3, colMeans)
-
-```
-
-
-4. Compare the difference in speed (e.g. using `bench::mark` or `microbenchmark`)
-   
+4. Calculate mean unemployment first using the original dataframe, then the new matrix. Compare the speed difference.

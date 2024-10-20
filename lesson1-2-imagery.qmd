@@ -20,7 +20,7 @@ library(gt)
 :::
 
 
----
+## Images are Rasters
 
 - The spatial raster data model represents the world with the continuous grid of cells (a.k.a. pixels)
 - This data model often refers to so-called regular grids, in which each cell has the same, constant size 
@@ -78,7 +78,6 @@ We will focus on the regular grids only. However, several other types of grids e
 :::
 
 
----
 
 ## Types of raster data
 
@@ -137,8 +136,9 @@ l7_full_rgb <- l7_full[[c(3,2,1)]]
 #| layout-ncol: 2
 #| column: page
 #| fig-cap: 
-#|   - The RGB Composite
 #|   - The bands stored internally
+#|   - The RGB Composite
+
 
 plot(l7_full_rgb, main = paste(c("Red", "Green", "Blue"),"Band"))
 
@@ -353,7 +353,7 @@ tm_shape(l7[[c("NIR","G","B")]]) + tm_rgb()
 
 ```
 
-
+7. Download an image from the [Sentinel Hub](https://browser.dataspace.copernicus.eu/) and import it in R.
 
  
 

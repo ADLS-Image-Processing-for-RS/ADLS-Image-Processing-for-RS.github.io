@@ -1,9 +1,8 @@
 book: 
   chapters:
-    - part: Lesson 2
-      chapters: 
-        - lesson2-1-operations.qmd 
     - part: Lesson TBD
       chapters: 
         - lesson1-3-datatypes.qmd
         - lesson1-4-nodata.qmd
+
+        

@@ -12,8 +12,9 @@ book:
       chapters: 
         - lesson1-1-tidy.qmd        
         - lesson1-2-imagery.qmd
-
-        
+    - part: Lesson 2
+      chapters: 
+        - lesson2-1-operations.qmd 
     - part: references.qmd
 format: 
   html:
