@@ -241,11 +241,176 @@
     ]
   },
   {
+    "objectID": "lesson2-1-operations.html",
+    "href": "lesson2-1-operations.html",
+    "title": "Raster Operations / Map algebra",
+    "section": "",
+    "text": "Introduction",
+    "crumbs": [
+      "Lesson 2",
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Raster Operations / Map algebra</span>"
+    ]
+  },
+  {
+    "objectID": "lesson2-1-operations.html#introduction",
+    "href": "lesson2-1-operations.html#introduction",
+    "title": "Raster Operations / Map algebra",
+    "section": "",
+    "text": "Map algebra can be defined as operations that modify or summarize raster cell values, with reference to surrounding cells, zones, or statistical functions that apply to every cell.\nMap algebra divides raster operations into four subclasses:\n\nLocal or per-cell operations\nFocal or neighborhood operations. Most often the output cell value is the result of a 3 x 3 input cell block\nZonal operations are similar to focal operations, but the surrounding pixel grid on which new values are computed can have irregular sizes and shapes\nGlobal or per-raster operations. That means the output cell derives its value potentially from one or several entire rasters",
+    "crumbs": [
+      "Lesson 2",
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Raster Operations / Map algebra</span>"
+    ]
+  },
+  {
+    "objectID": "lesson2-1-operations.html#global-operation-1",
+    "href": "lesson2-1-operations.html#global-operation-1",
+    "title": "Raster Operations / Map algebra",
+    "section": "Global Operation (1)",
+    "text": "Global Operation (1)\n\nThe most common global operations are descriptive statistics for the entire raster dataset such as the minimum, maximum or mean value.\nFor example: What is the mean elevation value for Luxembourg?\n\n\n\n\n\n\n\n\n\nFigure 3.1: Elevation of Luxembourg\n\n\n\n\n\n\n# note: mean(r) does not work, since \"mean\" is used as a local operator\nmean_elev &lt;- global(r, mean, na.rm = TRUE)\n\nmean_elev\n\n              mean\nelevation 347.6488",
+    "crumbs": [
+      "Lesson 2",
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Raster Operations / Map algebra</span>"
+    ]
+  },
+  {
+    "objectID": "lesson2-1-operations.html#global-operation-2",
+    "href": "lesson2-1-operations.html#global-operation-2",
+    "title": "Raster Operations / Map algebra",
+    "section": "Global Operation (2)",
+    "text": "Global Operation (2)\n\nAnother type of “global” operation is distance\nThis function calculates the distance from each cell to a specific target cell\nFor example, what is the distance from each cell to Luxembourg City, the capital of Luxembourg?\n\n\n\n\n\n\n\n\n\n\n\nr_dist &lt;- distance(r, luxembourg_city)\nr_dist &lt;- mask(r_dist, r)",
+    "crumbs": [
+      "Lesson 2",
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Raster Operations / Map algebra</span>"
+    ]
+  },
+  {
+    "objectID": "lesson2-1-operations.html#zonal",
+    "href": "lesson2-1-operations.html#zonal",
+    "title": "Raster Operations / Map algebra",
+    "section": "Zonal",
+    "text": "Zonal\n\nZonal operations apply an aggregation function to multiple raster cells\nA second raster with categorical values define the “zones”\n\nWhat is the mean altitude per municipality?\n\nmean_vals &lt;- zonal(r, zones, fun = mean, na.rm = TRUE)\n\n\n\n\n\n\n\n\n\n\n\n\n\nFigure 3.2: The original Zones (E.g. municipalities of Luxembourg)\n\n\n\n\n\n\n\n\n\n\n\nFigure 3.3: Mean elevation per zone / per municipality\n\n\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\n\n\n\nThe global operation can be seen as a special case of a zonal operation, where the only “Zone” is the entire dataset",
+    "crumbs": [
+      "Lesson 2",
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Raster Operations / Map algebra</span>"
+    ]
+  },
+  {
+    "objectID": "lesson2-1-operations.html#local-1",
+    "href": "lesson2-1-operations.html#local-1",
+    "title": "Raster Operations / Map algebra",
+    "section": "Local (1)",
+    "text": "Local (1)\n\nLocal operations comprise all cell-by-cell operations in one or several layers.\nFor example, we can classify the elevation into values above and below a certain threshold\n\n\n# first, create a boolean copy of the raster\nr_bool &lt;- as.logical(r)\n\nmean_elev &lt;- as.numeric(mean_elev)\nmean_elev\n\n[1] 347.6488\n\nr_bool[r &gt; mean_elev] &lt;- FALSE\nr_bool[r &lt;= mean_elev] &lt;- TRUE",
+    "crumbs": [
+      "Lesson 2",
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Raster Operations / Map algebra</span>"
+    ]
+  },
+  {
+    "objectID": "lesson2-1-operations.html#local-2",
+    "href": "lesson2-1-operations.html#local-2",
+    "title": "Raster Operations / Map algebra",
+    "section": "Local (2)",
+    "text": "Local (2)\n\nThis type of (re-) classification is a very common operation\nFor more than 2 categories, we can use classify\n\n\ncuts &lt;- global(r, quantile, probs = c(0, .33, .66, 1), na.rm = TRUE)\n\nr_classify &lt;- classify(r, as.numeric(cuts))\n\n# this next line just replaces the default labels with some custom ones\nlevels(r_classify) &lt;- data.frame(ID = 0:2, category = c(\"low\",\"mid\",\"high\"))\n\np + tm_shape(r_classify) +\n    tm_raster(style = \"cat\",legend.show = TRUE, palette = \"viridis\", title = \"Elevation\") +\n    tm_layout(legend.show = TRUE)",
+    "crumbs": [
+      "Lesson 2",
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Raster Operations / Map algebra</span>"
+    ]
+  },
+  {
+    "objectID": "lesson2-1-operations.html#local-3",
+    "href": "lesson2-1-operations.html#local-3",
+    "title": "Raster Operations / Map algebra",
+    "section": "Local (3)",
+    "text": "Local (3)\n\nLocal operations are often used with multiple bands\nFor example, we could calculate the mean intensity values of red, green and blue:\n\n\nl7 &lt;- rast(system.file(\"tif/L7_ETMs.tif\",package = \"stars\"))\n\nnames(l7) &lt;- c(\"B\", \"G\", \"R\", \"NIR\", \"SWIR\", \"MIR\")\n\nl7_rgb &lt;- l7[[c(\"R\",\"G\", \"B\")]]\n\nplot(l7_rgb, nr = 1)\n\n\n\n\n\n\n\n\n\nl7_rgb_mean &lt;- mean(l7_rgb)\n\nplot(l7_rgb_mean)",
+    "crumbs": [
+      "Lesson 2",
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Raster Operations / Map algebra</span>"
+    ]
+  },
+  {
+    "objectID": "lesson2-1-operations.html#local-4",
+    "href": "lesson2-1-operations.html#local-4",
+    "title": "Raster Operations / Map algebra",
+    "section": "Local (4)",
+    "text": "Local (4)\n\nIn a more complex usecase, we could use the R, G and B band to calculate a grayscale value (\\(L^*\\)) using the following formula (from here):\n\n\\[\\begin{aligned}\n\nL^* &= 116 \\times Y ^ {\\frac{1}{3}} - 16\\\\\n\nY &= 0.2126 \\times R^\\gamma+0.7152 \\times G^\\gamma+0.0722 \\times B^\\gamma \\\\\n\n\n\\gamma &= 2.2\n\n\\end{aligned}\\]\n\ng &lt;- 2.2\n\nl7 &lt;- l7/255 # scale values to 0-1 (probabbly not necessary)\n\nY &lt;- 0.2126 * l7[[\"R\"]]^g + 0.7152 * l7[[\"G\"]]^g + 0.0722 * l7[[\"B\"]]^g\n\nL &lt;- 116* Y^(1/3)-16",
+    "crumbs": [
+      "Lesson 2",
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Raster Operations / Map algebra</span>"
+    ]
+  },
+  {
+    "objectID": "lesson2-1-operations.html#focal",
+    "href": "lesson2-1-operations.html#focal",
+    "title": "Raster Operations / Map algebra",
+    "section": "Focal",
+    "text": "Focal\n\nWhile local functions operate on one cell focal operations take into account a central (focal) cell and its neighbors.\nThe neighborhood (also named kernel, filter or moving window) under consideration is typically of size 3-by-3 cells (that is the central cell and its eight surrounding neighbors), but can take on any other size or shape as defined by the user.\nA focal operation applies an aggregation function to all cells within the specified neighborhood, uses the corresponding output as the new value for the central cell, and moves on to the next central cell\n\n\n\n\n\n\n\nFigure 3.4: Note how, depnding on the size of your moving window, NA’s are produced. Source: Lovelace, Nowosad, and Muenchow (2019)\n\n\n\n\nfocal3by3 &lt;- matrix(rep(1,9), ncol = 3)\n\n\nfocal11by11 &lt;- matrix(rep(1,121), ncol = 11)\n\n\nr_foc3 &lt;- focal(r, focal3by3, fun = mean, fillNA = TRUE)\n\nr_foc11 &lt;- focal(r, focal11by11, fun = mean, fillNA = TRUE)\n\n\n\n\n\n\n\n\n\n\n\n\n\nFigure 3.5: Original values\n\n\n\n\n\n\n\n\n\n\n\nFigure 3.6: Result of a 3x3 Focal Window\n\n\n\n\n\n\n\n\n\n\n\nFigure 3.7: Result of a 11x11 Focal Window\n\n\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\n\n\n\nNote how the output raster is smaller as the focal window is larger (edge effect)",
+    "crumbs": [
+      "Lesson 2",
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Raster Operations / Map algebra</span>"
+    ]
+  },
+  {
+    "objectID": "lesson2-1-operations.html#focal-weights-1",
+    "href": "lesson2-1-operations.html#focal-weights-1",
+    "title": "Raster Operations / Map algebra",
+    "section": "Focal weights (1)",
+    "text": "Focal weights (1)\n\nThe focal weights we used above were square and evenly weighted\n\n\nfocal3by3\n\n     [,1] [,2] [,3]\n[1,]    1    1    1\n[2,]    1    1    1\n[3,]    1    1    1\n\n\n\nfocal11by11\n\n      [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10] [,11]\n [1,]    1    1    1    1    1    1    1    1    1     1     1\n [2,]    1    1    1    1    1    1    1    1    1     1     1\n [3,]    1    1    1    1    1    1    1    1    1     1     1\n [4,]    1    1    1    1    1    1    1    1    1     1     1\n [5,]    1    1    1    1    1    1    1    1    1     1     1\n [6,]    1    1    1    1    1    1    1    1    1     1     1\n [7,]    1    1    1    1    1    1    1    1    1     1     1\n [8,]    1    1    1    1    1    1    1    1    1     1     1\n [9,]    1    1    1    1    1    1    1    1    1     1     1\n[10,]    1    1    1    1    1    1    1    1    1     1     1\n[11,]    1    1    1    1    1    1    1    1    1     1     1",
+    "crumbs": [
+      "Lesson 2",
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Raster Operations / Map algebra</span>"
+    ]
+  },
+  {
+    "objectID": "lesson2-1-operations.html#focal-weights-2",
+    "href": "lesson2-1-operations.html#focal-weights-2",
+    "title": "Raster Operations / Map algebra",
+    "section": "Focal weights (2)",
+    "text": "Focal weights (2)\n\nHowever, we can also create uneven weights:\n\nFor example, a laplacian filter is commonly used for edge detection.\n\nlaplacian &lt;- matrix(c(0,1,0,1,-4,1,0,1,0), nrow=3) \n\nlaplacian\n\n     [,1] [,2] [,3]\n[1,]    0    1    0\n[2,]    1   -4    1\n[3,]    0    1    0\n\n\nSo are the sobel filters\n\n\n     [,1] [,2] [,3]\n[1,]   -1    0    1\n[2,]   -2    0    2\n[3,]   -1    0    1\n\n\n     [,1] [,2] [,3]\n[1,]    1    2    1\n[2,]    0    0    0\n[3,]   -1   -2   -1\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nFigure 3.8: Laplacian Filter\n\n\n\n\n\n\n\n\n\n\n\nFigure 3.9: Sobel (x-direction)\n\n\n\n\n\n\n\n\n\n\n\nFigure 3.10: SObel (y-direction)",
+    "crumbs": [
+      "Lesson 2",
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Raster Operations / Map algebra</span>"
+    ]
+  },
+  {
+    "objectID": "lesson2-1-operations.html#focal-weights-3",
+    "href": "lesson2-1-operations.html#focal-weights-3",
+    "title": "Raster Operations / Map algebra",
+    "section": "Focal weights (3)",
+    "text": "Focal weights (3)\n\nWe can also create specific shapes using weights\nWe don’t need to create these matrices by hand. Rather, we can use the function focalMat to create different shapes automatically\n\n\n# Note \n# - \"d\" is evaluated in the units of \"x\" (in our case: meters)\n# - The sum of all weights equals to 1\n# - Note how the edges receive a value of 0\nfocal_circle3000 &lt;- focalMat(x = r, d = 3000, \"circle\")\n\nfocal_circle3000\n\n           [,1]       [,2]       [,3]       [,4]       [,5]\n[1,] 0.00000000 0.00000000 0.03703704 0.00000000 0.00000000\n[2,] 0.03703704 0.03703704 0.03703704 0.03703704 0.03703704\n[3,] 0.03703704 0.03703704 0.03703704 0.03703704 0.03703704\n[4,] 0.03703704 0.03703704 0.03703704 0.03703704 0.03703704\n[5,] 0.03703704 0.03703704 0.03703704 0.03703704 0.03703704\n[6,] 0.03703704 0.03703704 0.03703704 0.03703704 0.03703704\n[7,] 0.00000000 0.00000000 0.03703704 0.00000000 0.00000000\n\n\n\n\n\n\n\nA visual representation of the matrix / filter above\n\n\n\n\n\nfocal_gauss1000 &lt;- focalMat(x = r, d = 1000, \"Gauss\")\n\nfocal_gauss1000\n\n            [,1]        [,2]        [,3]        [,4]        [,5]\n[1,] 0.000241551 0.001082556 0.001784834 0.001082556 0.000241551\n[2,] 0.002942693 0.013188236 0.021743725 0.013188236 0.002942693\n[3,] 0.013188236 0.059105572 0.097448614 0.059105572 0.013188236\n[4,] 0.021743725 0.097448614 0.160665602 0.097448614 0.021743725\n[5,] 0.013188236 0.059105572 0.097448614 0.059105572 0.013188236\n[6,] 0.002942693 0.013188236 0.021743725 0.013188236 0.002942693\n[7,] 0.000241551 0.001082556 0.001784834 0.001082556 0.000241551\n\n\n\n\n\n\n\nA visual representation of the matrix / filter above",
+    "crumbs": [
+      "Lesson 2",
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Raster Operations / Map algebra</span>"
+    ]
+  },
+  {
+    "objectID": "lesson2-1-operations.html#focal-functions-in-terrain-processing",
+    "href": "lesson2-1-operations.html#focal-functions-in-terrain-processing",
+    "title": "Raster Operations / Map algebra",
+    "section": "Focal functions in terrain processing",
+    "text": "Focal functions in terrain processing\n\nFocal functions are used to calculate the slope of a specific location, e.g. using the algorithm by Horn (1981)\nSimilarly, calculating the aspect (azimuth) of a location is a very typical task when dealing with elevation data\nThese algorithms are used so often, that they are implemented in a dedicated function (terrain())\n\nterrain(r, \"slope\") |&gt; plot()\nterrain(r, \"aspect\") |&gt; plot()\n\n\n\n\n\n\n\n\n\nFigure 3.11: Calculating slope using a predefined algorithm\n\n\n\n\n\n\n\n\n\n\n\nFigure 3.12: Calculating aspect",
+    "crumbs": [
+      "Lesson 2",
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Raster Operations / Map algebra</span>"
+    ]
+  },
+  {
+    "objectID": "lesson2-1-operations.html#tasks-exercises",
+    "href": "lesson2-1-operations.html#tasks-exercises",
+    "title": "Raster Operations / Map algebra",
+    "section": "Tasks / Exercises",
+    "text": "Tasks / Exercises\n\nDownlaod and import the elevation of Luxembourg from moodle (CW43 → Datasets)\nCaluculate the mean, maxaximum and minimum elevation values\nCalculate slope and aspect (see terrain functions)\nDetermine suitable locations of solar panels using the following conditions:\n\nElevation: above 500 MASL\nSlope: Between 1 and 3°\nAspect: Southfacing (between 135 and 235°)\n\nDownload the Municipalities of Luxembourg from Moodle and calculate the minimum, maximum and mean elevation values per municipality.\nSmooth the elevation values using different focal windows\nImport the multispectral Landsat 7 as a raster using the following path\n\nsystem.file(\"tif/L7_ETMs.tif\",package = \"stars\")\n\nCalculate the NDVI using the following formula:\n\n\\[\\text{NDVI} = \\frac{\\text{NIR}-\\text{red}}{\\text{NIR}+\\text{red}}\\]\n\n\n\n\n\n\n\n\n\n\nDownload a Sentinel 2 Image from browser.dataspace.copernicus.eu for a location of your choosing. Import it as a raster image in R. Note that you have to import the individual bands and then recombine the image to a multiband raster.\nCreate a True-Color RGB Image and a False-Color NirGB Image using the appropriate bands (see Spectral Bands (Wikipedia))\nCalculate NDVI of the Sentinel 2 Image using the appropriate bands\n\n\n\n\n\nHorn, Berthold KP. 1981. “Hill Shading and the Reflectance Map.” Proceedings of the IEEE 69 (1): 14–47.\n\n\nLovelace, Robin, Jakub Nowosad, and Jannes Muenchow. 2019. Geocomputation with r. Chapman; Hall/CRC.",
+    "crumbs": [
+      "Lesson 2",
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Raster Operations / Map algebra</span>"
+    ]
+  },
+  {
     "objectID": "references.html",
     "href": "references.html",
     "title": "References",
     "section": "",
-    "text": "Baltagi, Badi Hani, and Badi H Baltagi. 2008. Econometric Analysis\nof Panel Data. Vol. 4. Springer. https://bcs.wiley.com/he-bcs/Books?action=resource&bcsId=4338&itemId=1118672321&resourceId=13452.\n\n\nPebesma, Edzer, and Roger Bivand. 2023. Spatial Data Science: With\nApplications in R. Boca Raton: Chapman; Hall/CRC. https://doi.org/10.1201/9780429459016.\n\n\nWickham, Hadley. 2014. “Tidy Data.” Journal of\nStatistical Software 59 (10): 1–23. https://doi.org/10.18637/jss.v059.i10.",
+    "text": "Baltagi, Badi Hani, and Badi H Baltagi. 2008. Econometric Analysis\nof Panel Data. Vol. 4. Springer. https://bcs.wiley.com/he-bcs/Books?action=resource&bcsId=4338&itemId=1118672321&resourceId=13452.\n\n\nHorn, Berthold KP. 1981. “Hill Shading and the Reflectance\nMap.” Proceedings of the IEEE 69 (1): 14–47.\n\n\nLovelace, Robin, Jakub Nowosad, and Jannes Muenchow. 2019.\nGeocomputation with r. Chapman; Hall/CRC.\n\n\nPebesma, Edzer, and Roger Bivand. 2023. Spatial Data Science: With\nApplications in R. Boca Raton: Chapman; Hall/CRC. https://doi.org/10.1201/9780429459016.\n\n\nWickham, Hadley. 2014. “Tidy Data.” Journal of\nStatistical Software 59 (10): 1–23. https://doi.org/10.18637/jss.v059.i10.",
     "crumbs": [
       "References"
     ]
