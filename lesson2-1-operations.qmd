@@ -498,9 +498,9 @@ terrain(r, "aspect") |> plot()
 ## Tasks / Exercises
 
 
-1. Downlaod and import the elevation of Luxembourg from moodle (CW43 → Datasets) 
+1. Download and import the elevation of Luxembourg from Moodle (CW43 → Datasets) 
 
-2. Caluculate the mean, maxaximum and minimum elevation values
+2. Calculate the mean, maximum and minimum elevation values
 
 3. Calculate slope and aspect (see [terrain functions](https://rspatial.github.io/terra/reference/terrain.html))
 
