@@ -1,0 +1,122 @@
+---
+echo: true
+---
+# Showcase: Importing Sentinel data
+
+- Sentinel 2 data is provided in SAFE format. This is a zipped file that contains the data in separate JP2 files
+
+
+```{r}
+library(terra)
+library(dplyr)
+
+s2_files <- list.files("data-large/S2B_MSIL2A_20240915T102559_N0511_R108_T32TMS_20240915T131207.SAFE/GRANULE/L2A_T32TMS_A039316_20240915T102803/IMG_DATA/R60m/", "\\.jp2$", full.names = TRUE)
+```
+
+The folder above includes the following content:
+
+```{r}
+#| echo: false
+
+library(data.tree)
+
+as.Node(data.frame(paths = s2_files),pathName = "paths")
+```
+
+We can import all `jp2` files into a `rast` object. To add reasonable `names` to the SpatRaster object, we can use `str_split_fixed` to extract the relevant information from the file names.
+
+```{r}
+library(stringr)
+
+s2 <- rast(s2_files)
+
+names(s2) <- str_split_fixed(names(s2), "_",4)[,3]
+
+names(s2)
+```
+
+
+For now, we will only use B01 to B12. We can select these bands by using the `[[` operator. 
+
+```{r}
+sel <- names(s2) %in% paste0("B",str_pad(1:12,2,pad = "0"))
+
+s2_sel <- s2[[sel]]
+```
+
+
+Further metadata can be extracted from the `MTD_MSIL2A.xml` file. This file contains information about the bands, the scale factor, and the offset values. Here we use `xml2` and `rvest` to extract the relevant information programmatically. 
+
+```{r}
+library(xml2)
+library(rvest)
+
+metadata <- read_xml("data-large/S2B_MSIL2A_20240915T102559_N0511_R108_T32TMS_20240915T131207.SAFE/MTD_MSIL2A.xml") 
+
+scale_val <- metadata |> 
+  html_node(xpath = "//BOA_QUANTIFICATION_VALUE")|> 
+  html_text() |> 
+  as.numeric()
+
+
+
+offset_val <- metadata |> 
+  html_node(xpath = "//BOA_ADD_OFFSET_VALUES_LIST") |> 
+  html_children() |> 
+  html_text() |> 
+  as.numeric()
+
+
+```
+
+
+```{r}
+# Since all bands have the same scale and offset values, we can apply these to all bands
+s2b <- (s2_sel+ unique(offset_val))/scale_val
+```
+
+Now that the values are rescaled, they should range between 0 and 1. We can use the `global` function to check this: 
+
+```{r}
+global(s2b, c("min","max"))
+```
+
+We can see that the values are not within the desired range. We now have to decide how to handle these values. One option is to simply clip the values to the desired range with the function below:
+
+
+```{r}
+force_minmax <- \(x, min = 0, max = 1){
+  x[x<min] <- min
+  x[x>max] <- max
+  x
+}
+```
+
+To apply this function to all bands, we can use the `app` function. 
+
+```{r}
+s2c <- app(s2b, force_minmax)
+
+global(s2c, c("min","max"))
+```
+
+Let's create a True Color image using the bands B05, B03, and B02. 
+
+```{r}
+plotRGB(s2c,r = 5, g = 3, b = 2, stretch = "histogram", smooth = FALSE)
+```
+
+To calculate NDVI, we can create our custom function and apply it to the `s2c` object using `app`:
+
+```{r}
+ndvi <- \(x){(x[5]-x[4])/(x[5]+x[4])}
+
+s2_ndvi <- app(s2c, ndvi)
+
+
+library(tmap)
+tm_shape(s2_ndvi) + 
+  tm_raster(style = "cont",midpoint = 0) + 
+  tm_layout(legend.outside = TRUE)
+```
+

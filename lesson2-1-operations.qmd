@@ -505,7 +505,7 @@ terrain(r, "aspect") |> plot()
 3. Calculate slope and aspect (see [terrain functions](https://rspatial.github.io/terra/reference/terrain.html))
 
 4. Determine suitable locations of solar panels using the following conditions:
-   - Elevation: above 500 MASL
+   - Elevation: above 300 MASL
    - Slope: Between 1 and 3° 
    - Aspect: Southfacing (between 135 and 235°)
    

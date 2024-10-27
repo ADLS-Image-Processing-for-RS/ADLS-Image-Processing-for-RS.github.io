@@ -15,6 +15,10 @@ book:
     - part: Lesson 2
       chapters: 
         - lesson2-1-operations.qmd 
+    - part: Lesson 3
+      chapters: 
+        - lesson3-1-datatypes.qmd
+        - lesson3-2-sentinel-data.qmd
     - part: references.qmd
 format: 
   html:
