@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>NoData – Image Processing for Remote Sensing</title>
+<title>Data Types – Image Processing for Remote Sensing</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -50,7 +50,8 @@ div.csl-indent {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./lesson1-3-datatypes.html" rel="prev">
+<link href="./lesson3-2-sentinel-data.html" rel="next">
+<link href="./lesson2-1-operations.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -113,6 +114,35 @@ div.csl-indent {
   
   </script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="aux/style.css">
 </head>
@@ -126,7 +156,7 @@ div.csl-indent {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./lesson1-3-datatypes.html">Lesson TBD</a></li><li class="breadcrumb-item"><a href="./lesson1-4-nodata.html"><span class="chapter-title">NoData</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./lesson3-1-datatypes.html">Lesson 3</a></li><li class="breadcrumb-item"><a href="./lesson3-1-datatypes.html"><span class="chapter-title">Data Types</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -186,18 +216,14 @@ div.csl-indent {
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
-      <span class="sidebar-item-text sidebar-link text-start">
- <span class="menu-text">References</span></span>
-  </li>
-        <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
  <span class="menu-text">Lesson 2</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./lesson2-1-operations.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Raster Operations / Map algebra</span></a>
@@ -207,45 +233,43 @@ div.csl-indent {
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
- <span class="menu-text">Lesson TBD</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Lesson 3</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./lesson1-3-datatypes.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Data Types</span></a>
+  <a href="./lesson3-1-datatypes.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Data Types</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./lesson1-4-nodata.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">NoData</span></a>
+  <a href="./lesson3-2-sentinel-data.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Showcase: Importing Sentinel data</span></a>
   </div>
 </li>
       </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">References</span></span>
   </li>
     </ul>
     </div>
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">Table of contents</h2>
-   
-  <ul>
-  <li><a href="#bibliography" id="toc-bibliography" class="nav-link active" data-scroll-target="#bibliography">Bibliography</a></li>
-  </ul>
-</nav>
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+        
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./lesson1-3-datatypes.html">Lesson TBD</a></li><li class="breadcrumb-item"><a href="./lesson1-4-nodata.html"><span class="chapter-title">NoData</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./lesson3-1-datatypes.html">Lesson 3</a></li><li class="breadcrumb-item"><a href="./lesson3-1-datatypes.html"><span class="chapter-title">Data Types</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span id="sec-no-data" class="quarto-section-identifier"><span class="chapter-title">NoData</span></span></h1>
+<h1 class="title"><span id="sec-data-types" class="quarto-section-identifier"><span class="chapter-title">Data Types</span></span></h1>
 </div>
 
 
@@ -263,42 +287,151 @@ div.csl-indent {
 
 
 <hr>
+<table class="caption-top table">
+<caption>The possible ranges of different datatypes in <code>gdal</code> (source: <span class="citation" data-cites="amatulli2024">Amatulli</span>)</caption>
+<colgroup>
+<col style="width: 27%">
+<col style="width: 23%">
+<col style="width: 23%">
+<col style="width: 13%">
+<col style="width: 11%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Data type</th>
+<th style="text-align: right;">Minimum</th>
+<th style="text-align: right;">Maximum</th>
+<th style="text-align: right;">Size<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></th>
+<th style="text-align: right;">Factor</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Byte</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">255</td>
+<td style="text-align: right;">39M</td>
+<td style="text-align: right;">1x</td>
+</tr>
+<tr class="even">
+<td>UInt16</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">65,535</td>
+<td style="text-align: right;">78M</td>
+<td style="text-align: right;">2x</td>
+</tr>
+<tr class="odd">
+<td>Int16, CInt16</td>
+<td style="text-align: right;">-32,768</td>
+<td style="text-align: right;">32,767</td>
+<td style="text-align: right;">78M</td>
+<td style="text-align: right;">2x</td>
+</tr>
+<tr class="even">
+<td>UInt32</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">4,294,967,295</td>
+<td style="text-align: right;">155M</td>
+<td style="text-align: right;">~4x</td>
+</tr>
+<tr class="odd">
+<td>Int32, CInt32</td>
+<td style="text-align: right;">-2,147,483,648</td>
+<td style="text-align: right;">2,147,483,647</td>
+<td style="text-align: right;">155M</td>
+<td style="text-align: right;">~4x</td>
+</tr>
+<tr class="even">
+<td>Float32, CFloat32</td>
+<td style="text-align: right;">-3.4E38</td>
+<td style="text-align: right;">3.4E38</td>
+<td style="text-align: right;">155M</td>
+<td style="text-align: right;">~4x</td>
+</tr>
+<tr class="odd">
+<td>Float64, CFloat64</td>
+<td style="text-align: right;">-1.79E308</td>
+<td style="text-align: right;">1.79E308</td>
+<td style="text-align: right;">309M</td>
+<td style="text-align: right;">~8x</td>
+</tr>
+</tbody>
+</table>
+<div class="notes callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
 <ul>
-<li>Raster <em>Files</em> do not have an explicit <code>NoData</code> value</li>
-<li>To specify cells with <code>NoData</code>:
-<ol type="1">
-<li>We must assign this cell any value within Datatypes range of values (typicall the highest possible value)</li>
-<li>Label this value to be interpreted as <code>NoData</code></li>
-</ol></li>
+<li>If you store categorical data, use integer datatype and store the corespondence in the metadata</li>
+<li>Always be minimalistic about which datatype you need.</li>
+<li>Question if you have a continuous value from 0 to 1, which datatype do you use?
+<ul>
+<li>Not <code>Float32</code>! But Multiply by 100 and use <code>Byte</code> or by 1000 (if you need more precision) and use <code>UInt16</code></li>
+</ul></li>
+<li>Question: if you are measuring temperature, and your values are floating point ranging is -20 to +40 degrees, what datatype are you going to use?
+<ul>
+<li>Not CFloat32!</li>
+<li>Multiply by 100 and use <code>CInt16</code></li>
+</ul></li>
+<li>Question: if you compute NDVI and have values in the range 0 - 1, what datatype do you use?
+<ul>
+<li>Not <code>Float32</code>, but not <code>CInt16</code> either:</li>
+<li>Transform the values to 0 - 255</li>
+</ul></li>
 </ul>
+</div>
+</div>
+</div>
+<hr>
+<p>Transform -1 to +1 to 0 - 254<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>:</p>
+<!-- &= a + \frac{(x-(-1))\times(255-0)}{1-(-1)} \\ -->
+<p><span class="math display">\[\begin{align}
+x' &amp;= a + \frac{(x-min(x))\times(b - a)}{max(x)-min(x)} \\
+
+&amp;= 0 + \frac{(x+1)\times 254}{2} \\
+
+&amp;= (x+1)\times 127 \\
+
+x` &amp;= 127x+127 \\
+
+x &amp;= \frac{x'-127}{127}
+\end{align}\]</span></p>
+<hr>
 <div class="cell">
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="lesson1-4-nodata_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="lesson3-1-datatypes_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
-<div id="fig-stevens" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-stevens-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="img/stevens_1946.png" class="img-fluid figure-img">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-stevens-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;5.1: <span class="citation" data-cites="stevens1946">Stevens (<a href="references.html#ref-stevens1946" role="doc-biblioref">1946</a>)</span> “On the Theory of Scales of Measurement”
-</figcaption>
-</figure>
-</div>
-<section id="bibliography" class="level2">
-<h2 class="anchored" data-anchor-id="bibliography">Bibliography</h2>
+<p>Note:</p>
+<ul>
+<li><span class="math inline">\(y = ax + b\)</span></li>
+<li>a = <code>scale</code> and b = <code>offset</code></li>
+</ul>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
-<div id="ref-stevens1946" class="csl-entry" role="listitem">
-Stevens, Stanley Smith. 1946. <span>“On the Theory of Scales of Measurement.”</span> <em>Science</em> 103 (2684): 677–80.
+<div id="ref-amatulli2024" class="csl-entry" role="listitem">
+Amatulli, Giuseppe. <span>“Geocomputation and Machine Learning for Environmental Applications.”</span> <a href="http://spatial-ecology.net/docs/build/html/GDAL/gdal_osgeo.html" class="uri">http://spatial-ecology.net/docs/build/html/GDAL/gdal_osgeo.html</a>.
 </div>
 </div>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1"><p>Difference in file size using constant dataset (same values and resolution) and varying the datatype<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>255 is reserved, as we will see later<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
 </section>
 
 </main> <!-- /main -->
@@ -724,11 +857,14 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./lesson1-3-datatypes.html" class="pagination-link" aria-label="Data Types">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Data Types</span></span>
+      <a href="./lesson2-1-operations.html" class="pagination-link" aria-label="Raster Operations / Map algebra">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Raster Operations / Map algebra</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
+      <a href="./lesson3-2-sentinel-data.html" class="pagination-link" aria-label="Showcase: Importing Sentinel data">
+        <span class="nav-page-text"><span class="chapter-title">Showcase: Importing Sentinel data</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
   </div>
 </nav>
 </div> <!-- /content -->
