@@ -14,19 +14,21 @@ library(gt)
 
 ```
 
+## GDAL data types
 
+The following Numeric data types are supported by `gdal`:
 
 ---
 
-| Data type         	| Minimum        	| Maximum       	| Size[^1] | Factor |
-|-------------------	|---------------:	|---------------: |--------: |-------:| 
-| Byte              	| 0              	| 255           	| 39M  	   |     1x |
-| UInt16            	| 0              	| 65,535        	| 78M  	   |     2x |
-| Int16, CInt16     	| -32,768        	| 32,767        	| 78M  	   |     2x |
-| UInt32            	| 0              	| 4,294,967,295 	| 155M 	   |    ~4x |
-| Int32, CInt32     	| -2,147,483,648 	| 2,147,483,647 	| 155M 	   |    ~4x |
-| Float32, CFloat32 	| -3.4E38        	| 3.4E38        	| 155M 	   |    ~4x |
-| Float64, CFloat64 	| -1.79E308      	| 1.79E308      	| 309M 	   |    ~8x | 
+| Data type         | Minimum        | Maximum       | Size[^1]| Factor |
+|-------------------|---------------:|--------------:|--------:|-------:| 
+| Byte              | 0              | 255           | 39M  	 |     1x |
+| UInt16            | 0              | 65,535        | 78M  	 |     2x |
+| Int16, CInt16     | -32,768        | 32,767        | 78M  	 |     2x |
+| UInt32            | 0              | 4,294,967,295 | 155M 	 |    ~4x |
+| Int32, CInt32     | -2,147,483,648 | 2,147,483,647 | 155M 	 |    ~4x |
+| Float32, CFloat32 | -3.4E38        | 3.4E38        | 155M 	 |    ~4x |
+| Float64, CFloat64 | -1.79E308      | 1.79E308      | 309M 	 |    ~8x | 
 
 : The possible ranges of different datatypes in `gdal` (source: @amatulli2024)
 
@@ -51,24 +53,29 @@ library(gt)
 
 ---
 
-Transform -1 to +1 to 0 - 254[^maxval]:
+## Rescaling values to 0 - 255
 
-<!-- &= a + \frac{(x-(-1))\times(255-0)}{1-(-1)} \\ -->
+From [Wikipedia](https://en.wikipedia.org/wiki/Feature_scaling#Rescaling_(min-max_normalization)): 
+
+> To rescale a range between an arbitrary set of values [a, b], the formula becomes: 
+> $$x' = a + \frac{(x-min(x))\times(b - a)}{max(x)-min(x)}$$
+
+Let's use our values and solve this equation:
+
+- `min(x)` and `max(x)`: `-1` and `1` respectively
+- `a` and `b`: 0 and 255 respectively
 
 \begin{align}
-x' &= a + \frac{(x-min(x))\times(b - a)}{max(x)-min(x)} \\
 
-&= 0 + \frac{(x+1)\times 254}{2} \\
+x' &= 0 + \frac{(x+1)\times 255}{2} \\
 
-&= (x+1)\times 127 \\
+x' &= \frac{255x+255}{2} \\
 
-x` &= 127x+127 \\
+x' &= 127x+127.5 \\
 
-x &= \frac{x'-127}{127}
 \end{align}
 
 
-[^maxval]: 255 is reserved, as we will see later
 
 ---
 
@@ -88,8 +95,8 @@ x &= \frac{x'-127}{127}
 # x_new <- rescale_n(x, c(-1,1),c(0,255), TRUE)
 
 
-x_stored <- 0:254
-x_measured <- (x_stored-127)/127
+x_stored <- 0:255
+x_measured <- (x_stored-127.5)/127.5
 
 
 tibble(x_measured, x_stored) |> 

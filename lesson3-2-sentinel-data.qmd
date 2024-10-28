@@ -103,8 +103,14 @@ global(s2c, c("min","max"))
 Let's create a True Color image using the bands B05, B03, and B02. 
 
 ```{r}
-plotRGB(s2c,r = 5, g = 3, b = 2, stretch = "histogram", smooth = FALSE)
+plotRGB(s2c,r = 4, g = 3, b = 2, stretch = "histogram", smooth = FALSE)
 ```
+
+```{r}
+# export to RGB Geotiff
+writeRaster(s2c[[c(4,3,2)]], "data-out/sentinel-rgb.tif")
+```
+
 
 To calculate NDVI, we can create our custom function and apply it to the `s2c` object using `app`:
 
@@ -119,4 +125,5 @@ tm_shape(s2_ndvi) +
   tm_raster(style = "cont",midpoint = 0) + 
   tm_layout(legend.outside = TRUE)
 ```
+
 
