@@ -261,8 +261,15 @@ window.Quarto = {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#gdal-data-types" id="toc-gdal-data-types" class="nav-link active" data-scroll-target="#gdal-data-types">GDAL data types</a></li>
+  <li><a href="#rescaling-values-to-0---255" id="toc-rescaling-values-to-0---255" class="nav-link" data-scroll-target="#rescaling-values-to-0---255">Rescaling values to 0 - 255</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -286,13 +293,16 @@ window.Quarto = {
 </header>
 
 
+<section id="gdal-data-types" class="level2">
+<h2 class="anchored" data-anchor-id="gdal-data-types">GDAL data types</h2>
+<p>The following Numeric data types are supported by <code>gdal</code>:</p>
 <hr>
 <table class="caption-top table">
 <caption>The possible ranges of different datatypes in <code>gdal</code> (source: <span class="citation" data-cites="amatulli2024">Amatulli</span>)</caption>
 <colgroup>
-<col style="width: 27%">
+<col style="width: 28%">
 <col style="width: 23%">
-<col style="width: 23%">
+<col style="width: 22%">
 <col style="width: 13%">
 <col style="width: 11%">
 </colgroup>
@@ -391,18 +401,26 @@ Note
 </div>
 </div>
 <hr>
-<p>Transform -1 to +1 to 0 - 254<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>:</p>
-<!-- &= a + \frac{(x-(-1))\times(255-0)}{1-(-1)} \\ -->
+</section>
+<section id="rescaling-values-to-0---255" class="level2">
+<h2 class="anchored" data-anchor-id="rescaling-values-to-0---255">Rescaling values to 0 - 255</h2>
+<p>From <a href="https://en.wikipedia.org/wiki/Feature_scaling#Rescaling_(min-max_normalization)">Wikipedia</a>:</p>
+<blockquote class="blockquote">
+<p>To rescale a range between an arbitrary set of values [a, b], the formula becomes: <span class="math display">\[x' = a + \frac{(x-min(x))\times(b - a)}{max(x)-min(x)}\]</span></p>
+</blockquote>
+<p>Let’s use our values and solve this equation:</p>
+<ul>
+<li><code>min(x)</code> and <code>max(x)</code>: <code>-1</code> and <code>1</code> respectively</li>
+<li><code>a</code> and <code>b</code>: 0 and 255 respectively</li>
+</ul>
 <p><span class="math display">\[\begin{align}
-x' &amp;= a + \frac{(x-min(x))\times(b - a)}{max(x)-min(x)} \\
 
-&amp;= 0 + \frac{(x+1)\times 254}{2} \\
+x' &amp;= 0 + \frac{(x+1)\times 255}{2} \\
 
-&amp;= (x+1)\times 127 \\
+x' &amp;= \frac{255x+255}{2} \\
 
-x` &amp;= 127x+127 \\
+x' &amp;= 127x+127.5 \\
 
-x &amp;= \frac{x'-127}{127}
 \end{align}\]</span></p>
 <hr>
 <div class="cell">
@@ -426,11 +444,11 @@ x &amp;= \frac{x'-127}{127}
 Amatulli, Giuseppe. <span>“Geocomputation and Machine Learning for Environmental Applications.”</span> <a href="http://spatial-ecology.net/docs/build/html/GDAL/gdal_osgeo.html" class="uri">http://spatial-ecology.net/docs/build/html/GDAL/gdal_osgeo.html</a>.
 </div>
 </div>
+</section>
 <section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
 <hr>
 <ol>
 <li id="fn1"><p>Difference in file size using constant dataset (same values and resolution) and varying the datatype<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn2"><p>255 is reserved, as we will see later<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 

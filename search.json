@@ -406,11 +406,44 @@
     ]
   },
   {
+    "objectID": "lesson3-1-datatypes.html",
+    "href": "lesson3-1-datatypes.html",
+    "title": "Data Types",
+    "section": "",
+    "text": "GDAL data types\nThe following Numeric data types are supported by gdal:",
+    "crumbs": [
+      "Lesson 3",
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Data Types</span>"
+    ]
+  },
+  {
+    "objectID": "lesson3-1-datatypes.html#gdal-data-types",
+    "href": "lesson3-1-datatypes.html#gdal-data-types",
+    "title": "Data Types",
+    "section": "",
+    "text": "The possible ranges of different datatypes in gdal (source: Amatulli)\n\n\n\n\n\n\n\n\n\nData type\nMinimum\nMaximum\nSize1\nFactor\n\n\n\n\nByte\n0\n255\n39M\n1x\n\n\nUInt16\n0\n65,535\n78M\n2x\n\n\nInt16, CInt16\n-32,768\n32,767\n78M\n2x\n\n\nUInt32\n0\n4,294,967,295\n155M\n~4x\n\n\nInt32, CInt32\n-2,147,483,648\n2,147,483,647\n155M\n~4x\n\n\nFloat32, CFloat32\n-3.4E38\n3.4E38\n155M\n~4x\n\n\nFloat64, CFloat64\n-1.79E308\n1.79E308\n309M\n~8x\n\n\n\n\n\n\n\n\n\nNote\n\n\n\n\n\n\nIf you store categorical data, use integer datatype and store the corespondence in the metadata\nAlways be minimalistic about which datatype you need.\nQuestion if you have a continuous value from 0 to 1, which datatype do you use?\n\nNot Float32! But Multiply by 100 and use Byte or by 1000 (if you need more precision) and use UInt16\n\nQuestion: if you are measuring temperature, and your values are floating point ranging is -20 to +40 degrees, what datatype are you going to use?\n\nNot CFloat32!\nMultiply by 100 and use CInt16\n\nQuestion: if you compute NDVI and have values in the range 0 - 1, what datatype do you use?\n\nNot Float32, but not CInt16 either:\nTransform the values to 0 - 255",
+    "crumbs": [
+      "Lesson 3",
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Data Types</span>"
+    ]
+  },
+  {
+    "objectID": "lesson3-1-datatypes.html#rescaling-values-to-0---255",
+    "href": "lesson3-1-datatypes.html#rescaling-values-to-0---255",
+    "title": "Data Types",
+    "section": "Rescaling values to 0 - 255",
+    "text": "Rescaling values to 0 - 255\nFrom Wikipedia:\n\nTo rescale a range between an arbitrary set of values [a, b], the formula becomes: \\[x' = a + \\frac{(x-min(x))\\times(b - a)}{max(x)-min(x)}\\]\n\nLet’s use our values and solve this equation:\n\nmin(x) and max(x): -1 and 1 respectively\na and b: 0 and 255 respectively\n\n\\[\\begin{align}\n\nx' &= 0 + \\frac{(x+1)\\times 255}{2} \\\\\n\nx' &= \\frac{255x+255}{2} \\\\\n\nx' &= 127x+127.5 \\\\\n\n\\end{align}\\]\n\n\n\n\n\n\n\n\n\n\nNote:\n\n\\(y = ax + b\\)\na = scale and b = offset\n\n\n\n\n\nAmatulli, Giuseppe. “Geocomputation and Machine Learning for Environmental Applications.” http://spatial-ecology.net/docs/build/html/GDAL/gdal_osgeo.html.",
+    "crumbs": [
+      "Lesson 3",
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Data Types</span>"
+    ]
+  },
+  {
     "objectID": "lesson3-1-datatypes.html#footnotes",
     "href": "lesson3-1-datatypes.html#footnotes",
     "title": "Data Types",
     "section": "",
-    "text": "Difference in file size using constant dataset (same values and resolution) and varying the datatype↩︎\n255 is reserved, as we will see later↩︎",
+    "text": "Difference in file size using constant dataset (same values and resolution) and varying the datatype↩︎",
     "crumbs": [
       "Lesson 3",
       "<span class='chapter-number'>4</span>  <span class='chapter-title'>Data Types</span>"
