@@ -275,8 +275,16 @@ window.Quarto = {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#download-data" id="toc-download-data" class="nav-link active" data-scroll-target="#download-data">Download data</a></li>
+  <li><a href="#copernicus-safe-format-i" id="toc-copernicus-safe-format-i" class="nav-link" data-scroll-target="#copernicus-safe-format-i">Copernicus SAFE Format I</a></li>
+  <li><a href="#copernicus-safe-format-ii" id="toc-copernicus-safe-format-ii" class="nav-link" data-scroll-target="#copernicus-safe-format-ii">Copernicus SAFE Format II</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -300,6 +308,22 @@ window.Quarto = {
 </header>
 
 
+<section id="download-data" class="level2">
+<h2 class="anchored" data-anchor-id="download-data">Download data</h2>
+<p>To download Sentinel data:</p>
+<ol type="1">
+<li>Go to the <a href="https://browser.dataspace.copernicus.eu/">Copernicus Browser</a> website</li>
+<li>Login using your credentials</li>
+<li>Go to your area of interest</li>
+<li>Click on the “Search” Tab in the left panel</li>
+<li>In Data Source, select <em>Sentinel 2</em> → <em>L2A</em></li>
+<li>Choose your desired time frame</li>
+<li>Click on the “Search” button</li>
+<li>From the search results, download one or two scenes</li>
+</ol>
+</section>
+<section id="copernicus-safe-format-i" class="level2">
+<h2 class="anchored" data-anchor-id="copernicus-safe-format-i">Copernicus SAFE Format I</h2>
 <ul>
 <li>Sentinel 2 data is provided in SAFE format. This is a zipped file that contains the data in separate JP2 files</li>
 <li>The Sentinel-SAFE format wraps a folder containing image data in a binary data format and product metadata in XML.</li>
@@ -312,6 +336,9 @@ window.Quarto = {
 <li>A support folder containing the XML schemes describing the product XML.</li>
 </ul></li>
 </ul>
+</section>
+<section id="copernicus-safe-format-ii" class="level2">
+<h2 class="anchored" data-anchor-id="copernicus-safe-format-ii">Copernicus SAFE Format II</h2>
 <p>The SAFE folder above includes the following content:</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
@@ -427,7 +454,7 @@ window.Quarto = {
 <li>However, it seems that we have to apply these values manually: <a href="https://sentinel.esa.int/en/web/sentinel/technical-guides/sentinel-2-msi/level-1c/product-formatting">this website</a>, writes the following:</li>
 </ul>
 <blockquote class="blockquote">
-<p>The transformation of reflectances in 16 bit integers is performed according to the following equation: <span class="math display">\[\text{L1C\_DN} = \rho \times \text{QUANTIFICATION_VALUE} - \text{RADIO_ADD_OFFSET}\]</span> The L1C product’s metadata includes the values for the QUANTIFICATION_VALUE and RADIO_ADD_OFFSET.</p>
+<p>The transformation of reflectances in 16 bit integers is performed according to the following equation: <span class="math display">\[\text{L1C\_DN} = \rho \times \text{QUANTIFICATION\_VALUE} - \text{RADIO\_ADD\_OFFSET}\]</span> The L1C product’s metadata includes the values for the QUANTIFICATION_VALUE and RADIO_ADD_OFFSET.</p>
 </blockquote>
 <ul>
 <li>This information is stored in the file <code>MTD_MSIL2A.xml</code>:</li>
@@ -546,6 +573,7 @@ max   1   1   1   1   1   1   1   1   1   1</code></pre>
 </div>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
