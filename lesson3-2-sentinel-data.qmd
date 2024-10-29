@@ -1,7 +1,25 @@
 ---
 echo: true
 ---
+
 # Showcase: Importing Sentinel data
+
+## Download data
+
+To download Sentinel data:
+
+1. Go to the [Copernicus Browser](https://browser.dataspace.copernicus.eu/) website
+2. Login using your credentials
+3. Go to your area of interest
+4. Click on the "Search" Tab in the left panel
+5. In Data Source, select *Sentinel 2* → *L2A*
+6. Choose your desired time frame
+7. Click on the "Search" button
+8. From the search results, download one or two scenes
+
+
+## Copernicus SAFE Format I
+
 
 - Sentinel 2 data is provided in SAFE format. This is a zipped file that contains the data in separate JP2 files
 - The Sentinel-SAFE format wraps a folder containing image data in a binary data format and product metadata in XML. 
@@ -12,6 +30,9 @@ echo: true
   - An annotation folder containing the product metadata in XML as well as calibration data.
   - A support folder containing the XML schemes describing the product XML.
 
+
+
+## Copernicus SAFE Format II
 
 The SAFE folder above includes the following content:
 
@@ -81,7 +102,7 @@ plot(s2[[1]])
 - However, it seems that we have to apply these values manually: [this website](https://sentinel.esa.int/en/web/sentinel/technical-guides/sentinel-2-msi/level-1c/product-formatting), writes the following:
 
 > The transformation of reflectances in 16 bit integers is performed according to the following equation:
-> $$\text{L1C\_DN} = \rho \times \text{QUANTIFICATION_VALUE} - \text{RADIO_ADD_OFFSET}$$
+> $$\text{L1C\_DN} = \rho \times \text{QUANTIFICATION\_VALUE} - \text{RADIO\_ADD\_OFFSET}$$
 > The L1C product's metadata includes the values for the QUANTIFICATION_VALUE and RADIO_ADD_OFFSET.
 
 - This information is stored in the file `MTD_MSIL2A.xml`:
