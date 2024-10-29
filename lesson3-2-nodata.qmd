@@ -1,0 +1,22 @@
+# NoData {#sec-no-data}
+
+
+- Raster *Files* do not have an explicit `NoData` value
+- To specify cells with `NoData`: 
+  1. We must assign this cell any value within Datatypes range of values (typically the highest possible value)
+  2. Label this value to be interpreted as `NoData`
+
+
+
+```{r}
+
+
+library(terra)
+library(tmap)
+
+elev <- rast(system.file("ex/elev.tif", package="terra"))
+
+plot(elev)
+```
+
+

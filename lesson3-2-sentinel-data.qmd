@@ -4,7 +4,45 @@ echo: true
 # Showcase: Importing Sentinel data
 
 - Sentinel 2 data is provided in SAFE format. This is a zipped file that contains the data in separate JP2 files
+- The Sentinel-SAFE format wraps a folder containing image data in a binary data format and product metadata in XML. 
+- This includes:
+  - A 'manifest.safe' file which holds the general product information in XML.
+  - Subfolders for measurement datasets containing image data in various binary formats.
+  - A preview folder containing 'quicklooks' in PNG format, Google Earth overlays in KML format and HTML preview files.
+  - An annotation folder containing the product metadata in XML as well as calibration data.
+  - A support folder containing the XML schemes describing the product XML.
 
+
+The SAFE folder above includes the following content:
+
+```{r}
+#| echo: false
+
+library(data.tree)
+library(tidyr)
+library(dplyr)
+
+tibble(full = list.files("data-large/S2B_MSIL2A_20240915T102559_N0511_R108_T32TMS_20240915T131207.SAFE/", recursive = TRUE, full.names = TRUE)) |> 
+  mutate(
+    basen = basename(full),
+    dirn = dirname(full)
+  ) |> 
+  separate_wider_delim(basen,delim = "_", names = paste0("d",1:7),too_few = "align_start",cols_remove = FALSE) |> 
+  group_by(dirn, d1,d2) |> 
+  mutate(
+    n = row_number(),
+    basen = ifelse(n == 3, "... (etc)", basen)
+    ) |> 
+  filter(n <= 3) |> 
+  ungroup() |> 
+  transmute(paths = paste(dirn, basen, sep = "/")) -> fi
+
+as.Node(fi,pathName = "paths")
+
+```
+
+
+The data we are interested in is in the `IMG_DATA` folder. This folder contains the data in three different resolutions, where each band is a separate file *jp2* File. 
 
 ```{r}
 library(terra)
@@ -13,78 +51,82 @@ library(dplyr)
 s2_files <- list.files("data-large/S2B_MSIL2A_20240915T102559_N0511_R108_T32TMS_20240915T131207.SAFE/GRANULE/L2A_T32TMS_A039316_20240915T102803/IMG_DATA/R60m/", "\\.jp2$", full.names = TRUE)
 ```
 
-The folder above includes the following content:
 
-```{r}
-#| echo: false
-
-library(data.tree)
-
-as.Node(data.frame(paths = s2_files),pathName = "paths")
-```
-
-We can import all `jp2` files into a `rast` object. To add reasonable `names` to the SpatRaster object, we can use `str_split_fixed` to extract the relevant information from the file names.
+- We can import all `jp2` files into a `rast` object in a singe `rast()` command. 
+- Before we do this, let's filter the data for the bands we are interested in (`B01`...`B12`)
+- To add reasonable `names` to the SpatRaster object, we can use `str_split_fixed` to extract the relevant information from the file names.
 
 ```{r}
 library(stringr)
 
+# selecting only the bands we are interested in:
+s2_files <- s2_files[str_detect(s2_files, "B\\d{2}")]
+
 s2 <- rast(s2_files)
 
+# Extracting the band names from the file names and adding these
 names(s2) <- str_split_fixed(names(s2), "_",4)[,3]
 
 names(s2)
 ```
 
-
-For now, we will only use B01 to B12. We can select these bands by using the `[[` operator. 
+- Test if the data is loaded correctly:
 
 ```{r}
-sel <- names(s2) %in% paste0("B",str_pad(1:12,2,pad = "0"))
+plot(s2[[1]])
+```
 
-s2_sel <- s2[[sel]]
+- Note how the values range from 0 to > 15000. It seems that the values are not scaled yet (see @sec-data-types)
+- If `scale` and `offset` values were set using `GDAL` flags, `terra` would automatically apply these values
+- However, it seems that we have to apply these values manually: [this website](https://sentinel.esa.int/en/web/sentinel/technical-guides/sentinel-2-msi/level-1c/product-formatting), writes the following:
+
+> The transformation of reflectances in 16 bit integers is performed according to the following equation:
+> $$\text{L1C\_DN} = \rho \times \text{QUANTIFICATION_VALUE} - \text{RADIO_ADD_OFFSET}$$
+> The L1C product's metadata includes the values for the QUANTIFICATION_VALUE and RADIO_ADD_OFFSET.
+
+- This information is stored in the file `MTD_MSIL2A.xml`:
+- This file contains information about the bands, the scale factor, and the offset values. 
+- If we search for `QUANTIFICATION_VALUE`, we find the following information:
+
+```{r}
+#| echo: false
+
+meta <- readLines("data-large/S2B_MSIL2A_20240915T102559_N0511_R108_T32TMS_20240915T131207.SAFE/MTD_MSIL2A.xml") 
+
+cat(meta[str_detect(meta, "QUANTIFICATION_VALUE")], sep = "\n")
+```
+
+- If we search for `ADD_OFFSET`, we find the following information:
+
+
+```{r}
+#| echo: false
+
+cat(meta[str_detect(meta, "ADD_OFFSET")], sep = "\n")
+```
+
+<!-- this does not work, since I would need offset to be added first, and then scale (?) -->
+<!-- - Rather than manually converting our data to reflectance values, we can use the function `scoff` -->
+<!-- - This function takes a *two-column matrix with scale (first column) and offset (second column) for each layer* -->
+<!-- - `scale` and `offset` are applied to the original values as follows: -->
+
+<!--   > `value <- value * scale + offset` -->
+
+- We can now use the `scale` (10'000) and `offset` (-1'000) values to convert the data to reflectance values. 
+- We can then use `hist` to get a histogram of the values in each band
+- Note that most bands have values > 1. 
+  - We have to decide how to handle these values
+  - One option is to simply clip the values to the desired range
+
+```{r}
+s2b <- (s2 - 1000)/10000
+
+hist(s2b)
 ```
 
 
-Further metadata can be extracted from the `MTD_MSIL2A.xml` file. This file contains information about the bands, the scale factor, and the offset values. Here we use `xml2` and `rvest` to extract the relevant information programmatically. 
-
 ```{r}
-library(xml2)
-library(rvest)
-
-metadata <- read_xml("data-large/S2B_MSIL2A_20240915T102559_N0511_R108_T32TMS_20240915T131207.SAFE/MTD_MSIL2A.xml") 
-
-scale_val <- metadata |> 
-  html_node(xpath = "//BOA_QUANTIFICATION_VALUE")|> 
-  html_text() |> 
-  as.numeric()
-
-
-
-offset_val <- metadata |> 
-  html_node(xpath = "//BOA_ADD_OFFSET_VALUES_LIST") |> 
-  html_children() |> 
-  html_text() |> 
-  as.numeric()
-
-
-```
-
-
-```{r}
-# Since all bands have the same scale and offset values, we can apply these to all bands
-s2b <- (s2_sel+ unique(offset_val))/scale_val
-```
-
-Now that the values are rescaled, they should range between 0 and 1. We can use the `global` function to check this: 
-
-```{r}
-global(s2b, c("min","max"))
-```
-
-We can see that the values are not within the desired range. We now have to decide how to handle these values. One option is to simply clip the values to the desired range with the function below:
-
-
-```{r}
+# function to clip values to the desired range
 force_minmax <- \(x, min = 0, max = 1){
   x[x<min] <- min
   x[x>max] <- max
@@ -97,18 +139,19 @@ To apply this function to all bands, we can use the `app` function.
 ```{r}
 s2c <- app(s2b, force_minmax)
 
-global(s2c, c("min","max"))
+# If we now check the min/max values, we see that all values are between 0 and 1
+minmax(s2c)
 ```
 
-Let's create a True Color image using the bands B05, B03, and B02. 
+To test if we processed the data correctly, let's create a True Color image using the bands `B04`, `B03`, and `B02`. 
 
 ```{r}
 plotRGB(s2c,r = 4, g = 3, b = 2, stretch = "histogram", smooth = FALSE)
 ```
 
 ```{r}
-# export to RGB Geotiff
-writeRaster(s2c[[c(4,3,2)]], "data-out/sentinel-rgb.tif")
+# To export the R,G,B bands to a True Color Geotiff: 
+writeRaster(s2c[[c(4,3,2)]], "data-out/sentinel-rgb.tif", overwrite = TRUE)
 ```
 
 
@@ -118,7 +161,6 @@ To calculate NDVI, we can create our custom function and apply it to the `s2c` o
 ndvi <- \(x){(x[5]-x[4])/(x[5]+x[4])}
 
 s2_ndvi <- app(s2c, ndvi)
-
 
 library(tmap)
 tm_shape(s2_ndvi) + 

@@ -1,4 +1,4 @@
-# Data Types {#sec-data-types}
+# Data Types, scale and offset {#sec-data-types}
 
 ```{r}
 #| echo: false
@@ -14,11 +14,15 @@ library(gt)
 
 ```
 
-## GDAL data types
+## Raster data types
 
-The following Numeric data types are supported by `gdal`:
+- While R and Python have a variety of data types including character strings, raster data is always stored as numeric
+- However, there are quite a number of numeric data types that can be used to store raster data, depending on the range of values and the precision required
+- The choice of data type can have a significant impact on the size of the file and the precision of the data stored
+- Since raster data is powered by GDAL, most raster based software (including R and Python) use the same data types
+- The numeric data types are supported by `gdal` are summarized in @tbl-datatypes
 
----
+:::{#tbl-datatypes}
 
 | Data type         | Minimum        | Maximum       | Size[^1]| Factor |
 |-------------------|---------------:|--------------:|--------:|-------:| 
@@ -33,6 +37,9 @@ The following Numeric data types are supported by `gdal`:
 : The possible ranges of different datatypes in `gdal` (source: @amatulli2024)
 
 [^1]: Difference in file size using constant dataset (same values and resolution) and varying the datatype
+
+:::
+
 
 :::{.callout-note .notes collapse="true"}
 
@@ -51,19 +58,34 @@ The following Numeric data types are supported by `gdal`:
 :::
 
 
----
 
-## Rescaling values to 0 - 255
+
+## Choosing a data type
+
+- To minimize file size, it's important to choose the data type that best fits the range of values in the raster
+- At a first glance, it might seem that the numeric values we measured / calculated *determine* the datatype we use
+- However, we can transform the values to a different range to fit a different datatype
+- For example, if we have NDVI values ranging from -1 to 1, it might seem that we need to use `CFloat32` to store these values. However, we can *transform* (rescale) these values to the range 0 - 255 and store them as `Byte` datatype.
+
+
+
+
+
+## Rescaling / Transforming values to 0 - 255
 
 From [Wikipedia](https://en.wikipedia.org/wiki/Feature_scaling#Rescaling_(min-max_normalization)): 
 
 > To rescale a range between an arbitrary set of values [a, b], the formula becomes: 
 > $$x' = a + \frac{(x-min(x))\times(b - a)}{max(x)-min(x)}$$
 
-Let's use our values and solve this equation:
+For our usecase, we can consider: 
 
-- `min(x)` and `max(x)`: `-1` and `1` respectively
-- `a` and `b`: 0 and 255 respectively
+ - $x'$ to be the *stored* value
+ - $x$ to be the measured value
+ - $a$ and $b$ to be the maximum, minimum value of `Byte` (0 and 255 respectively)
+ - $min(x)$ and $max(x)$ the maximum and minimum measured values (`-1` and `1` respectively)
+ 
+We can use these values and simplify the formula as follows:
 
 \begin{align}
 
@@ -71,44 +93,227 @@ x' &= 0 + \frac{(x+1)\times 255}{2} \\
 
 x' &= \frac{255x+255}{2} \\
 
-x' &= 127x+127.5 \\
+x' &= 127.5x+127.5 \\
 
 \end{align}
 
 
+## Rescaling NDVI values
 
----
+- We can now use this formula $x' = 127.5x+127.5$ to rescale NDVI values to the range 0 - 255
+- So, rather than storing the NDVI value 0.2, for example, we store the value 153
+- This rescaling is determined by two values: `scale` and `offset` (127.5 for both values in our case)
+
+
+
+## Precision
+
+Note that this transformation to 255 values limits our precision:
+
+- Our values are now limited to in their precision, since we only have 255 possible values
+- We can calculate the available precision like so: $\frac{max(x)-min(x)}{b-a}$ 
+- In our case this is $\frac{1 - (-1)}{255-0} = 0.0078$. 
+- Any measured / calculated NDVI value will be rounded to a multiple of 0.0078.
+
+
+## R Implementation for vectors
+
+- A generic way to implement this in R is as follows:
 
 ```{r}
+#| echo: true
+ 
+scale_minmax <- function(
+    x, 
+    a = 0,          # the minimum value of the new range (default 0)
+    b = 255         # the maximum value of the new range (default 255)
+    ){
+  min_x = min(x) 
+  max_x = max(x) 
+  a + (x - min_x) * (b - a) / (max_x - min_x)
+}
 
-# scales::rescale_max(seq(-1,1,.1),to = c(0,255),from = c(-1,1))
+```
 
-# rescale_n <- \(values, from = range(values), to, integer = FALSE){
-#   res <- to[1]+((values-from[1])*(to[2]-to[1]))/(from[2]-from[1])
-#   
-#   if(integer)res <- as.integer(res)
-#   
-#   res
-# }
+Take the following example:
 
-# x <- seq(-1,1,.1)
-# x_new <- rescale_n(x, c(-1,1),c(0,255), TRUE)
+```{r}
+set.seed(552)
+```
 
 
-x_stored <- 0:255
-x_measured <- (x_stored-127.5)/127.5
+```{r}
+#| echo: true
 
+# this creates 100 random NDVI values between -1 and 1
+ndvi_measured <- runif(100, -1, 1)
 
-tibble(x_measured, x_stored) |> 
-  ggplot(aes(x_measured,x_stored)) + 
-  geom_line() +
-  labs(x = "Measured NDVI", y = "Stored value") +
+ndvi_stored <- scale_minmax(ndvi_measured)
+
+tibble(ndvi_measured, ndvi_stored) |>
+  ggplot(aes(ndvi_measured, ndvi_stored)) + 
+  geom_line(col = "grey") +
+  geom_point() +
+  labs(x = "Measured NDVI (-1 to +1)", y = "Stored value (0 to 255)") +
   theme_minimal()
 ```
 
-Note: 
+## Restoring the original values
 
-- $y = ax + b$
-- a = `scale` and b = `offset`
+- Imagine you stored the NDVI values in the range 0 - 255, stored these values in a Geotiff and sent it to a colleague.
+- To restore the original NDVI values the transformation ($x' = 127x+127.5$) needs to be known
+- More precisely, the `scale` and `offset` values need to be known
+- We can simply invert the transformation to get the original values back: $x = \frac{x'-127.5}{127.5}$ 
+
+
+## R implementation for rasters I
+
+- Since rescaling values is a common operation, it is supported by GDAL and therefore most raster libraries
+- Rather than transforming our values in memory, we can transform them when writing the raster to disk.
+- For this, we can use the arguments `scale = ` and `offset = ` in the `writeRaster` function
+- To use these arguments we need to calculate the `scale` and `offset` values first
+- Rewriting the formula above, we can calculate `scale` and `offset`:
+
+
+\begin{align}
+\text{scale} &= \frac{b - a}{max(x)-min(x)} \\
+\text{offset} &= \frac{a \times max(x) - b \times min(x)}{max(x)-min(x)}
+\end{align}
+
+- To implement this in R, I use two functions: `get_scale` and `get_offset`:
+
+```{r}
+#| echo: true
+
+get_scale <- function(
+    x, 
+    a = 0,          # the minimum value of the new range (default 0)
+    b = 255         # the maximum value of the new range (default 255)
+    ){
+  min_x = min(x)
+  max_x = max(x)
+  
+  scale <- (b - a) / (max_x - min_x)
+  
+  scale
+}
+
+get_offset <- function(
+    x, 
+    a = 0,          
+    b = 255
+    ){
+  min_x = min(x)
+  max_x = max(x)
+  offset <- (a * max_x - b * min_x) / (max_x - min_x)
+  
+  offset
+}
+
+
+get_scale(ndvi_measured)
+
+```
+
+
+## R implementation for rasters II
+
+- The new function `get_scale_offset` works nicely with vectors, but not with rasters
+- The reason it does not work for raster is that `min(x)` (and `max(x)`) are *local* and not *global* functions
+  - They return the minimum / maximum value *per cell over all bands*, not the global minimum / maximum value
+  - To calculate the global minimum and maximum value, we can either use `global`, or the slightly faster `minmax` function
+- Additionally, the `writeRaster` function will *divide* by `scale` and *subtract* `offset` from the values (see `writeRaster`), so we need to invert the two values
+- This is how this is implemented in R:
+
+```{r}
+#| echo: true
+
+get_scale2 <- function(
+    x, 
+    a = 0,          
+    b = 255         
+    ){
+  library(terra)
+  min_max = minmax(x) 
+  min_x <- min_max[1,1]
+  max_x <- min_max[2,1]
+
+  scale <- (b - a) / (max_x - min_x)
+  
+  1/scale           # invert the scale, sincd writeRaster divides by scale
+}
+
+
+get_offset2 <- function(
+    x, 
+    a = 0,          
+    b = 255
+    ){
+  library(terra)
+  min_max = minmax(x) 
+  min_x <- min_max[1,1]   
+  max_x <- min_max[2,1]
+  
+  offset <- (a * max_x - b * min_x) / (max_x - min_x)
+  
+  offset * -1       # invert the offset, since writeRaster subtracts the offset
+}
+
+
+```
+
+
+## R implementation for rasters: example 
+
+- Let's import a raster, calculate the `scale` and `offset` values and use these values to write to disk
+
+```{r}
+#| echo: true
+library(terra)
+
+elev <- rast(system.file("ex/elev.tif", package="terra"))
+
+plot(elev, main = paste(minmax(elev),collapse = "-"))
+```
+
+
+```{r}
+#| echo: true
+# write to disk with the minimum data type that fits the range 
+# without transformation 
+
+scale <- get_scale2(elev)
+offset <- get_offset2(elev)
+
+writeRaster(
+  elev, 
+  "data-out/datatypes/INT1U.tif",
+  # datatype = "INT1U", 
+  overwrite = TRUE, 
+  scale = scale, 
+  offset = offset
+  )
+```
+
+
+## R implementation for rasters: example 
+
+- Since GDAL stores the `scale` and `offset` values in the metadata, any software powered by GDAL will restore the original values on import
+- In other words, if you run `rast("data-out/datatypes/INT1U.tif")` you will not notice the values were internally stored using 0 - 255. Instead, you will retrieve the original values.
+- To finish off, let's compare the file sizes of the raster stored as `INT1U` (Byte) and `FLT8S` (Float32)
+
+
+```{r}
+writeRaster(
+  elev, 
+  "data-out/datatypes/FLT8S.tif",
+  datatype = "FLT8S", 
+  overwrite = TRUE
+  )
+
+
+file.size("data-out/datatypes/INT1U.tif")/file.size("data-out/datatypes/FLT8S.tif")
+
+```
 
 

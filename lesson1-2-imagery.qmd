@@ -353,7 +353,7 @@ tm_shape(l7[[c("NIR","G","B")]]) + tm_rgb()
 
 ```
 
-7. Download an image from the [Sentinel Hub](https://browser.dataspace.copernicus.eu/) and import it in R.
+
 
  
 

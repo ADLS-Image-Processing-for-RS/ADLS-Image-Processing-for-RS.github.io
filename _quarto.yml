@@ -18,6 +18,7 @@ book:
     - part: Lesson 3
       chapters: 
         - lesson3-1-datatypes.qmd
+        # - lesson3-2-nodata.qmd # todo: explore this further
         - lesson3-2-sentinel-data.qmd
     - part: references.qmd
 format: 
