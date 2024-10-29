@@ -1,8 +1,8 @@
 book: 
   chapters:
-    - part: Lesson TBD
+    - part: Lesson 4
       chapters: 
-        - lesson1-3-datatypes.qmd
-        - lesson1-4-nodata.qmd
+        - lesson4-1-unsupervised-learning.qmd
+        - lesson4-2-supervised-learning.qmd
 
         

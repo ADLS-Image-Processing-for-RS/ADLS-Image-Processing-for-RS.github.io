@@ -1,0 +1,231 @@
+---
+echo: true
+---
+
+# Supervised learning
+
+
+## Introduction
+
+- Supervised learning is a type of machine learning where the model is trained on a labeled dataset
+- The model learns to map input data to the correct output label
+- Supervised learning is used extensively in remote sensing to enable quantitative analysis of satellite imagery
+- We will use historic satellite imagery to train a model to classify land cover types in a given area
+
+
+## Task and Data
+
+- The task we will perform is to quantitatively analyze forest cover change over time in the area surrounding the village Ces in Ticino, Switzerland
+- We are provided with historic areal imagery from 1961 from swisstopo [[source](https://map.geo.admin.ch/#/map?lang=de&center=2706292.97,1144053.16&z=9.82&bgLayer=ch.swisstopo.pixelkarte-farbe&topic=ech&layers=ch.swisstopo.swissimage-product_1946,f;ch.swisstopo.swissimage-product@year=1961)] 
+- The resolution of the imagery is 1 m/pixel and it contains only one single band (!!!)
+
+
+```{r}
+library(terra)
+library(purrr)
+library(sf)
+library(dplyr)
+library(tmap)
+
+ces1961 <- rast("data-large/ces/1961.tif")
+
+names(ces1961) <- "luminosity"
+```
+
+
+
+```{r}
+plot(ces1961, col = grey.colors(255))
+```
+
+
+## Approach
+
+To solve this task
+
+1. We first need to create some labelled data
+2. Do some feature engineering to on our raster data 
+3. Split our labelled data into training and testing data
+4. Train a model on the training data
+5. Evaluate the model on the testing data
+
+
+## Data labelling
+
+In preparation, I used QGIS to create labelled points for the following classes:
+
+- Forest
+- Buildings
+- Agriculture
+- Shadows
+
+
+```{r}
+#| echo: false
+
+# this is just for internal preperation of the data
+library(sf)
+library(purrr)
+labelled_datapath <- "data-large/ces/labelled-points.gpkg"
+
+labels_lyrs <- st_layers(labelled_datapath)
+
+labelled_data <- map(labels_lyrs$name, \(x){
+  read_sf(labelled_datapath, layer = x) |> 
+    mutate(class = x) |> 
+    st_set_geometry("geom")
+}) |> 
+  do.call(rbind, args = _)
+
+write_sf(labelled_data, "data-large/ces/labelled-data.gpkg")
+
+```
+
+
+
+```{r}
+library(sf)
+
+labelled_data <- read_sf("data-large/ces/labelled-data.gpkg")
+
+# We will turn the class into a factor, 
+# which is useful for classification
+labelled_data$class <- factor(labelled_data$class)
+
+tmap_mode("view")
+tm_shape(ces1961) + 
+  tm_raster(palette = "-Greys",legend.show = FALSE) +
+  tm_shape(labelled_data) +
+  tm_dots(col = "class") +
+  tm_layout(legend.outside = TRUE)
+```
+
+
+## Splitting the data
+
+- We need to split our data into training and testing data
+- We will randomly select 70% of the data for training and the remaining 30% for testing
+- Note that this is *not the recommended approach*, instead we should use a spatially stratified split. However, for this exercise, we will use a random split
+
+```{r}
+
+labelled_data <- labelled_data |> 
+  group_by(class) |> 
+  mutate(
+    i = sample(seq_len(n())),
+    train = i <= n()*0.7
+    )
+
+data_train <- labelled_data |> 
+  filter(train) |> 
+  select(-c(i,train))
+
+
+data_test <- labelled_data |> 
+  filter(!train) |> 
+  select(-c(i,train))
+
+tmap_mode("plot")
+
+tm_shape(labelled_data) + tm_dots(col = "train", palette = c("blue","red"))
+```
+
+
+## Feature Extraction
+
+- We need to extract the values of the raster data at the labelled points
+- Since we only have one band, our result is a data.frame with one column
+
+```{r}
+train_features <- extract(ces1961, data_train, ID = FALSE)
+
+data_train2 <- cbind(data_train, train_features) |> 
+  st_drop_geometry()
+```
+
+
+## Training the model
+
+- We will use the `rpart` package to train a classification tree
+- The classification tree is also known as a decision tree: it is a flowchart-like structure in which each internal node represents a test on an attribute, each branch represents the outcome of the test, and each leaf node represents a class label
+- This model does not always produce the best results, but it is simple and interpretable
+
+```{r}
+library(rpart)
+
+set.seed(111)
+cart_model <- rpart(class~., data = data_train2, method = "class")
+
+
+library(rpart.plot)
+rpart.plot(cart_model, type = 3)
+```
+
+
+## Predicting the probabilities per class for each pixel
+
+- We will use the trained model to predict the probabilities of each class for each pixel in the raster data
+- We can use the `predict` function to do this
+- The result is a raster with one layer per class, giving the probability of each class for each pixel
+
+```{r}
+ces1961_predict <- predict(ces1961, cart_model)
+
+tm_shape(ces1961_predict) + tm_raster(style = "cont", midpoint = .5, palette = "-Spectral",title = "probability") +
+  tm_layout()
+```
+
+
+## Highest probability class
+
+- To get the class with the highest probability for each pixel, we can use the `which.max` function
+
+```{r}
+
+ces1961_predict2 <- which.max(ces1961_predict)
+
+
+classes <- levels(data_train2$class)
+
+classes_df <- data.frame(ID = seq_along(classes), class = classes)
+
+levels(ces1961_predict2) <- classes_df
+
+tmap_mode("view")
+tm_shape(ces1961_predict2) + tm_raster(palette = c("gold","gray","palegreen4","black")) +
+  tm_layout(legend.outside = TRUE)
+```
+
+## Evaluation
+
+
+<!-- todo: more metrics on model performance:  -->
+<!-- https://youtu.be/GLcirSRIapA?si=bSR39sDpQCBcxP1S -->
+
+- To evaluate the model, we will use the testing data
+
+
+```{r}
+
+test_features <- extract(ces1961_predict2, data_test, ID = FALSE)
+
+cbind(data_test, test_features) |> 
+  st_drop_geometry() |> 
+  transmute(predicted = class.1, actual = class) |> 
+  table()
+```
+
+
+
+
+## Feature Engineering
+
+- Currently, our raster data only contains one band. Our feature space is therefore only one dimensional and won't get us very far
+
+
+
+
+
+
+
+

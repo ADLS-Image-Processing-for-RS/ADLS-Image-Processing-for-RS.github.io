@@ -1,3 +1,8 @@
 
 # Welcome! {.unnumbered .unlisted}
 
+Welcome to the Part *Geospatial Computing* in the course *Image Processing for Remote Sensing*. This course is taught in the Bachelor Degree [Applied Digital Life Sciences](https://www.zhaw.ch/en/lsfm/studies/bachelor/applied-digital-life-sciences/) at the Zurich University of Applied Sciences (ZHAW).
+
+
+<!-- https://pixabay.com/photos/field-cultivation-fields-cultivation-62952/ -->
+![](img/field-cultivation-62952_1280.jpg)

@@ -4,3 +4,7 @@
 /.quarto/
 docs
 data-large
+data-out
+data
+adls-image-processing
+adls-image-processing_attachments.zip
