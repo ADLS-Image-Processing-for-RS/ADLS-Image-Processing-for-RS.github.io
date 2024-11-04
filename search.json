@@ -4,7 +4,7 @@
     "href": "index.html",
     "title": "Image Processing for Remote Sensing",
     "section": "",
-    "text": "Welcome!",
+    "text": "Welcome!\nWelcome to the Part Geospatial Computing in the course Image Processing for Remote Sensing. This course is taught in the Bachelor Degree Applied Digital Life Sciences at the Zurich University of Applied Sciences (ZHAW).",
     "crumbs": [
       "Welcome!"
     ]
@@ -340,8 +340,8 @@
     ]
   },
   {
-    "objectID": "lesson2-1-operations.html#focal",
-    "href": "lesson2-1-operations.html#focal",
+    "objectID": "lesson2-1-operations.html#sec-focal-1",
+    "href": "lesson2-1-operations.html#sec-focal-1",
     "title": "Raster Operations / Map algebra",
     "section": "Focal",
     "text": "Focal\n\nWhile local functions operate on one cell focal operations take into account a central (focal) cell and its neighbors.\nThe neighborhood (also named kernel, filter or moving window) under consideration is typically of size 3-by-3 cells (that is the central cell and its eight surrounding neighbors), but can take on any other size or shape as defined by the user.\nA focal operation applies an aggregation function to all cells within the specified neighborhood, uses the corresponding output as the new value for the central cell, and moves on to the next central cell\n\n\n\n\n\n\n\nFigure 3.4: Note how, depnding on the size of your moving window, NA’s are produced. Source: Lovelace, Nowosad, and Muenchow (2019)\n\n\n\n\nfocal3by3 &lt;- matrix(rep(1,9), ncol = 3)\n\n\nfocal11by11 &lt;- matrix(rep(1,121), ncol = 11)\n\n\nr_foc3 &lt;- focal(r, focal3by3, fun = mean, fillNA = TRUE)\n\nr_foc11 &lt;- focal(r, focal11by11, fun = mean, fillNA = TRUE)\n\n\n\n\n\n\n\n\n\n\n\n\n\nFigure 3.5: Original values\n\n\n\n\n\n\n\n\n\n\n\nFigure 3.6: Result of a 3x3 Focal Window\n\n\n\n\n\n\n\n\n\n\n\nFigure 3.7: Result of a 11x11 Focal Window\n\n\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\n\n\n\nNote how the output raster is smaller as the focal window is larger (edge effect)",
@@ -399,7 +399,7 @@
     "href": "lesson2-1-operations.html#tasks-exercises",
     "title": "Raster Operations / Map algebra",
     "section": "Tasks / Exercises",
-    "text": "Tasks / Exercises\n\nDownload and import the elevation of Luxembourg from Moodle (CW43 → Datasets)\nCalculate the mean, maximum and minimum elevation values\nCalculate slope and aspect (see terrain functions)\nDetermine suitable locations of solar panels using the following conditions:\n\nElevation: above 500 MASL\nSlope: Between 1 and 3°\nAspect: Southfacing (between 135 and 235°)\n\nDownload the Municipalities of Luxembourg from Moodle and calculate the minimum, maximum and mean elevation values per municipality.\nSmooth the elevation values using different focal windows\nImport the multispectral Landsat 7 as a raster using the following path\n\nsystem.file(\"tif/L7_ETMs.tif\",package = \"stars\")\n\nCalculate the NDVI using the following formula:\n\n\\[\\text{NDVI} = \\frac{\\text{NIR}-\\text{red}}{\\text{NIR}+\\text{red}}\\]\n\n\n\n\n\n\n\n\n\n\nDownload a Sentinel 2 Image from browser.dataspace.copernicus.eu for a location of your choosing. Import it as a raster image in R. Note that you have to import the individual bands and then recombine the image to a multiband raster.\nCreate a True-Color RGB Image and a False-Color NirGB Image using the appropriate bands (see Spectral Bands (Wikipedia))\nCalculate NDVI of the Sentinel 2 Image using the appropriate bands\n\n\n\n\n\nHorn, Berthold KP. 1981. “Hill Shading and the Reflectance Map.” Proceedings of the IEEE 69 (1): 14–47.\n\n\nLovelace, Robin, Jakub Nowosad, and Jannes Muenchow. 2019. Geocomputation with r. Chapman; Hall/CRC.",
+    "text": "Tasks / Exercises\n\nDownload and import the elevation of Luxembourg from Moodle (CW43 → Datasets)\nCalculate the mean, maximum and minimum elevation values\nCalculate slope and aspect (see terrain functions)\nDetermine suitable locations of solar panels using the following conditions:\n\nElevation: above 300 MASL\nSlope: Between 1 and 3°\nAspect: Southfacing (between 135 and 235°)\n\nDownload the Municipalities of Luxembourg from Moodle and calculate the minimum, maximum and mean elevation values per municipality.\nSmooth the elevation values using different focal windows\nImport the multispectral Landsat 7 as a raster using the following path\n\nsystem.file(\"tif/L7_ETMs.tif\",package = \"stars\")\n\nCalculate the NDVI using the following formula:\n\n\\[\\text{NDVI} = \\frac{\\text{NIR}-\\text{red}}{\\text{NIR}+\\text{red}}\\]\n\n\n\n\n\n\n\n\n\n\nDownload a Sentinel 2 Image from browser.dataspace.copernicus.eu for a location of your choosing. Import it as a raster image in R. Note that you have to import the individual bands and then recombine the image to a multiband raster.\nCreate a True-Color RGB Image and a False-Color NirGB Image using the appropriate bands (see Spectral Bands (Wikipedia))\nCalculate NDVI of the Sentinel 2 Image using the appropriate bands\n\n\n\n\n\nHorn, Berthold KP. 1981. “Hill Shading and the Reflectance Map.” Proceedings of the IEEE 69 (1): 14–47.\n\n\nLovelace, Robin, Jakub Nowosad, and Jannes Muenchow. 2019. Geocomputation with r. Chapman; Hall/CRC.",
     "crumbs": [
       "Lesson 2",
       "<span class='chapter-number'>3</span>  <span class='chapter-title'>Raster Operations / Map algebra</span>"
@@ -593,13 +593,234 @@
     ]
   },
   {
-    "objectID": "references.html",
-    "href": "references.html",
-    "title": "References",
+    "objectID": "lesson4-2-supervised-learning.html",
+    "href": "lesson4-2-supervised-learning.html",
+    "title": "Supervised learning",
     "section": "",
-    "text": "Amatulli, Giuseppe. “Geocomputation and Machine Learning for\nEnvironmental Applications.” http://spatial-ecology.net/docs/build/html/GDAL/gdal_osgeo.html.\n\n\nBaltagi, Badi Hani, and Badi H Baltagi. 2008. Econometric Analysis\nof Panel Data. Vol. 4. Springer. https://bcs.wiley.com/he-bcs/Books?action=resource&bcsId=4338&itemId=1118672321&resourceId=13452.\n\n\nHorn, Berthold KP. 1981. “Hill Shading and the Reflectance\nMap.” Proceedings of the IEEE 69 (1): 14–47.\n\n\nLovelace, Robin, Jakub Nowosad, and Jannes Muenchow. 2019.\nGeocomputation with r. Chapman; Hall/CRC.\n\n\nPebesma, Edzer, and Roger Bivand. 2023. Spatial Data Science: With\nApplications in R. Boca Raton: Chapman; Hall/CRC. https://doi.org/10.1201/9780429459016.\n\n\nWickham, Hadley. 2014. “Tidy Data.” Journal of\nStatistical Software 59 (10): 1–23. https://doi.org/10.18637/jss.v059.i10.",
+    "text": "Introduction",
     "crumbs": [
-      "References"
+      "Lesson 4",
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Supervised learning</span>"
+    ]
+  },
+  {
+    "objectID": "lesson4-2-supervised-learning.html#introduction",
+    "href": "lesson4-2-supervised-learning.html#introduction",
+    "title": "Supervised learning",
+    "section": "",
+    "text": "Supervised learning is a type of machine learning where the model is trained on a labelled dataset\nThe model learns to map input data to the correct output label\nSupervised learning is used extensively in remote sensing to enable quantitative analysis of satellite imagery\nWe will use historic satellite imagery to train a model to classify land cover types in a given area",
+    "crumbs": [
+      "Lesson 4",
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Supervised learning</span>"
+    ]
+  },
+  {
+    "objectID": "lesson4-2-supervised-learning.html#task-and-data",
+    "href": "lesson4-2-supervised-learning.html#task-and-data",
+    "title": "Supervised learning",
+    "section": "Task and Data",
+    "text": "Task and Data\n\nThe task we will perform is to quantitatively analyze forest cover change over time in the area surrounding the village Ces in Ticino, Switzerland\nWe are provided with historic areal imagery from 1961 from swisstopo [source]\nThe resolution of the imagery is 1 m/pixel and it contains only one single band (!!!)\n\n\nlibrary(terra)\nlibrary(purrr)\nlibrary(sf)\nlibrary(dplyr)\nlibrary(tmap)\n\nces1961 &lt;- rast(\"data-large/ces/1961.tif\")\n\nces1961 &lt;- ces1961/255 # normalize the values to [0,1]\n\nnames(ces1961) &lt;- \"luminosity\"\n\n\nplot(ces1961, col = grey.colors(255))",
+    "crumbs": [
+      "Lesson 4",
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Supervised learning</span>"
+    ]
+  },
+  {
+    "objectID": "lesson4-2-supervised-learning.html#approach",
+    "href": "lesson4-2-supervised-learning.html#approach",
+    "title": "Supervised learning",
+    "section": "Approach",
+    "text": "Approach\nTo solve this task\n\nWe first need to create some labelled data\nSplit our labelled data into training and testing data\nTrain a model on the training data\nEvaluate the model on the testing data",
+    "crumbs": [
+      "Lesson 4",
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Supervised learning</span>"
+    ]
+  },
+  {
+    "objectID": "lesson4-2-supervised-learning.html#data-labelling",
+    "href": "lesson4-2-supervised-learning.html#data-labelling",
+    "title": "Supervised learning",
+    "section": "Data labelling",
+    "text": "Data labelling\nIn preparation, I used QGIS to create labelled points for the following classes:\n\nForest\nBuildings\nAgriculture\nShadows\n\n\nlibrary(sf)\n\nlabelled_data &lt;- read_sf(\"data-large/ces/labelled-data.gpkg\")\n\n# We will turn the class into a factor, \n# which is useful for classification\nlabelled_data$class &lt;- factor(labelled_data$class)\n\ntmap_mode(\"view\")\ntm_shape(ces1961) + \n  tm_raster(palette = \"-Greys\",legend.show = FALSE) +\n  tm_shape(labelled_data) +\n  tm_dots(col = \"class\") +\n  tm_layout(legend.outside = TRUE)",
+    "crumbs": [
+      "Lesson 4",
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Supervised learning</span>"
+    ]
+  },
+  {
+    "objectID": "lesson4-2-supervised-learning.html#splitting-the-data",
+    "href": "lesson4-2-supervised-learning.html#splitting-the-data",
+    "title": "Supervised learning",
+    "section": "Splitting the data",
+    "text": "Splitting the data\n\nWe need to split our data into training and testing data\nWe will randomly select 70% of the data for training and the remaining 30% for testing\n\n\n\n\n\n\n\nImportant\n\n\n\nNote that this is not the recommended approach, instead we should use a spatially stratified split (see Brenning 2023; and Schratz et al. 2021). To keep things simple for this exercise however, we will use a random split.\n\n\n\nlabelled_data &lt;- labelled_data |&gt; \n  group_by(class) |&gt;            # for each class...\n  mutate(                       #\n    i = sample(seq_len(n())),   # ...assign a random number from 1 to n...\n    train = i &lt;= n()*0.7        # ...and assign the first 70% to \"training\"\n    )\n\ndata_train &lt;- labelled_data |&gt;  # filter the training data and store in a\n  filter(train) |&gt;              # a new data frame \n  select(-c(i,train))           # remove obsolete columns\n\n\ndata_test &lt;- labelled_data |&gt;  # same as above, but the filter is inverted\n  filter(!train) |&gt;            # for the testing data\n  select(-c(i,train))\n\ntmap_mode(\"plot\")\n\ntm_shape(labelled_data) + tm_dots(col = \"train\", palette = c(\"blue\",\"red\"))",
+    "crumbs": [
+      "Lesson 4",
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Supervised learning</span>"
+    ]
+  },
+  {
+    "objectID": "lesson4-2-supervised-learning.html#sec-feature-extraction1",
+    "href": "lesson4-2-supervised-learning.html#sec-feature-extraction1",
+    "title": "Supervised learning",
+    "section": "Feature Extraction",
+    "text": "Feature Extraction\n\nWe need to extract the values of the raster data at the labelled points\nSince we only have one band, our result is a data.frame with one column\n\n\n# ID = FALSE means that we do not want to add an ID column\ntrain_features &lt;- terra::extract(ces1961, data_train, ID = FALSE)\n\nhead(train_features)\n\n  luminosity\n1  0.1843137\n2  0.3568627\n3  0.1960784\n4  0.4392157\n5  0.6313725\n6  0.2823529\n\n\n\ndata_train2 &lt;- cbind(data_train, train_features) |&gt; \n  st_drop_geometry()",
+    "crumbs": [
+      "Lesson 4",
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Supervised learning</span>"
+    ]
+  },
+  {
+    "objectID": "lesson4-2-supervised-learning.html#sec-training-model1",
+    "href": "lesson4-2-supervised-learning.html#sec-training-model1",
+    "title": "Supervised learning",
+    "section": "Training the model",
+    "text": "Training the model\n\nWe will use the rpart package to train a classification tree\nThe classification tree is also known as a decision tree\nA decision tree has a flowchart-like structure (see Figure 6.1)\nClassification trees does not always produce the best results, but they are simple and interpretable\n\n\nlibrary(rpart)\ncart_model &lt;- rpart(class~., data = data_train2, method = \"class\")\n\n\nAs mentioned above, the decision tree is interpretable. We can visualize it using the rpart.plot package:\nEach pixel is classified into one of the four classes based on its value (luminosity) according to the decision tree in Figure 6.1\n\n\nlibrary(rpart.plot)\nrpart.plot(cart_model, type = 3)\n\n\n\n\n\n\n\nFigure 6.1: The resulting decision tree. Each internal node represents a test on an attribute, each branch represents the outcome of the test and each leaf node represents a class label",
+    "crumbs": [
+      "Lesson 4",
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Supervised learning</span>"
+    ]
+  },
+  {
+    "objectID": "lesson4-2-supervised-learning.html#sec-prediction-per-class",
+    "href": "lesson4-2-supervised-learning.html#sec-prediction-per-class",
+    "title": "Supervised learning",
+    "section": "Predicting the probabilities per class for each pixel",
+    "text": "Predicting the probabilities per class for each pixel\n\nWe will use the trained model to predict the probabilities of each class for each pixel in the raster data\nWe can use the predict function to do this\nThe result is a raster with one layer per class, giving the probability of each class for each pixel\n\n\nces1961_predict &lt;- predict(ces1961, cart_model)\n\ntm_shape(ces1961_predict) + tm_raster(style = \"cont\", midpoint = .5, palette = \"-Spectral\",title = \"probability\") +\n  tm_layout()",
+    "crumbs": [
+      "Lesson 4",
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Supervised learning</span>"
+    ]
+  },
+  {
+    "objectID": "lesson4-2-supervised-learning.html#sec-highest-probability-class",
+    "href": "lesson4-2-supervised-learning.html#sec-highest-probability-class",
+    "title": "Supervised learning",
+    "section": "Highest probability class",
+    "text": "Highest probability class\n\nWe can combine the four layers into a single layer by assigning the class with the highest probability to each pixel\nFor this, we can use the which.max function:\n\n\nces1961_predict2 &lt;- which.max(ces1961_predict)\n\n# the next three lines assign class labels to the raster (instead of numbers)\nclasses &lt;- levels(data_train2$class)\nclasses_df &lt;- data.frame(ID = seq_along(classes), class = classes)\nlevels(ces1961_predict2) &lt;- classes_df\n\n# visualize the result\ntmap_mode(\"view\")\ntm_shape(ces1961_predict2) + tm_raster(palette = c(\"gold\",\"gray\",\"palegreen4\",\"black\")) +\n  tm_layout(legend.outside = TRUE)",
+    "crumbs": [
+      "Lesson 4",
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Supervised learning</span>"
+    ]
+  },
+  {
+    "objectID": "lesson4-2-supervised-learning.html#sec-model-evaluation-1",
+    "href": "lesson4-2-supervised-learning.html#sec-model-evaluation-1",
+    "title": "Supervised learning",
+    "section": "Model Evaluation I",
+    "text": "Model Evaluation I\n\n\n\nTo evaluate the model, we will use the testing data\n\n\ntest_features &lt;- terra::extract(ces1961_predict2, data_test, ID = FALSE)\n\nconfusion_matrix &lt;- cbind(data_test, test_features) |&gt; \n  st_drop_geometry() |&gt; \n  transmute(predicted = class.1, actual = class) |&gt; \n  table()\n\n\n\n\n\nTable 6.1: The confusion matrix shows the predicted values (rows) against the actual values (columns). The diagonal cells (in red) shows the correct predictions. The results are better than expected, the model seems to haev the most problems with the class “agriculture”.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nActual\n\n\n\n\nAgriculture\nBuildings\nForest\nShadows\n\n\n\n\nAgriculture\n34\n3\n14\n0\n\n\nBuildings\n2\n6\n2\n0\n\n\nForest\n5\n0\n15\n2\n\n\nShadows\n0\n0\n8\n18",
+    "crumbs": [
+      "Lesson 4",
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Supervised learning</span>"
+    ]
+  },
+  {
+    "objectID": "lesson4-2-supervised-learning.html#sec-model-evaluation-2",
+    "href": "lesson4-2-supervised-learning.html#sec-model-evaluation-2",
+    "title": "Supervised learning",
+    "section": "Model Evaluation I",
+    "text": "Model Evaluation I\n\nA very simple measure to asses the model performance is the overall accuracy\nThis is the ratio of the number of features correctly classified (diagonals in Table 6.1) to the total number of features (sum of all column sums in Table 6.1):\n\n\\[\\frac{\\text{number of features correctly classified}}{\\text{total number of features}}\\]\n\nif we insert our values, we get:\n\n\\[\\frac{34+6+15+18)}{41+9+39+20}= 0.67\\]",
+    "crumbs": [
+      "Lesson 4",
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Supervised learning</span>"
+    ]
+  },
+  {
+    "objectID": "lesson4-2-supervised-learning.html#sec-feature-engineering0",
+    "href": "lesson4-2-supervised-learning.html#sec-feature-engineering0",
+    "title": "Supervised learning",
+    "section": "Feature Engineering",
+    "text": "Feature Engineering\n\nCurrently, our raster data only contains one band. In other words, our feature space is only one-dimensional\nIt’s actually quite a challenge to determine the land cover of a pixel if we regard just a single pixel. We humans rely on context (sorrounding pixels) to determine the land cover. You can test this by zooming in very closely on the raster image and try to distinguish the land cover types (see Figure 6.2)\nWe will have a look at possibilities to include context information in Feature Engineering\n\n\nxmin &lt;- 2706200\nxmax &lt;- xmin+100\nymin &lt;- 1143600\nymax &lt;- ymin+100\ne &lt;- ext(xmin, xmax, ymin, ymax)\n\ncrop(ces1961, e) |&gt; \n  plot( col = grey.colors(255))\n\n\n\n\n\n\n\nFigure 6.2: Zooming in on the raster image, it is difficult to determine the land cover types of individual pixels\n\n\n\n\n\n\n\n\n\nBrenning, Alexander. 2023. “Spatial ML Model Assessment and Interpretation.” OpenGeoHub Summer School 2023. OpenGeoHub Foundation. https://doi.org/10.5446/63464.\n\n\nSchratz, Patrick, Marc Becker, Michel Lang, and Alexander Brenning. 2021. “Mlr3spatiotempcv: Spatiotemporal Resampling Methods for Machine Learning in r.” arXiv Preprint arXiv:2110.12674.",
+    "crumbs": [
+      "Lesson 4",
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Supervised learning</span>"
+    ]
+  },
+  {
+    "objectID": "lesson4-2-feature-engineering.html",
+    "href": "lesson4-2-feature-engineering.html",
+    "title": "Feature Engineering",
+    "section": "",
+    "text": "What is Feature Engineering?",
+    "crumbs": [
+      "Lesson 4",
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Feature Engineering</span>"
+    ]
+  },
+  {
+    "objectID": "lesson4-2-feature-engineering.html#what-is-feature-engineering",
+    "href": "lesson4-2-feature-engineering.html#what-is-feature-engineering",
+    "title": "Feature Engineering",
+    "section": "",
+    "text": "Feature Engineering is the process of using domain knowledge to extract features from raw data.\nThis is especially useful, when our raw data is not sufficient to build a model\nIn our previous example, we only had luminosity to predict the class of the raster cells\nAs discussed in the chapter Feature Engineering, we humans ourselves rely on context to determine the land cover types\nThis context is provided by the values of the sorrounding pixels\nWe can provide this context by applying focal filters to the raster data",
+    "crumbs": [
+      "Lesson 4",
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Feature Engineering</span>"
+    ]
+  },
+  {
+    "objectID": "lesson4-2-feature-engineering.html#focal-filters",
+    "href": "lesson4-2-feature-engineering.html#focal-filters",
+    "title": "Feature Engineering",
+    "section": "Focal filters",
+    "text": "Focal filters\n\nFocal Filters, as we have seen in the chapter Focal, aggregate the values over a (moving) neighborhood of pixels.\nWe can determine the size and shape of this neighborhood by specifying a matrix\n\n\nn &lt;- 5\nfocal3by3 &lt;- matrix(rep(1,n^2), ncol = n)\n\nr_foc3 &lt;- focal(ces1961, focal3by3, fun = sd, fillNA = TRUE)\n\nr_foc3 &lt;- r_foc3\n\n# plot(r_foc3)\n\n\n\n\n\n\n\n\n\n\n\n\n\nFigure 7.1: The original raster\n\n\n\n\n\n\n\n\n\n\n\nFigure 7.2: The raster after applying a focal filter",
+    "crumbs": [
+      "Lesson 4",
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Feature Engineering</span>"
+    ]
+  },
+  {
+    "objectID": "lesson4-2-feature-engineering.html#using-focal-filters-as-features",
+    "href": "lesson4-2-feature-engineering.html#using-focal-filters-as-features",
+    "title": "Feature Engineering",
+    "section": "Using focal filters as features",
+    "text": "Using focal filters as features\n\nTo use the focal filters as features, the values of the focal filters need to be normalized to [0,1]\nA simple way to do this is to use the min-max normalization:\n\n\\[x' = \\frac{x - min(x)}{\\max(x) - min(x)}\\]\n\nTo implement this in R, we need to use global(x, min) or (slightly faster) minmax(x).\n\n\nminmax_normalization &lt;- function(x){\n  minmax_vals &lt;- minmax(x)[,1]\n  minval &lt;- minmax_vals[1]\n  maxval &lt;- minmax_vals[2]\n  \n  (x-minval)/(maxval-minval)\n}\n\nr_foc3 &lt;- minmax_normalization(r_foc3)\n\nces &lt;- c(ces1961, r_foc3)\n\nnames(ces) &lt;- c(\"luminosity\", \"focal3by3\")",
+    "crumbs": [
+      "Lesson 4",
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Feature Engineering</span>"
+    ]
+  },
+  {
+    "objectID": "lesson4-2-feature-engineering.html#feature-extraction",
+    "href": "lesson4-2-feature-engineering.html#feature-extraction",
+    "title": "Feature Engineering",
+    "section": "Feature extraction",
+    "text": "Feature extraction\n\nJust as we did in our first approach (see Feature Extraction), we need to extract the features from the raster data at the labelled points\nNote that the resulting data frame now has two columns, rather than just a single column\n\n\ntrain_features_b &lt;- terra::extract(ces, data_train, ID = FALSE)\n\nhead(train_features_b)\n\n  luminosity focal3by3\n1  0.1843137 0.1800299\n2  0.3568627 0.2273958\n3  0.1960784 0.2349411\n4  0.4392157 0.1740047\n5  0.6313725 0.1663846\n6  0.2823529 0.3338187\n\n\n\ndata_train2_b &lt;- cbind(data_train, train_features_b) |&gt; \n  st_drop_geometry()",
+    "crumbs": [
+      "Lesson 4",
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Feature Engineering</span>"
+    ]
+  },
+  {
+    "objectID": "lesson4-2-feature-engineering.html#train-the-model",
+    "href": "lesson4-2-feature-engineering.html#train-the-model",
+    "title": "Feature Engineering",
+    "section": "Train the model",
+    "text": "Train the model\n\nJust as in our first approach (see Training the model), we need to train the model\nThis time, we have more features to train the model\n\n\ncart_modelb &lt;- rpart(class~., data = data_train2_b, method = \"class\")\n\nlibrary(rpart.plot)\nrpart.plot(cart_modelb, type = 3)",
+    "crumbs": [
+      "Lesson 4",
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Feature Engineering</span>"
+    ]
+  },
+  {
+    "objectID": "lesson4-2-feature-engineering.html#predict-the-classes",
+    "href": "lesson4-2-feature-engineering.html#predict-the-classes",
+    "title": "Feature Engineering",
+    "section": "Predict the classes",
+    "text": "Predict the classes\nSee Predicting the probabilities per class for each pixel and Highest probability class.\n\n# Probability per class\nces1961_predictb &lt;- predict(ces, cart_modelb)\n\n# Class with highest probability\nces1961_predict2b &lt;- which.max(ces1961_predictb)",
+    "crumbs": [
+      "Lesson 4",
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Feature Engineering</span>"
+    ]
+  },
+  {
+    "objectID": "lesson4-2-feature-engineering.html#evaluate-the-model",
+    "href": "lesson4-2-feature-engineering.html#evaluate-the-model",
+    "title": "Feature Engineering",
+    "section": "Evaluate the model",
+    "text": "Evaluate the model\nSee Model Evaluation I and Model Evaluation I\n\ntest_featuresb &lt;- terra::extract(ces1961_predict2b, data_test, ID = FALSE)\n\nconfusion_matrixb &lt;- cbind(data_test, test_featuresb) |&gt; \n  st_drop_geometry() |&gt; \n  transmute(predicted = class.1, actual = class) |&gt; \n  table()\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nActual\n\n\n\n\nAgriculture\nBuildings\nForest\nShadows\n\n\n\n\nAgriculture\n37\n3\n9\n0\n\n\nBuildings\n2\n5\n0\n0\n\n\nForest\n2\n1\n29\n0\n\n\nShadows\n0\n0\n1\n20\n\n\n\n\n\n\n\n\nIn our first approach, we achieved an accuracy of 0.67 (see Model Evaluation I)\nWith our additional features, the overall accuracy is 0.83\nWe can further improve our modle by adding more features in this way",
+    "crumbs": [
+      "Lesson 4",
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Feature Engineering</span>"
     ]
   }
 ]

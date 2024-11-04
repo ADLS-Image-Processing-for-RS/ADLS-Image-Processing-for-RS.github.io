@@ -287,8 +287,25 @@ window.Quarto = {
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
-      <span class="sidebar-item-text sidebar-link text-start">
- <span class="menu-text">References</span></span>
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Lesson 4</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lesson4-2-supervised-learning.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Supervised learning</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lesson4-2-feature-engineering.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Feature Engineering</span></a>
+  </div>
+</li>
+      </ul>
   </li>
     </ul>
     </div>
@@ -308,7 +325,7 @@ window.Quarto = {
   <li><a href="#local-2" id="toc-local-2" class="nav-link" data-scroll-target="#local-2">Local (2)</a></li>
   <li><a href="#local-3" id="toc-local-3" class="nav-link" data-scroll-target="#local-3">Local (3)</a></li>
   <li><a href="#local-4" id="toc-local-4" class="nav-link" data-scroll-target="#local-4">Local (4)</a></li>
-  <li><a href="#focal" id="toc-focal" class="nav-link" data-scroll-target="#focal">Focal</a></li>
+  <li><a href="#sec-focal-1" id="toc-sec-focal-1" class="nav-link" data-scroll-target="#sec-focal-1">Focal</a></li>
   <li><a href="#focal-weights-1" id="toc-focal-weights-1" class="nav-link" data-scroll-target="#focal-weights-1">Focal weights (1)</a></li>
   <li><a href="#focal-weights-2" id="toc-focal-weights-2" class="nav-link" data-scroll-target="#focal-weights-2">Focal weights (2)</a></li>
   <li><a href="#focal-weights-3" id="toc-focal-weights-3" class="nav-link" data-scroll-target="#focal-weights-3">Focal weights (3)</a></li>
@@ -596,8 +613,8 @@ Y &amp;= 0.2126 \times R^\gamma+0.7152 \times G^\gamma+0.0722 \times B^\gamma \\
 </div>
 </div>
 </section>
-<section id="focal" class="level2 page-columns page-full">
-<h2 class="anchored" data-anchor-id="focal">Focal</h2>
+<section id="sec-focal-1" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="sec-focal-1">Focal</h2>
 <ul>
 <li>While local functions operate on one cell focal operations take into account a central (focal) cell <em>and its neighbors</em>.</li>
 <li>The neighborhood (also named kernel, filter or moving window) under consideration is typically of size 3-by-3 cells (that is the central cell and its eight surrounding neighbors), but can take on any other size or shape as defined by the user.</li>
@@ -609,7 +626,7 @@ Y &amp;= 0.2126 \times R^\gamma+0.7152 \times G^\gamma+0.0722 \times B^\gamma \\
 <img src="img/focal.png" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-focal-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;3.4: Note how, depnding on the size of your moving window, NA’s are produced. Source: <span class="citation" data-cites="lovelace2019">Lovelace, Nowosad, and Muenchow (<a href="references.html#ref-lovelace2019" role="doc-biblioref">2019</a>)</span>
+Figure&nbsp;3.4: Note how, depnding on the size of your moving window, NA’s are produced. Source: <span class="citation" data-cites="lovelace2019">Lovelace, Nowosad, and Muenchow (<a href="#ref-lovelace2019" role="doc-biblioref">2019</a>)</span>
 </figcaption>
 </figure>
 </div>
@@ -858,7 +875,7 @@ Figure&nbsp;3.10: SObel (y-direction)
 <section id="focal-functions-in-terrain-processing" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="focal-functions-in-terrain-processing">Focal functions in terrain processing</h2>
 <ul>
-<li>Focal functions are used to calculate the slope of a specific location, e.g.&nbsp;using the algorithm by <span class="citation" data-cites="horn1981">Horn (<a href="references.html#ref-horn1981" role="doc-biblioref">1981</a>)</span></li>
+<li>Focal functions are used to calculate the slope of a specific location, e.g.&nbsp;using the algorithm by <span class="citation" data-cites="horn1981">Horn (<a href="#ref-horn1981" role="doc-biblioref">1981</a>)</span></li>
 <li>Similarly, calculating the aspect (azimuth) of a location is a very typical task when dealing with elevation data</li>
 <li>These algorithms are used so often, that they are implemented in a dedicated function (<code>terrain()</code>)</li>
 </ul>
@@ -901,7 +918,7 @@ Figure&nbsp;3.12: Calculating aspect
 <li><p>Calculate slope and aspect (see <a href="https://rspatial.github.io/terra/reference/terrain.html">terrain functions</a>)</p></li>
 <li><p>Determine suitable locations of solar panels using the following conditions:</p>
 <ul>
-<li>Elevation: above 500 MASL</li>
+<li>Elevation: above 300 MASL</li>
 <li>Slope: Between 1 and 3°</li>
 <li>Aspect: Southfacing (between 135 and 235°)</li>
 </ul></li>
@@ -930,7 +947,7 @@ Figure&nbsp;3.12: Calculating aspect
 </ol>
 
 
-<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
 <div id="ref-horn1981" class="csl-entry" role="listitem">
 Horn, Berthold KP. 1981. <span>“Hill Shading and the Reflectance Map.”</span> <em>Proceedings of the IEEE</em> 69 (1): 14–47.
 </div>

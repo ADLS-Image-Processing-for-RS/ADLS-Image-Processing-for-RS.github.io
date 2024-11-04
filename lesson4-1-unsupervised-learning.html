@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Showcase: Importing Sentinel data – Image Processing for Remote Sensing</title>
+<title>Unsupervised learning – Image Processing for Remote Sensing</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,40 +20,6 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for syntax highlighting */
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
 </style>
 
 
@@ -65,7 +31,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
 <link href="./lesson4-2-supervised-learning.html" rel="next">
-<link href="./lesson3-1-datatypes.html" rel="prev">
+<link href="./lesson3-2-sentinel-data.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -128,35 +94,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   
   </script>
 
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 <link rel="stylesheet" href="aux/style.css">
 </head>
@@ -170,7 +107,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./lesson3-1-datatypes.html">Lesson 3</a></li><li class="breadcrumb-item"><a href="./lesson3-2-sentinel-data.html"><span class="chapter-title">Showcase: Importing Sentinel data</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./lesson4-1-unsupervised-learning.html">Lesson 4</a></li><li class="breadcrumb-item"><a href="./lesson4-1-unsupervised-learning.html"><span class="chapter-title">Unsupervised learning</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -261,7 +198,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./lesson3-2-sentinel-data.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Showcase: Importing Sentinel data</span></a>
+  <a href="./lesson3-2-sentinel-data.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Showcase: Importing Sentinel data</span></a>
   </div>
 </li>
       </ul>
@@ -275,6 +212,11 @@ window.Quarto = {
           </a> 
       </div>
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lesson4-1-unsupervised-learning.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Unsupervised learning</span></a>
+  </div>
+</li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./lesson4-2-supervised-learning.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Supervised learning</span></a>
@@ -292,23 +234,15 @@ window.Quarto = {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">Table of contents</h2>
-   
-  <ul>
-  <li><a href="#download-data" id="toc-download-data" class="nav-link active" data-scroll-target="#download-data">Download data</a></li>
-  <li><a href="#copernicus-safe-format-i" id="toc-copernicus-safe-format-i" class="nav-link" data-scroll-target="#copernicus-safe-format-i">Copernicus SAFE Format I</a></li>
-  <li><a href="#copernicus-safe-format-ii" id="toc-copernicus-safe-format-ii" class="nav-link" data-scroll-target="#copernicus-safe-format-ii">Copernicus SAFE Format II</a></li>
-  </ul>
-</nav>
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+        
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./lesson3-1-datatypes.html">Lesson 3</a></li><li class="breadcrumb-item"><a href="./lesson3-2-sentinel-data.html"><span class="chapter-title">Showcase: Importing Sentinel data</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./lesson4-1-unsupervised-learning.html">Lesson 4</a></li><li class="breadcrumb-item"><a href="./lesson4-1-unsupervised-learning.html"><span class="chapter-title">Unsupervised learning</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-title">Showcase: Importing Sentinel data</span></h1>
+<h1 class="title"><span class="chapter-title">Unsupervised learning</span></h1>
 </div>
 
 
@@ -325,272 +259,8 @@ window.Quarto = {
 </header>
 
 
-<section id="download-data" class="level2">
-<h2 class="anchored" data-anchor-id="download-data">Download data</h2>
-<p>To download Sentinel data:</p>
-<ol type="1">
-<li>Go to the <a href="https://browser.dataspace.copernicus.eu/">Copernicus Browser</a> website</li>
-<li>Login using your credentials</li>
-<li>Go to your area of interest</li>
-<li>Click on the “Search” Tab in the left panel</li>
-<li>In Data Source, select <em>Sentinel 2</em> → <em>L2A</em></li>
-<li>Choose your desired time frame</li>
-<li>Click on the “Search” button</li>
-<li>From the search results, download one or two scenes</li>
-</ol>
-</section>
-<section id="copernicus-safe-format-i" class="level2">
-<h2 class="anchored" data-anchor-id="copernicus-safe-format-i">Copernicus SAFE Format I</h2>
-<ul>
-<li>Sentinel 2 data is provided in SAFE format. This is a zipped file that contains the data in separate JP2 files</li>
-<li>The Sentinel-SAFE format wraps a folder containing image data in a binary data format and product metadata in XML.</li>
-<li>This includes:
-<ul>
-<li>A ‘manifest.safe’ file which holds the general product information in XML.</li>
-<li>Subfolders for measurement datasets containing image data in various binary formats.</li>
-<li>A preview folder containing ‘quicklooks’ in PNG format, Google Earth overlays in KML format and HTML preview files.</li>
-<li>An annotation folder containing the product metadata in XML as well as calibration data.</li>
-<li>A support folder containing the XML schemes describing the product XML.</li>
-</ul></li>
-</ul>
-</section>
-<section id="copernicus-safe-format-ii" class="level2">
-<h2 class="anchored" data-anchor-id="copernicus-safe-format-ii">Copernicus SAFE Format II</h2>
-<p>The SAFE folder above includes the following content:</p>
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>                                                                     levelName
-1  data-large                                                                 
-2   °--S2B_MSIL2A_20240915T102559_N0511_R108_T32TMS_20240915T131207.SAFE      
-3       ¦--DATASTRIP                                                          
-4       ¦   °--DS_2BPS_20240915T131207_S20240915T102803                       
-5       ¦       ¦--MTD_DS.xml                                                 
-6       ¦       °--QI_DATA                                                    
-7       ¦           ¦--FORMAT_CORRECTNESS.xml                                 
-8       ¦           ¦--GENERAL_QUALITY.xml                                    
-9       ¦           ¦--GEOMETRIC_QUALITY.xml                                  
-10      ¦           ¦--RADIOMETRIC_QUALITY.xml                                
-11      ¦           °--SENSOR_QUALITY.xml                                     
-12      ¦--GRANULE                                                            
-13      ¦   °--L2A_T32TMS_A039316_20240915T102803                             
-14      ¦       ¦--AUX_DATA                                                   
-15      ¦       ¦   ¦--AUX_CAMSFO                                             
-16      ¦       ¦   °--AUX_ECMWFT                                             
-17      ¦       ¦--IMG_DATA                                                   
-18      ¦       ¦   ¦--R10m                                                   
-19      ¦       ¦   ¦   ¦--T32TMS_20240915T102559_AOT_10m.jp2                 
-20      ¦       ¦   ¦   ¦--T32TMS_20240915T102559_B02_10m.jp2                 
-21      ¦       ¦   ¦   °--... (etc)                                          
-22      ¦       ¦   ¦--R20m                                                   
-23      ¦       ¦   ¦   ¦--T32TMS_20240915T102559_AOT_20m.jp2                 
-24      ¦       ¦   ¦   ¦--T32TMS_20240915T102559_B01_20m.jp2                 
-25      ¦       ¦   ¦   °--... (etc)                                          
-26      ¦       ¦   °--R60m                                                   
-27      ¦       ¦       ¦--T32TMS_20240915T102559_AOT_60m.jp2                 
-28      ¦       ¦       ¦--T32TMS_20240915T102559_B01_60m.jp2                 
-29      ¦       ¦       °--... (etc)                                          
-30      ¦       ¦--MTD_TL.xml                                                 
-31      ¦       °--QI_DATA                                                    
-32      ¦           ¦--FORMAT_CORRECTNESS.xml                                 
-33      ¦           ¦--GENERAL_QUALITY.xml                                    
-34      ¦           ¦--GEOMETRIC_QUALITY.xml                                  
-35      ¦           ¦--L2A_QUALITY.xml                                        
-36      ¦           ¦--MSK_CLASSI_B00.jp2                                     
-37      ¦           ¦--MSK_CLDPRB_20m.jp2                                     
-38      ¦           ¦--MSK_CLDPRB_60m.jp2                                     
-39      ¦           ¦--MSK_DETFOO_B01.jp2                                     
-40      ¦           ¦--MSK_DETFOO_B02.jp2                                     
-41      ¦           ¦--... (etc)                                              
-42      ¦           ¦--MSK_QUALIT_B01.jp2                                     
-43      ¦           ¦--MSK_QUALIT_B02.jp2                                     
-44      ¦           ¦--MSK_SNWPRB_20m.jp2                                     
-45      ¦           ¦--MSK_SNWPRB_60m.jp2                                     
-46      ¦           ¦--SENSOR_QUALITY.xml                                     
-47      ¦           °--T32TMS_20240915T102559_PVI.jp2                         
-48      ¦--HTML                                                               
-49      ¦   ¦--banner_1.png                                                   
-50      ¦   ¦--banner_2.png                                                   
-51      ¦   ¦--banner_3.png                                                   
-52      ¦   ¦--star_bg.jpg                                                    
-53      ¦   ¦--UserProduct_index.html                                         
-54      ¦   °--UserProduct_index.xsl                                          
-55      ¦--INSPIRE.xml                                                        
-56      ¦--manifest.safe                                                      
-57      ¦--MTD_MSIL2A.xml                                                     
-58      ¦--rep_info                                                           
-59      ¦   ¦--S2_PDI_Level-2A_Datastrip_Metadata.xsd                         
-60      ¦   ¦--S2_PDI_Level-2A_Tile_Metadata.xsd                              
-61      ¦   °--S2_User_Product_Level-2A_Metadata.xsd                          
-62      °--S2B_MSIL2A_20240915T102559_N0511_R108_T32TMS_20240915T131207-ql.jpg</code></pre>
-</div>
-</div>
-<p>The data we are interested in is in the <code>IMG_DATA</code> folder. This folder contains the data in three different resolutions, where each band is a separate file <em>jp2</em> File.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>s2_files <span class="ot">&lt;-</span> <span class="fu">list.files</span>(<span class="st">"data-large/S2B_MSIL2A_20240915T102559_N0511_R108_T32TMS_20240915T131207.SAFE/GRANULE/L2A_T32TMS_A039316_20240915T102803/IMG_DATA/R60m/"</span>, <span class="st">"</span><span class="sc">\\</span><span class="st">.jp2$"</span>, <span class="at">full.names =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<ul>
-<li>We can import all <code>jp2</code> files into a <code>rast</code> object in a singe <code>rast()</code> command.</li>
-<li>Before we do this, let’s filter the data for the bands we are interested in (<code>B01</code>…<code>B12</code>)</li>
-<li>To add reasonable <code>names</code> to the SpatRaster object, we can use <code>str_split_fixed</code> to extract the relevant information from the file names.</li>
-</ul>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># selecting only the bands we are interested in:</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>s2_files <span class="ot">&lt;-</span> s2_files[<span class="fu">str_detect</span>(s2_files, <span class="st">"B</span><span class="sc">\\</span><span class="st">d{2}"</span>)]</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>s2 <span class="ot">&lt;-</span> <span class="fu">rast</span>(s2_files)</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Extracting the band names from the file names and adding these</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(s2) <span class="ot">&lt;-</span> <span class="fu">str_split_fixed</span>(<span class="fu">names</span>(s2), <span class="st">"_"</span>,<span class="dv">4</span>)[,<span class="dv">3</span>]</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(s2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code> [1] "B01" "B02" "B03" "B04" "B05" "B06" "B07" "B09" "B11" "B12"</code></pre>
-</div>
-</div>
-<ul>
-<li>Test if the data is loaded correctly:</li>
-</ul>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(s2[[<span class="dv">1</span>]])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="lesson3-2-sentinel-data_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-<ul>
-<li>Note how the values range from 0 to &gt; 15000. It seems that the values are not scaled yet (see <a href="lesson3-1-datatypes.html" class="quarto-xref"><span>Data Types, scale and offset</span></a>)</li>
-<li>If <code>scale</code> and <code>offset</code> values were set using <code>GDAL</code> flags, <code>terra</code> would automatically apply these values</li>
-<li>However, it seems that we have to apply these values manually: <a href="https://sentinel.esa.int/en/web/sentinel/technical-guides/sentinel-2-msi/level-1c/product-formatting">this website</a>, writes the following:</li>
-</ul>
-<blockquote class="blockquote">
-<p>The transformation of reflectances in 16 bit integers is performed according to the following equation: <span class="math display">\[\text{L1C\_DN} = \rho \times \text{QUANTIFICATION\_VALUE} - \text{RADIO\_ADD\_OFFSET}\]</span> The L1C product’s metadata includes the values for the QUANTIFICATION_VALUE and RADIO_ADD_OFFSET.</p>
-</blockquote>
-<ul>
-<li>This information is stored in the file <code>MTD_MSIL2A.xml</code>:</li>
-<li>This file contains information about the bands, the scale factor, and the offset values.</li>
-<li>If we search for <code>QUANTIFICATION_VALUE</code>, we find the following information:</li>
-</ul>
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>            &lt;QUANTIFICATION_VALUES_LIST&gt;
-                &lt;BOA_QUANTIFICATION_VALUE unit="none"&gt;10000&lt;/BOA_QUANTIFICATION_VALUE&gt;
-                &lt;AOT_QUANTIFICATION_VALUE unit="none"&gt;1000.0&lt;/AOT_QUANTIFICATION_VALUE&gt;
-                &lt;WVP_QUANTIFICATION_VALUE unit="cm"&gt;1000.0&lt;/WVP_QUANTIFICATION_VALUE&gt;
-            &lt;/QUANTIFICATION_VALUES_LIST&gt;</code></pre>
-</div>
-</div>
-<ul>
-<li>If we search for <code>ADD_OFFSET</code>, we find the following information:</li>
-</ul>
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>            &lt;BOA_ADD_OFFSET_VALUES_LIST&gt;
-        &lt;BOA_ADD_OFFSET band_id="0"&gt;-1000&lt;/BOA_ADD_OFFSET&gt;
-        &lt;BOA_ADD_OFFSET band_id="1"&gt;-1000&lt;/BOA_ADD_OFFSET&gt;
-        &lt;BOA_ADD_OFFSET band_id="2"&gt;-1000&lt;/BOA_ADD_OFFSET&gt;
-        &lt;BOA_ADD_OFFSET band_id="3"&gt;-1000&lt;/BOA_ADD_OFFSET&gt;
-        &lt;BOA_ADD_OFFSET band_id="4"&gt;-1000&lt;/BOA_ADD_OFFSET&gt;
-        &lt;BOA_ADD_OFFSET band_id="5"&gt;-1000&lt;/BOA_ADD_OFFSET&gt;
-        &lt;BOA_ADD_OFFSET band_id="6"&gt;-1000&lt;/BOA_ADD_OFFSET&gt;
-        &lt;BOA_ADD_OFFSET band_id="7"&gt;-1000&lt;/BOA_ADD_OFFSET&gt;
-        &lt;BOA_ADD_OFFSET band_id="8"&gt;-1000&lt;/BOA_ADD_OFFSET&gt;
-        &lt;BOA_ADD_OFFSET band_id="9"&gt;-1000&lt;/BOA_ADD_OFFSET&gt;
-        &lt;BOA_ADD_OFFSET band_id="10"&gt;-1000&lt;/BOA_ADD_OFFSET&gt;
-        &lt;BOA_ADD_OFFSET band_id="11"&gt;-1000&lt;/BOA_ADD_OFFSET&gt;
-        &lt;BOA_ADD_OFFSET band_id="12"&gt;-1000&lt;/BOA_ADD_OFFSET&gt;
-      &lt;/BOA_ADD_OFFSET_VALUES_LIST&gt;</code></pre>
-</div>
-</div>
-<!-- this does not work, since I would need offset to be added first, and then scale (?) -->
-<!-- - Rather than manually converting our data to reflectance values, we can use the function `scoff` -->
-<!-- - This function takes a *two-column matrix with scale (first column) and offset (second column) for each layer* -->
-<!-- - `scale` and `offset` are applied to the original values as follows: -->
-<!--   > `value <- value * scale + offset` -->
-<ul>
-<li>We can now use the <code>scale</code> (10’000) and <code>offset</code> (-1’000) values to convert the data to reflectance values.</li>
-<li>We can then use <code>hist</code> to get a histogram of the values in each band</li>
-<li>Note that most bands have values &gt; 1.
-<ul>
-<li>We have to decide how to handle these values</li>
-<li>One option is to simply clip the values to the desired range</li>
-</ul></li>
-</ul>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>s2b <span class="ot">&lt;-</span> (s2 <span class="sc">-</span> <span class="dv">1000</span>)<span class="sc">/</span><span class="dv">10000</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(s2b)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="lesson3-2-sentinel-data_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># function to clip values to the desired range</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>force_minmax <span class="ot">&lt;-</span> \(x, <span class="at">min =</span> <span class="dv">0</span>, <span class="at">max =</span> <span class="dv">1</span>){</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  x[x<span class="sc">&lt;</span>min] <span class="ot">&lt;-</span> min</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  x[x<span class="sc">&gt;</span>max] <span class="ot">&lt;-</span> max</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  x</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>To apply this function to all bands, we can use the <code>app</code> function.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>s2c <span class="ot">&lt;-</span> <span class="fu">app</span>(s2b, force_minmax)</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># If we now check the min/max values, we see that all values are between 0 and 1</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="fu">minmax</span>(s2c)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>    B01 B02 B03 B04 B05 B06 B07 B09 B11 B12
-min   0   0   0   0   0   0   0   0   0   0
-max   1   1   1   1   1   1   1   1   1   1</code></pre>
-</div>
-</div>
-<p>To test if we processed the data correctly, let’s create a True Color image using the bands <code>B04</code>, <code>B03</code>, and <code>B02</code>.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotRGB</span>(s2c,<span class="at">r =</span> <span class="dv">4</span>, <span class="at">g =</span> <span class="dv">3</span>, <span class="at">b =</span> <span class="dv">2</span>, <span class="at">stretch =</span> <span class="st">"histogram"</span>, <span class="at">smooth =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="lesson3-2-sentinel-data_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># To export the R,G,B bands to a True Color Geotiff: </span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">writeRaster</span>(s2c[[<span class="fu">c</span>(<span class="dv">4</span>,<span class="dv">3</span>,<span class="dv">2</span>)]], <span class="st">"data-out/sentinel-rgb.tif"</span>, <span class="at">overwrite =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>To calculate NDVI, we can create our custom function and apply it to the <code>s2c</code> object using <code>app</code>:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>ndvi <span class="ot">&lt;-</span> \(x){(x[<span class="dv">5</span>]<span class="sc">-</span>x[<span class="dv">4</span>])<span class="sc">/</span>(x[<span class="dv">5</span>]<span class="sc">+</span>x[<span class="dv">4</span>])}</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>s2_ndvi <span class="ot">&lt;-</span> <span class="fu">app</span>(s2c, ndvi)</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tmap)</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(s2_ndvi) <span class="sc">+</span> </span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_raster</span>(<span class="at">style =</span> <span class="st">"cont"</span>,<span class="at">midpoint =</span> <span class="dv">0</span>) <span class="sc">+</span> </span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_layout</span>(<span class="at">legend.outside =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="lesson3-2-sentinel-data_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
 
 
-</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -1015,8 +685,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./lesson3-1-datatypes.html" class="pagination-link" aria-label="Data Types, scale and offset">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Data Types, scale and offset</span></span>
+      <a href="./lesson3-2-sentinel-data.html" class="pagination-link" aria-label="Showcase: Importing Sentinel data">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Showcase: Importing Sentinel data</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
