@@ -64,6 +64,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
+<link href="./references.html" rel="next">
 <link href="./lesson4-2-supervised-learning.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -288,6 +289,10 @@ window.Quarto = {
 </li>
       </ul>
   </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">References</span></span>
+  </li>
     </ul>
     </div>
 </nav>
@@ -305,6 +310,7 @@ window.Quarto = {
   <li><a href="#train-the-model" id="toc-train-the-model" class="nav-link" data-scroll-target="#train-the-model">Train the model</a></li>
   <li><a href="#predict-the-classes" id="toc-predict-the-classes" class="nav-link" data-scroll-target="#predict-the-classes">Predict the classes</a></li>
   <li><a href="#evaluate-the-model" id="toc-evaluate-the-model" class="nav-link" data-scroll-target="#evaluate-the-model">Evaluate the model</a></li>
+  <li><a href="#tasks" id="toc-tasks" class="nav-link" data-scroll-target="#tasks">Tasks</a></li>
   </ul>
 </nav>
     </div>
@@ -426,13 +432,13 @@ Figure&nbsp;7.2: The raster after applying a focal filter
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(train_features_b)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>  luminosity focal3by3
-1  0.1843137 0.1800299
-2  0.3568627 0.2273958
-3  0.1960784 0.2349411
-4  0.4392157 0.1740047
-5  0.6313725 0.1663846
-6  0.2823529 0.3338187</code></pre>
+<pre><code>  luminosity  focal3by3
+1  0.3568627 0.22739583
+2  0.1960784 0.23494115
+3  0.4392157 0.17400471
+4  0.6313725 0.16638463
+5  0.2823529 0.33381873
+6  0.5294118 0.09907246</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -510,10 +516,10 @@ Actual
 <tbody>
 <tr class="odd">
 <td style="text-align: left; font-weight: bold;">Agriculture</td>
-<td style="text-align: right; background-color: red !important;">37</td>
+<td style="text-align: right; background-color: red !important;">33</td>
 <td style="text-align: right; background-color: white !important;">3</td>
-<td style="text-align: right; background-color: white !important;">9</td>
-<td style="text-align: right; background-color: white !important;">0</td>
+<td style="text-align: right; background-color: white !important;">6</td>
+<td style="text-align: right; background-color: white !important;">1</td>
 </tr>
 <tr class="even">
 <td style="text-align: left; font-weight: bold;">Buildings</td>
@@ -524,9 +530,9 @@ Actual
 </tr>
 <tr class="odd">
 <td style="text-align: left; font-weight: bold;">Forest</td>
-<td style="text-align: right; background-color: white !important;">2</td>
+<td style="text-align: right; background-color: white !important;">6</td>
 <td style="text-align: right; background-color: white !important;">1</td>
-<td style="text-align: right; background-color: red !important;">29</td>
+<td style="text-align: right; background-color: red !important;">32</td>
 <td style="text-align: right; background-color: white !important;">0</td>
 </tr>
 <tr class="even">
@@ -534,7 +540,7 @@ Actual
 <td style="text-align: right; background-color: white !important;">0</td>
 <td style="text-align: right; background-color: white !important;">0</td>
 <td style="text-align: right; background-color: white !important;">1</td>
-<td style="text-align: right; background-color: red !important;">20</td>
+<td style="text-align: right; background-color: red !important;">19</td>
 </tr>
 </tbody>
 </table>
@@ -544,9 +550,17 @@ Actual
 </div>
 <ul>
 <li>In our first approach, we achieved an accuracy of <em>0.67</em> (see <a href="lesson4-2-supervised-learning.html#sec-model-evaluation-1" class="quarto-xref"><span>Model Evaluation I</span></a>)</li>
-<li>With our additional features, the overall accuracy is <em>0.83</em></li>
-<li>We can further improve our modle by adding more features in this way</li>
+<li>With our additional features, the overall accuracy is <em>0.82</em></li>
+<li>We can further improve our model by adding more features in this way</li>
 </ul>
+</section>
+<section id="tasks" class="level2">
+<h2 class="anchored" data-anchor-id="tasks">Tasks</h2>
+<ol type="1">
+<li>First do the tasks described here: <a href="lesson4-2-supervised-learning.html#sec-tasks-supervised-learning" class="quarto-xref"><span>Tasks</span></a></li>
+<li>Use the <code>focal</code> function to create new features as described above</li>
+<li>Evaluate your new model</li>
+</ol>
 
 
 </section>
@@ -979,6 +993,9 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
+      <a href="./references.html" class="pagination-link" aria-label="References">
+        <span class="nav-page-text">References</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
   </div>
 </nav>
 </div> <!-- /content -->

@@ -663,7 +663,7 @@
     "href": "lesson4-2-supervised-learning.html#sec-feature-extraction1",
     "title": "Supervised learning",
     "section": "Feature Extraction",
-    "text": "Feature Extraction\n\nWe need to extract the values of the raster data at the labelled points\nSince we only have one band, our result is a data.frame with one column\n\n\n# ID = FALSE means that we do not want to add an ID column\ntrain_features &lt;- terra::extract(ces1961, data_train, ID = FALSE)\n\nhead(train_features)\n\n  luminosity\n1  0.1843137\n2  0.3568627\n3  0.1960784\n4  0.4392157\n5  0.6313725\n6  0.2823529\n\n\n\ndata_train2 &lt;- cbind(data_train, train_features) |&gt; \n  st_drop_geometry()",
+    "text": "Feature Extraction\n\nWe need to extract the values of the raster data at the labelled points\nSince we only have one band, our result is a data.frame with one column\n\n\n# ID = FALSE means that we do not want to add an ID column\ntrain_features &lt;- terra::extract(ces1961, data_train, ID = FALSE)\n\nhead(train_features)\n\n  luminosity\n1  0.3568627\n2  0.1960784\n3  0.4392157\n4  0.6313725\n5  0.2823529\n6  0.5294118\n\n\n\ndata_train2 &lt;- cbind(data_train, train_features) |&gt; \n  st_drop_geometry()",
     "crumbs": [
       "Lesson 4",
       "<span class='chapter-number'>6</span>  <span class='chapter-title'>Supervised learning</span>"
@@ -707,7 +707,7 @@
     "href": "lesson4-2-supervised-learning.html#sec-model-evaluation-1",
     "title": "Supervised learning",
     "section": "Model Evaluation I",
-    "text": "Model Evaluation I\n\n\n\nTo evaluate the model, we will use the testing data\n\n\ntest_features &lt;- terra::extract(ces1961_predict2, data_test, ID = FALSE)\n\nconfusion_matrix &lt;- cbind(data_test, test_features) |&gt; \n  st_drop_geometry() |&gt; \n  transmute(predicted = class.1, actual = class) |&gt; \n  table()\n\n\n\n\n\nTable 6.1: The confusion matrix shows the predicted values (rows) against the actual values (columns). The diagonal cells (in red) shows the correct predictions. The results are better than expected, the model seems to haev the most problems with the class “agriculture”.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nActual\n\n\n\n\nAgriculture\nBuildings\nForest\nShadows\n\n\n\n\nAgriculture\n34\n3\n14\n0\n\n\nBuildings\n2\n6\n2\n0\n\n\nForest\n5\n0\n15\n2\n\n\nShadows\n0\n0\n8\n18",
+    "text": "Model Evaluation I\n\n\n\nTo evaluate the model, we will use the testing data\n\n\ntest_features &lt;- terra::extract(ces1961_predict2, data_test, ID = FALSE)\n\nconfusion_matrix &lt;- cbind(data_test, test_features) |&gt; \n  st_drop_geometry() |&gt; \n  transmute(predicted = class.1, actual = class) |&gt; \n  table()\n\n\n\n\n\nTable 6.1: The confusion matrix shows the predicted values (rows) against the actual values (columns). The diagonal cells (in red) shows the correct predictions. The results are better than expected, the model seems to haev the most problems with the class “agriculture”.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nActual\n\n\n\n\nAgriculture\nBuildings\nForest\nShadows\n\n\n\n\nAgriculture\n34\n4\n13\n0\n\n\nBuildings\n3\n5\n0\n0\n\n\nForest\n4\n0\n16\n2\n\n\nShadows\n0\n0\n10\n18",
     "crumbs": [
       "Lesson 4",
       "<span class='chapter-number'>6</span>  <span class='chapter-title'>Supervised learning</span>"
@@ -718,7 +718,7 @@
     "href": "lesson4-2-supervised-learning.html#sec-model-evaluation-2",
     "title": "Supervised learning",
     "section": "Model Evaluation I",
-    "text": "Model Evaluation I\n\nA very simple measure to asses the model performance is the overall accuracy\nThis is the ratio of the number of features correctly classified (diagonals in Table 6.1) to the total number of features (sum of all column sums in Table 6.1):\n\n\\[\\frac{\\text{number of features correctly classified}}{\\text{total number of features}}\\]\n\nif we insert our values, we get:\n\n\\[\\frac{34+6+15+18)}{41+9+39+20}= 0.67\\]",
+    "text": "Model Evaluation I\n\nA very simple measure to asses the model performance is the overall accuracy\nThis is the ratio of the number of features correctly classified (diagonals in Table 6.1) to the total number of features (sum of all column sums in Table 6.1):\n\n\\[\\frac{\\text{number of features correctly classified}}{\\text{total number of features}}\\]\n\nif we insert our values, we get:\n\n\\[\\frac{34+5+16+18)}{41+9+39+20}= 0.67\\]",
     "crumbs": [
       "Lesson 4",
       "<span class='chapter-number'>6</span>  <span class='chapter-title'>Supervised learning</span>"
@@ -729,7 +729,18 @@
     "href": "lesson4-2-supervised-learning.html#sec-feature-engineering0",
     "title": "Supervised learning",
     "section": "Feature Engineering",
-    "text": "Feature Engineering\n\nCurrently, our raster data only contains one band. In other words, our feature space is only one-dimensional\nIt’s actually quite a challenge to determine the land cover of a pixel if we regard just a single pixel. We humans rely on context (sorrounding pixels) to determine the land cover. You can test this by zooming in very closely on the raster image and try to distinguish the land cover types (see Figure 6.2)\nWe will have a look at possibilities to include context information in Feature Engineering\n\n\nxmin &lt;- 2706200\nxmax &lt;- xmin+100\nymin &lt;- 1143600\nymax &lt;- ymin+100\ne &lt;- ext(xmin, xmax, ymin, ymax)\n\ncrop(ces1961, e) |&gt; \n  plot( col = grey.colors(255))\n\n\n\n\n\n\n\nFigure 6.2: Zooming in on the raster image, it is difficult to determine the land cover types of individual pixels\n\n\n\n\n\n\n\n\n\nBrenning, Alexander. 2023. “Spatial ML Model Assessment and Interpretation.” OpenGeoHub Summer School 2023. OpenGeoHub Foundation. https://doi.org/10.5446/63464.\n\n\nSchratz, Patrick, Marc Becker, Michel Lang, and Alexander Brenning. 2021. “Mlr3spatiotempcv: Spatiotemporal Resampling Methods for Machine Learning in r.” arXiv Preprint arXiv:2110.12674.",
+    "text": "Feature Engineering\n\nCurrently, our raster data only contains one band. In other words, our feature space is only one-dimensional\nIt’s actually quite a challenge to determine the land cover of a pixel if we regard just a single pixel. We humans rely on context (sorrounding pixels) to determine the land cover. You can test this by zooming in very closely on the raster image and try to distinguish the land cover types (see Figure 6.2)\nWe will have a look at possibilities to include context information in Feature Engineering\n\n\nxmin &lt;- 2706200\nxmax &lt;- xmin+100\nymin &lt;- 1143600\nymax &lt;- ymin+100\ne &lt;- ext(xmin, xmax, ymin, ymax)\n\ncrop(ces1961, e) |&gt; \n  plot( col = grey.colors(255))\n\n\n\n\n\n\n\nFigure 6.2: Zooming in on the raster image, it is difficult to determine the land cover types of individual pixels",
+    "crumbs": [
+      "Lesson 4",
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Supervised learning</span>"
+    ]
+  },
+  {
+    "objectID": "lesson4-2-supervised-learning.html#sec-tasks-supervised-learning",
+    "href": "lesson4-2-supervised-learning.html#sec-tasks-supervised-learning",
+    "title": "Supervised learning",
+    "section": "Tasks",
+    "text": "Tasks\n\nDownload the datasets labelled-points.gpkg and 1961.tif from moodle\nFollow the steps described above to train a model to classify the land cover types in the area surrounding the village Ces in Ticino\nEvaluate the model using the testing data\n\n\n\n\n\nBrenning, Alexander. 2023. “Spatial ML Model Assessment and Interpretation.” OpenGeoHub Summer School 2023. OpenGeoHub Foundation. https://doi.org/10.5446/63464.\n\n\nSchratz, Patrick, Marc Becker, Michel Lang, and Alexander Brenning. 2021. “Mlr3spatiotempcv: Spatiotemporal Resampling Methods for Machine Learning in r.” arXiv Preprint arXiv:2110.12674.",
     "crumbs": [
       "Lesson 4",
       "<span class='chapter-number'>6</span>  <span class='chapter-title'>Supervised learning</span>"
@@ -784,7 +795,7 @@
     "href": "lesson4-2-feature-engineering.html#feature-extraction",
     "title": "Feature Engineering",
     "section": "Feature extraction",
-    "text": "Feature extraction\n\nJust as we did in our first approach (see Feature Extraction), we need to extract the features from the raster data at the labelled points\nNote that the resulting data frame now has two columns, rather than just a single column\n\n\ntrain_features_b &lt;- terra::extract(ces, data_train, ID = FALSE)\n\nhead(train_features_b)\n\n  luminosity focal3by3\n1  0.1843137 0.1800299\n2  0.3568627 0.2273958\n3  0.1960784 0.2349411\n4  0.4392157 0.1740047\n5  0.6313725 0.1663846\n6  0.2823529 0.3338187\n\n\n\ndata_train2_b &lt;- cbind(data_train, train_features_b) |&gt; \n  st_drop_geometry()",
+    "text": "Feature extraction\n\nJust as we did in our first approach (see Feature Extraction), we need to extract the features from the raster data at the labelled points\nNote that the resulting data frame now has two columns, rather than just a single column\n\n\ntrain_features_b &lt;- terra::extract(ces, data_train, ID = FALSE)\n\nhead(train_features_b)\n\n  luminosity  focal3by3\n1  0.3568627 0.22739583\n2  0.1960784 0.23494115\n3  0.4392157 0.17400471\n4  0.6313725 0.16638463\n5  0.2823529 0.33381873\n6  0.5294118 0.09907246\n\n\n\ndata_train2_b &lt;- cbind(data_train, train_features_b) |&gt; \n  st_drop_geometry()",
     "crumbs": [
       "Lesson 4",
       "<span class='chapter-number'>7</span>  <span class='chapter-title'>Feature Engineering</span>"
@@ -817,10 +828,31 @@
     "href": "lesson4-2-feature-engineering.html#evaluate-the-model",
     "title": "Feature Engineering",
     "section": "Evaluate the model",
-    "text": "Evaluate the model\nSee Model Evaluation I and Model Evaluation I\n\ntest_featuresb &lt;- terra::extract(ces1961_predict2b, data_test, ID = FALSE)\n\nconfusion_matrixb &lt;- cbind(data_test, test_featuresb) |&gt; \n  st_drop_geometry() |&gt; \n  transmute(predicted = class.1, actual = class) |&gt; \n  table()\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nActual\n\n\n\n\nAgriculture\nBuildings\nForest\nShadows\n\n\n\n\nAgriculture\n37\n3\n9\n0\n\n\nBuildings\n2\n5\n0\n0\n\n\nForest\n2\n1\n29\n0\n\n\nShadows\n0\n0\n1\n20\n\n\n\n\n\n\n\n\nIn our first approach, we achieved an accuracy of 0.67 (see Model Evaluation I)\nWith our additional features, the overall accuracy is 0.83\nWe can further improve our modle by adding more features in this way",
+    "text": "Evaluate the model\nSee Model Evaluation I and Model Evaluation I\n\ntest_featuresb &lt;- terra::extract(ces1961_predict2b, data_test, ID = FALSE)\n\nconfusion_matrixb &lt;- cbind(data_test, test_featuresb) |&gt; \n  st_drop_geometry() |&gt; \n  transmute(predicted = class.1, actual = class) |&gt; \n  table()\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nActual\n\n\n\n\nAgriculture\nBuildings\nForest\nShadows\n\n\n\n\nAgriculture\n33\n3\n6\n1\n\n\nBuildings\n2\n5\n0\n0\n\n\nForest\n6\n1\n32\n0\n\n\nShadows\n0\n0\n1\n19\n\n\n\n\n\n\n\n\nIn our first approach, we achieved an accuracy of 0.67 (see Model Evaluation I)\nWith our additional features, the overall accuracy is 0.82\nWe can further improve our model by adding more features in this way",
     "crumbs": [
       "Lesson 4",
       "<span class='chapter-number'>7</span>  <span class='chapter-title'>Feature Engineering</span>"
+    ]
+  },
+  {
+    "objectID": "lesson4-2-feature-engineering.html#tasks",
+    "href": "lesson4-2-feature-engineering.html#tasks",
+    "title": "Feature Engineering",
+    "section": "Tasks",
+    "text": "Tasks\n\nFirst do the tasks described here: Tasks\nUse the focal function to create new features as described above\nEvaluate your new model",
+    "crumbs": [
+      "Lesson 4",
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Feature Engineering</span>"
+    ]
+  },
+  {
+    "objectID": "references.html",
+    "href": "references.html",
+    "title": "References",
+    "section": "",
+    "text": "Amatulli, Giuseppe. “Geocomputation and Machine Learning for\nEnvironmental Applications.” http://spatial-ecology.net/docs/build/html/GDAL/gdal_osgeo.html.\n\n\nBaltagi, Badi Hani, and Badi H Baltagi. 2008. Econometric Analysis\nof Panel Data. Vol. 4. Springer. https://bcs.wiley.com/he-bcs/Books?action=resource&bcsId=4338&itemId=1118672321&resourceId=13452.\n\n\nBrenning, Alexander. 2023. “Spatial ML Model Assessment and\nInterpretation.” OpenGeoHub Summer School 2023. OpenGeoHub\nFoundation. https://doi.org/10.5446/63464.\n\n\nHorn, Berthold KP. 1981. “Hill Shading and the Reflectance\nMap.” Proceedings of the IEEE 69 (1): 14–47.\n\n\nLovelace, Robin, Jakub Nowosad, and Jannes Muenchow. 2019.\nGeocomputation with r. Chapman; Hall/CRC.\n\n\nPebesma, Edzer, and Roger Bivand. 2023. Spatial Data Science: With\nApplications in R. Boca Raton: Chapman; Hall/CRC. https://doi.org/10.1201/9780429459016.\n\n\nSchratz, Patrick, Marc Becker, Michel Lang, and Alexander Brenning.\n2021. “Mlr3spatiotempcv: Spatiotemporal Resampling Methods for\nMachine Learning in r.” arXiv Preprint arXiv:2110.12674.\n\n\nWickham, Hadley. 2014. “Tidy Data.” Journal of\nStatistical Software 59 (10): 1–23. https://doi.org/10.18637/jss.v059.i10.",
+    "crumbs": [
+      "References"
     ]
   }
 ]
