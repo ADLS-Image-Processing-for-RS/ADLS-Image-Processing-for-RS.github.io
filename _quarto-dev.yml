@@ -1,8 +1,5 @@
 book: 
   chapters:
-    - part: Lesson 4
-      chapters: 
-        - lesson4-1-unsupervised-learning.qmd
-        - lesson4-2-supervised-learning.qmd
+
 
         
