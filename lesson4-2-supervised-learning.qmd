@@ -7,7 +7,7 @@ echo: true
 
 ## Introduction
 
-- Supervised learning is a type of machine learning where the model is trained on a labeled dataset
+- Supervised learning is a type of machine learning where the model is trained on a labelled dataset
 - The model learns to map input data to the correct output label
 - Supervised learning is used extensively in remote sensing to enable quantitative analysis of satellite imagery
 - We will use historic satellite imagery to train a model to classify land cover types in a given area
@@ -29,6 +29,8 @@ library(tmap)
 
 ces1961 <- rast("data-large/ces/1961.tif")
 
+ces1961 <- ces1961/255 # normalize the values to [0,1]
+
 names(ces1961) <- "luminosity"
 ```
 
@@ -44,7 +46,6 @@ plot(ces1961, col = grey.colors(255))
 To solve this task
 
 1. We first need to create some labelled data
-2. Do some feature engineering to on our raster data 
 3. Split our labelled data into training and testing data
 4. Train a model on the training data
 5. Evaluate the model on the testing data
@@ -105,24 +106,29 @@ tm_shape(ces1961) +
 
 - We need to split our data into training and testing data
 - We will randomly select 70% of the data for training and the remaining 30% for testing
-- Note that this is *not the recommended approach*, instead we should use a spatially stratified split. However, for this exercise, we will use a random split
+
+:::{.callout-important}
+
+Note that this is *not the recommended approach*, instead we should use a spatially stratified split [see  @brenning2023; and @schratz2021]. To keep things simple for this exercise however, we will use a random split.
+
+:::
 
 ```{r}
 
 labelled_data <- labelled_data |> 
-  group_by(class) |> 
-  mutate(
-    i = sample(seq_len(n())),
-    train = i <= n()*0.7
+  group_by(class) |>            # for each class...
+  mutate(                       #
+    i = sample(seq_len(n())),   # ...assign a random number from 1 to n...
+    train = i <= n()*0.7        # ...and assign the first 70% to "training"
     )
 
-data_train <- labelled_data |> 
-  filter(train) |> 
-  select(-c(i,train))
+data_train <- labelled_data |>  # filter the training data and store in a
+  filter(train) |>              # a new data frame 
+  select(-c(i,train))           # remove obsolete columns
 
 
-data_test <- labelled_data |> 
-  filter(!train) |> 
+data_test <- labelled_data |>  # same as above, but the filter is inverted
+  filter(!train) |>            # for the testing data
   select(-c(i,train))
 
 tmap_mode("plot")
@@ -131,38 +137,50 @@ tm_shape(labelled_data) + tm_dots(col = "train", palette = c("blue","red"))
 ```
 
 
-## Feature Extraction
+## Feature Extraction {#sec-feature-extraction1}
 
 - We need to extract the values of the raster data at the labelled points
 - Since we only have one band, our result is a data.frame with one column
 
 ```{r}
-train_features <- extract(ces1961, data_train, ID = FALSE)
+# ID = FALSE means that we do not want to add an ID column
+train_features <- terra::extract(ces1961, data_train, ID = FALSE)
 
+head(train_features)
+```
+
+
+```{r}
 data_train2 <- cbind(data_train, train_features) |> 
   st_drop_geometry()
 ```
 
 
-## Training the model
+## Training the model {#sec-training-model1}
 
 - We will use the `rpart` package to train a classification tree
-- The classification tree is also known as a decision tree: it is a flowchart-like structure in which each internal node represents a test on an attribute, each branch represents the outcome of the test, and each leaf node represents a class label
-- This model does not always produce the best results, but it is simple and interpretable
+- The classification tree is also known as a decision tree
+- A decision tree has a flowchart-like structure (see @fig-cart)
+- Classification trees does not always produce the best results, but they are simple and interpretable
 
 ```{r}
 library(rpart)
-
-set.seed(111)
 cart_model <- rpart(class~., data = data_train2, method = "class")
+```
 
+- As mentioned above, the decision tree is interpretable. We can visualize it using the `rpart.plot` package:
+- Each pixel is classified into one of the four classes based on its value (luminosity) according to the decision tree in @fig-cart
+
+```{r}
+#| label: fig-cart
+#| fig-cap: The resulting decision tree. Each internal node represents a test on an attribute, each branch represents the outcome of the test and each leaf node represents a class label
 
 library(rpart.plot)
 rpart.plot(cart_model, type = 3)
 ```
 
 
-## Predicting the probabilities per class for each pixel
+## Predicting the probabilities per class for each pixel {#sec-prediction-per-class}
 
 - We will use the trained model to predict the probabilities of each class for each pixel in the raster data
 - We can use the `predict` function to do this
@@ -176,27 +194,27 @@ tm_shape(ces1961_predict) + tm_raster(style = "cont", midpoint = .5, palette = "
 ```
 
 
-## Highest probability class
+## Highest probability class {#sec-highest-probability-class}
 
-- To get the class with the highest probability for each pixel, we can use the `which.max` function
+- We can combine the four layers into a single layer by assigning the class with the highest probability to each pixel
+- For this, we can use the `which.max` function:
 
 ```{r}
 
 ces1961_predict2 <- which.max(ces1961_predict)
 
-
+# the next three lines assign class labels to the raster (instead of numbers)
 classes <- levels(data_train2$class)
-
 classes_df <- data.frame(ID = seq_along(classes), class = classes)
-
 levels(ces1961_predict2) <- classes_df
 
+# visualize the result
 tmap_mode("view")
 tm_shape(ces1961_predict2) + tm_raster(palette = c("gold","gray","palegreen4","black")) +
   tm_layout(legend.outside = TRUE)
 ```
 
-## Evaluation
+## Model Evaluation I {#sec-model-evaluation-1}
 
 
 <!-- todo: more metrics on model performance:  -->
@@ -206,26 +224,115 @@ tm_shape(ces1961_predict2) + tm_raster(palette = c("gold","gray","palegreen4","b
 
 
 ```{r}
+#| output: false
+test_features <- terra::extract(ces1961_predict2, data_test, ID = FALSE)
 
-test_features <- extract(ces1961_predict2, data_test, ID = FALSE)
-
-cbind(data_test, test_features) |> 
+confusion_matrix <- cbind(data_test, test_features) |> 
   st_drop_geometry() |> 
   transmute(predicted = class.1, actual = class) |> 
   table()
 ```
 
 
+```{r}
+#| echo: false
+#| label: tbl-confusion-matrix1
+#| class: left
+#| tbl-cap: The confusion matrix shows the predicted values (rows) against the actual values (columns). The diagonal cells (in red) shows the correct predictions. The results are better than expected, the model seems to haev the most problems with the class "agriculture". 
+
+library(tidyr)
+library(kableExtra)
 
 
-## Feature Engineering
-
-- Currently, our raster data only contains one band. Our feature space is therefore only one dimensional and won't get us very far
-
-
+confusion_matrix2 <- confusion_matrix |> 
+  as_tibble() |> 
+  pivot_wider(names_from = actual, values_from = n, values_fill = 0)
 
 
 
 
+
+highlight_diagonal <- \(kable_table, diag_cols, color = "red", default_color = "white") {
+  purrr::reduce(seq_along(diag_cols), \(tbl, i) {
+    tbl |> column_spec(diag_cols[i], background = ifelse(seq_along(diag_cols) == i, color, default_color))
+  }, .init = kable_table)
+}
+
+col_names <- colnames(confusion_matrix2)
+col_names[1] <- ""
+
+kable(confusion_matrix2,col.names = col_names) |> 
+  kable_styling(full_width = FALSE) |> 
+  column_spec(1, bold = TRUE) |> 
+  highlight_diagonal(2:5) |> 
+  add_header_above(c(" " = 1, "Actual" = 4)) |>
+  collapse_rows(columns = 1)
+
+
+
+
+```
+
+
+## Model Evaluation I {#sec-model-evaluation-2}
+
+```{r}
+#| echo: false
+confusion_matrix3 <- as.matrix(confusion_matrix2[,-1])
+
+correct <- diag(confusion_matrix3)
+tot <- colSums(confusion_matrix3)
+
+# make strings
+
+correct_str <- paste(correct, collapse = "+")
+tot_str <- paste(tot, collapse = "+")
+
+acc <- sum(correct)/sum(tot)
+
+acc_str <- format(acc, digits = 2)
+```
+
+- A very simple measure to asses the model performance is the overall accuracy
+- This is the ratio of the number of features correctly classified (diagonals in @tbl-confusion-matrix1) to the total number of features (sum of all column sums in @tbl-confusion-matrix1):
+
+$$\frac{\text{number of features correctly classified}}{\text{total number of features}}$$
+
+
+- if we insert our values, we get: 
+
+
+
+$$\frac{`r correct_str`)}{`r tot_str`}= `r acc_str`$$
+
+
+
+
+## Feature Engineering {#sec-feature-engineering0}
+
+- Currently, our raster data only contains one band. In other words, our feature space is only one-dimensional 
+- It's actually quite a challenge to determine the land cover of a pixel if we regard just a single pixel. We humans rely on *context* (sorrounding pixels) to determine the land cover. You can test this by zooming in very closely on the raster image and try to distinguish the land cover types (see @fig-zoom)
+- We will have a look at possibilities to include context information in @sec-feature-engineering
+
+```{r}
+#| label: fig-zoom
+#| fig-cap: Zooming in on the raster image, it is difficult to determine the land cover types of individual pixels
+
+
+xmin <- 2706200
+xmax <- xmin+100
+ymin <- 1143600
+ymax <- ymin+100
+e <- ext(xmin, xmax, ymin, ymax)
+
+crop(ces1961, e) |> 
+  plot( col = grey.colors(255))
+```
+
+```{r}
+#| echo: false
+
+save.image(file = "data-out/workspace.Rdata")
+```
 
 

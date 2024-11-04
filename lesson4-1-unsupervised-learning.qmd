@@ -1,2 +1,34 @@
 
 # Unsupervised learning
+
+
+```{r}
+
+tm_shape(s2c) + tm_rgb(4,3,2,stretch.palette = FALSE, max.value = 1)
+
+plot(s2c[[1]])
+
+e <- ext(400000, 440000, 5160000, 5180000)
+
+s2c_crop <- crop(s2c, e)
+plotRGB(s2c_crop, 4, 3, 2,scale = 1, stretch = FALSE)
+
+nr <- as.data.frame(s2c_crop, cell=TRUE)
+
+
+nclust <- 10
+kmncluster <- kmeans(nr[,-1], centers=nclust, iter.max = 500, nstart = 5, algorithm="Lloyd")
+
+knr <- rast(s2c_crop, nlyr=1)
+knr[nr$cell] <- kmncluster$cluster
+knr
+
+par(mfrow = c(2,1))
+plotRGB(s2c_crop,  4, 3, 2, scale = 1, stretch = FALSE)
+plot(knr, col = RColorBrewer::brewer.pal(nclust, "Set3"))
+dev.off()
+
+RColorBrewer::display.brewer.all()
+
+```
+

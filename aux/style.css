@@ -19,3 +19,7 @@
 figcaption{
   text-align: center;
 }
+
+.left > figure > figcaption{
+  text-align: left !important;
+}

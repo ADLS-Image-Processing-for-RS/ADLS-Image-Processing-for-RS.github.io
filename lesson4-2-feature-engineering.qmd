@@ -1,0 +1,218 @@
+---
+echo: true
+---
+# Feature Engineering {#sec-feature-engineering}
+
+```{r}
+#| echo: false
+library(terra)
+library(sf)
+library(rpart)
+library(tidyr)
+library(dplyr)
+load("data-out/workspace.Rdata")
+
+# terra pointers are invalid
+ces1961 <- rast("data-large/ces/1961.tif")
+ces1961 <- ces1961/255 # normalize the values to [0,1]
+names(ces1961) <- "luminosity"
+
+xmin <- 2706200
+xmax <- xmin+100
+ymin <- 1143600
+ymax <- ymin+100
+e <- ext(xmin, xmax, ymin, ymax)
+
+```
+
+
+## What is Feature Engineering?
+
+- Feature Engineering is the process of using domain knowledge to extract features from raw data.
+- This is especially useful, when our raw data is not sufficient to build a model
+- In our previous example, we only had luminosity to predict the class of the raster cells
+- As discussed in the chapter @sec-feature-engineering0, we humans ourselves rely on context to determine the land cover types
+- This context is provided by the values of the sorrounding pixels
+- We can provide this context by applying focal filters to the raster data
+
+
+## Focal filters
+
+
+
+- Focal Filters, as we have seen in the chapter @sec-focal-1, aggregate the values over a (moving) neighborhood of pixels. 
+- We can determine the size and shape of this neighborhood by specifying a matrix
+
+
+
+
+
+```{r}
+n <- 5
+focal3by3 <- matrix(rep(1,n^2), ncol = n)
+
+r_foc3 <- focal(ces1961, focal3by3, fun = sd, fillNA = TRUE)
+
+r_foc3 <- r_foc3
+
+# plot(r_foc3)
+```
+
+
+```{r}
+#| layout-nrow: 1
+#| label: fig-focal-filter
+#| fig-cap:
+#|   - The original raster
+#|   - The raster after applying a focal filter
+#| echo: false
+
+crop(ces1961, e) |> 
+  plot(col = grey.colors(255))
+
+crop(r_foc3, e) |> 
+  plot( col = grey.colors(255))
+```
+
+
+## Using focal filters as features
+
+- To use the focal filters as features, the values of the focal filters need to be normalized to [0,1]
+- A simple way to do this is to use the [min-max normalization](https://en.wikipedia.org/wiki/Feature_scaling#Rescaling_(min-max_normalization)): 
+
+$$x' = \frac{x - min(x)}{\max(x) - min(x)}$$
+
+
+- To implement this in R, we need to use `global(x, min)` or (slightly faster) `minmax(x)`. 
+
+```{r}
+
+minmax_normalization <- function(x){
+  minmax_vals <- minmax(x)[,1]
+  minval <- minmax_vals[1]
+  maxval <- minmax_vals[2]
+  
+  (x-minval)/(maxval-minval)
+}
+
+r_foc3 <- minmax_normalization(r_foc3)
+
+ces <- c(ces1961, r_foc3)
+
+names(ces) <- c("luminosity", "focal3by3")
+```
+
+
+## Feature extraction
+
+- Just as we did in our first approach (see @sec-feature-extraction1), we need to extract the features from the raster data at the labelled points
+- Note that the resulting data frame now has two columns, rather than just a single column
+
+```{r}
+train_features_b <- terra::extract(ces, data_train, ID = FALSE)
+
+head(train_features_b)
+```
+
+
+```{r}
+data_train2_b <- cbind(data_train, train_features_b) |> 
+  st_drop_geometry()
+```
+
+## Train the model
+
+- Just as in our first approach (see @sec-training-model1), we need to train the model
+- This time, we have more features to train the model
+
+
+
+```{r}
+cart_modelb <- rpart(class~., data = data_train2_b, method = "class")
+
+library(rpart.plot)
+rpart.plot(cart_modelb, type = 3)
+```
+
+## Predict the classes
+
+See @sec-prediction-per-class and @sec-highest-probability-class.
+
+```{r}
+# Probability per class
+ces1961_predictb <- predict(ces, cart_modelb)
+
+# Class with highest probability
+ces1961_predict2b <- which.max(ces1961_predictb)
+
+```
+
+## Evaluate the model
+
+See @sec-model-evaluation-1 and @sec-model-evaluation-2
+
+```{r}
+#| echo: false
+levels(ces1961_predict2b) <- classes_df
+```
+
+
+```{r}
+test_featuresb <- terra::extract(ces1961_predict2b, data_test, ID = FALSE)
+
+confusion_matrixb <- cbind(data_test, test_featuresb) |> 
+  st_drop_geometry() |> 
+  transmute(predicted = class.1, actual = class) |> 
+  table()
+```
+
+
+```{r}
+#| echo: false
+library(tidyr)
+library(kableExtra)
+
+
+confusion_matrix2b <- confusion_matrixb |> 
+  as_tibble() |> 
+  pivot_wider(names_from = actual, values_from = n, values_fill = 0)
+
+
+col_namesb <- colnames(confusion_matrix2b)
+col_namesb[1] <- ""
+
+kable(confusion_matrix2b,col.names = col_namesb) |> 
+  kable_styling(full_width = FALSE) |> 
+  column_spec(1, bold = TRUE) |> 
+  highlight_diagonal(2:5) |> 
+  add_header_above(c(" " = 1, "Actual" = 4))
+
+
+
+```
+
+
+```{r}
+#| echo: false
+confusion_matrix3b <- as.matrix(confusion_matrix2b[,-1])
+
+correctb <- diag(confusion_matrix3b)
+totb <- colSums(confusion_matrix3b)
+
+# make strings
+
+correct_strb <- paste(correctb, collapse = "+")
+tot_strb <- paste(totb, collapse = "+")
+
+accb <- sum(correctb)/sum(totb)
+
+acc_strb <- format(accb, digits = 2)
+
+
+
+```
+
+
+- In our first approach, we achieved an accuracy of *`r acc_str`* (see @sec-model-evaluation-1)
+- With our additional features, the overall accuracy is *`r acc_strb`*
+- We can further improve our model by adding more features in this way

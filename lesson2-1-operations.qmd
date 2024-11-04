@@ -310,7 +310,7 @@ tm_shape(L) + tm_raster(style = "cont", palette = grey.colors(255)) +
 ```
 
 
-## Focal
+## Focal {#sec-focal-1}
 
 - While local functions operate on one cell focal operations take into account a central (focal) cell *and its neighbors*. 
 - The neighborhood (also named kernel, filter or moving window) under consideration is typically of size 3-by-3 cells (that is the central cell and its eight surrounding neighbors), but can take on any other size or shape as defined by the user. 
@@ -321,7 +321,7 @@ tm_shape(L) + tm_raster(style = "cont", palette = grey.colors(255)) +
 
 ![](img/focal.png)
 
-Note how, depnding on the size of your moving window, NA's are produced. Source: @lovelace2019
+Note how, depending on the size of your moving window, NA's are produced. Source: @lovelace2019
 :::
 
 

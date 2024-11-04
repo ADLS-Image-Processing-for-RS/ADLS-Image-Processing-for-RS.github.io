@@ -20,6 +20,11 @@ book:
         - lesson3-1-datatypes.qmd
         # - lesson3-2-nodata.qmd # todo: This chapter is incomplete, finish it!
         - lesson3-2-sentinel-data.qmd
+    - part: Lesson 4
+      chapters: 
+        # - lesson4-1-unsupervised-learning.qmd todo: This chapter is incomplete, finish it!
+        - lesson4-2-supervised-learning.qmd
+        - lesson4-2-feature-engineering.qmd
     # - part: references.qmd
 format: 
   html:
