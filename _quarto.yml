@@ -25,7 +25,7 @@ book:
         # - lesson4-1-unsupervised-learning.qmd todo: This chapter is incomplete, finish it!
         - lesson4-2-supervised-learning.qmd
         - lesson4-2-feature-engineering.qmd
-    # - part: references.qmd
+    - part: references.qmd
 format: 
   html:
     number-depth: -1

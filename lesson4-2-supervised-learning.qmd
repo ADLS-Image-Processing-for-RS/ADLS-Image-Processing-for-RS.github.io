@@ -336,3 +336,8 @@ save.image(file = "data-out/workspace.Rdata")
 ```
 
 
+## Tasks {#sec-tasks-supervised-learning}
+
+1. Download the datasets *labelled-points.gpkg* and *1961.tif* from moodle
+2. Follow the steps described above to train a model to classify the land cover types in the area surrounding the village Ces in Ticino
+3. Evaluate the model using the testing data

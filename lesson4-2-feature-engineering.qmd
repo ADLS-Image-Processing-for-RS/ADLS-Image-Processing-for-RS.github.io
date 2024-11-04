@@ -216,3 +216,11 @@ acc_strb <- format(accb, digits = 2)
 - In our first approach, we achieved an accuracy of *`r acc_str`* (see @sec-model-evaluation-1)
 - With our additional features, the overall accuracy is *`r acc_strb`*
 - We can further improve our model by adding more features in this way
+
+
+
+## Tasks
+
+1. First do the tasks described here: @sec-tasks-supervised-learning
+2. Use the `focal` function to create new features as described above
+3. Evaluate your new model
