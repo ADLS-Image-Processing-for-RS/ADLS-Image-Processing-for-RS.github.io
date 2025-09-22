@@ -308,6 +308,27 @@ window.Quarto = {
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Lesson 5</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lesson5-supervised_learning_focal.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">lesson5-supervised_learning_focal.html</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lesson5-supervised_learning.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">lesson5-supervised_learning.html</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
       <span class="sidebar-item-text sidebar-link text-start">
  <span class="menu-text">References</span></span>
   </li>
@@ -588,16 +609,8 @@ Note
 <ul>
 <li>In a more complex usecase, we could use the R, G and B band to calculate a grayscale value (<span class="math inline">\(L^*\)</span>) using the following formula (from <a href="https://stackoverflow.com/a/689547/4139249">here</a>):</li>
 </ul>
-<span class="math display">\[\begin{aligned}
-
-L^* &amp;= 116 \times Y ^ {\frac{1}{3}} - 16\\
-
-Y &amp;= 0.2126 \times R^\gamma+0.7152 \times G^\gamma+0.0722 \times B^\gamma \\
-
-
-\gamma &amp;= 2.2
-
-\end{aligned}\]</span>
+<p>$$</p>
+<p>$$</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>g <span class="ot">&lt;-</span> <span class="fl">2.2</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -630,7 +643,7 @@ Y &amp;= 0.2126 \times R^\gamma+0.7152 \times G^\gamma+0.0722 \times B^\gamma \\
 <img src="img/focal.png" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-focal-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;3.4: Note how, depnding on the size of your moving window, NA’s are produced. Source: <span class="citation" data-cites="lovelace2019">Lovelace, Nowosad, and Muenchow (<a href="references.html#ref-lovelace2019" role="doc-biblioref">2019</a>)</span>
+Figure&nbsp;3.4: Note how, depending on the size of your moving window, NA’s are produced. Source: <span class="citation" data-cites="lovelace2019">Lovelace, Nowosad, and Muenchow (<a href="references.html#ref-lovelace2019" role="doc-biblioref">2019</a>)</span>
 </figcaption>
 </figure>
 </div>

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Feature Engineering – Image Processing for Remote Sensing</title>
+<title>lesson5-supervised_learning_focal – Image Processing for Remote Sensing</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,52 +20,18 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for syntax highlighting */
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="site_libs/quarto-nav/headroom.min.js"></script>
 <script src="site_libs/clipboard/clipboard.min.js"></script>
 <script src="site_libs/quarto-search/autocomplete.umd.js"></script>
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./lesson5-supervised_learning_focal.html" rel="next">
-<link href="./lesson4-2-supervised-learning.html" rel="prev">
+<link href="./lesson5-supervised_learning.html" rel="next">
+<link href="./lesson4-2-feature-engineering.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -127,43 +93,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
   
   </script>
-<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
-<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
 
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 <link rel="stylesheet" href="aux/style.css">
 </head>
 
-<body class="nav-sidebar floating">
+<body class="nav-sidebar floating fullcontent">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -172,7 +110,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./lesson4-2-supervised-learning.html">Lesson 4</a></li><li class="breadcrumb-item"><a href="./lesson4-2-feature-engineering.html"><span class="chapter-title">Feature Engineering</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./lesson5-supervised_learning_focal.html">Lesson 5</a></li><li class="breadcrumb-item"><a href="./lesson5-supervised_learning_focal.html"><span class="chapter-title">lesson5-supervised_learning_focal.html</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -284,7 +222,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./lesson4-2-feature-engineering.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Feature Engineering</span></a>
+  <a href="./lesson4-2-feature-engineering.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Feature Engineering</span></a>
   </div>
 </li>
       </ul>
@@ -300,7 +238,7 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./lesson5-supervised_learning_focal.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">lesson5-supervised_learning_focal.html</span></a>
+  <a href="./lesson5-supervised_learning_focal.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">lesson5-supervised_learning_focal.html</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -319,272 +257,810 @@ window.Quarto = {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">Table of contents</h2>
-   
-  <ul>
-  <li><a href="#what-is-feature-engineering" id="toc-what-is-feature-engineering" class="nav-link active" data-scroll-target="#what-is-feature-engineering">What is Feature Engineering?</a></li>
-  <li><a href="#focal-filters" id="toc-focal-filters" class="nav-link" data-scroll-target="#focal-filters">Focal filters</a></li>
-  <li><a href="#using-focal-filters-as-features" id="toc-using-focal-filters-as-features" class="nav-link" data-scroll-target="#using-focal-filters-as-features">Using focal filters as features</a></li>
-  <li><a href="#feature-extraction" id="toc-feature-extraction" class="nav-link" data-scroll-target="#feature-extraction">Feature extraction</a></li>
-  <li><a href="#train-the-model" id="toc-train-the-model" class="nav-link" data-scroll-target="#train-the-model">Train the model</a></li>
-  <li><a href="#predict-the-classes" id="toc-predict-the-classes" class="nav-link" data-scroll-target="#predict-the-classes">Predict the classes</a></li>
-  <li><a href="#evaluate-the-model" id="toc-evaluate-the-model" class="nav-link" data-scroll-target="#evaluate-the-model">Evaluate the model</a></li>
-  <li><a href="#tasks" id="toc-tasks" class="nav-link" data-scroll-target="#tasks">Tasks</a></li>
-  </ul>
-</nav>
-    </div>
+    
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./lesson4-2-supervised-learning.html">Lesson 4</a></li><li class="breadcrumb-item"><a href="./lesson4-2-feature-engineering.html"><span class="chapter-title">Feature Engineering</span></a></li></ol></nav>
-<div class="quarto-title">
-<h1 class="title"><span id="sec-feature-engineering" class="quarto-section-identifier"><span class="chapter-title">Feature Engineering</span></span></h1>
-</div>
 
 
 
-<div class="quarto-title-meta">
-
-    
-  
-    
-  </div>
-  
-
-
-</header>
-
-
-<section id="what-is-feature-engineering" class="level2">
-<h2 class="anchored" data-anchor-id="what-is-feature-engineering">What is Feature Engineering?</h2>
-<ul>
-<li>Feature Engineering is the process of using domain knowledge to extract features from raw data.</li>
-<li>This is especially useful, when our raw data is not sufficient to build a model</li>
-<li>In our previous example, we only had luminosity to predict the class of the raster cells</li>
-<li>As discussed in the chapter <a href="lesson4-2-supervised-learning.html#sec-feature-engineering0" class="quarto-xref"><span>Feature Engineering</span></a>, we humans ourselves rely on context to determine the land cover types</li>
-<li>This context is provided by the values of the sorrounding pixels</li>
-<li>We can provide this context by applying focal filters to the raster data</li>
-</ul>
-</section>
-<section id="focal-filters" class="level2">
-<h2 class="anchored" data-anchor-id="focal-filters">Focal filters</h2>
-<ul>
-<li>Focal Filters, as we have seen in the chapter <a href="lesson2-1-operations.html#sec-focal-1" class="quarto-xref"><span>Focal</span></a>, aggregate the values over a (moving) neighborhood of pixels.</li>
-<li>We can determine the size and shape of this neighborhood by specifying a matrix</li>
-</ul>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">5</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>focal_sd <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rep</span>(<span class="dv">1</span>,n<span class="sc">^</span><span class="dv">2</span>), <span class="at">ncol =</span> n)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>r_foc3 <span class="ot">&lt;-</span> <span class="fu">focal</span>(ces1961, focal_sd, <span class="at">fun =</span> sd, <span class="at">fillNA =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>r_foc3 <span class="ot">&lt;-</span> r_foc3</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># plot(r_foc3)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div>
-
-</div>
-<div class="cell quarto-layout-panel" data-layout-nrow="1">
-<div class="quarto-layout-row">
-<div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
-<div id="fig-focal-filter-1" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-focal-filter-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="lesson4-2-feature-engineering_files/figure-html/fig-focal-filter-1.png" class="img-fluid figure-img" width="672">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-focal-filter-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;7.1: The original raster
-</figcaption>
-</figure>
-</div>
-</div>
-<div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
-<div id="fig-focal-filter-2" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-focal-filter-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="lesson4-2-feature-engineering_files/figure-html/fig-focal-filter-2.png" class="img-fluid figure-img" width="672">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-focal-filter-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;7.2: The raster after applying a focal filter
-</figcaption>
-</figure>
-</div>
-</div>
-</div>
-</div>
-</section>
-<section id="using-focal-filters-as-features" class="level2">
-<h2 class="anchored" data-anchor-id="using-focal-filters-as-features">Using focal filters as features</h2>
-<ul>
-<li>To use the focal filters as features, the values of the focal filters need to be normalized to [0,1]</li>
-<li>A simple way to do this is to use the <a href="https://en.wikipedia.org/wiki/Feature_scaling#Rescaling_(min-max_normalization)">min-max normalization</a>:</li>
-</ul>
-<p><span class="math display">\[x' = \frac{x - min(x)}{\max(x) - min(x)}\]</span></p>
-<ul>
-<li>To implement this in R, we need to use <code>global(x, min)</code> or (slightly faster) <code>minmax(x)</code>.</li>
-</ul>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>minmax_normalization <span class="ot">&lt;-</span> <span class="cf">function</span>(x){</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  minmax_vals <span class="ot">&lt;-</span> <span class="fu">minmax</span>(x)[,<span class="dv">1</span>]</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  minval <span class="ot">&lt;-</span> minmax_vals[<span class="dv">1</span>]</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  maxval <span class="ot">&lt;-</span> minmax_vals[<span class="dv">2</span>]</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  (x<span class="sc">-</span>minval)<span class="sc">/</span>(maxval<span class="sc">-</span>minval)</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>r_foc3 <span class="ot">&lt;-</span> <span class="fu">minmax_normalization</span>(r_foc3)</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>ces <span class="ot">&lt;-</span> <span class="fu">c</span>(ces1961, r_foc3)</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(ces) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"luminosity"</span>, <span class="st">"focal_sd"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</section>
-<section id="feature-extraction" class="level2">
-<h2 class="anchored" data-anchor-id="feature-extraction">Feature extraction</h2>
-<ul>
-<li>Just as we did in our first approach (see <a href="lesson4-2-supervised-learning.html#sec-feature-extraction1" class="quarto-xref"><span>Feature Extraction</span></a>), we need to extract the features from the raster data at the labelled points</li>
-<li>Note that the resulting data frame now has two columns, rather than just a single column</li>
-</ul>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>train_features_b <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">extract</span>(ces, data_train, <span class="at">ID =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(train_features_b)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Supervised Learning</p>
+<p>Task and Data</p>
+<pre><code>The task we will perform is to quantitatively analyze forest cover change over time in the area surrounding the village Ces in Ticino, Switzerland
+We are provided with historic areal imagery from 1961 from swisstopo [source]
+The resolution of the imagery is 1 m/pixel and it contains only one single band (!!!)</code></pre>
+<div id="cell-3" class="cell" data-execution_count="2">
 <div class="cell-output cell-output-stdout">
-<pre><code>  luminosity  focal_sd
-1  0.1843137 0.1800299
-2  0.3568627 0.2273958
-3  0.1960784 0.2349411
-4  0.4392157 0.1740047
-5  0.6313725 0.1663846
-6  0.2823529 0.3338187</code></pre>
+<pre><code>/Users/scli/Documents/ZHAW/Teaching/Remote Sensing 24/Data</code></pre>
 </div>
 </div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>data_train2_b <span class="ot">&lt;-</span> <span class="fu">cbind</span>(data_train, train_features_b) <span class="sc">|&gt;</span> </span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_drop_geometry</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</section>
-<section id="train-the-model" class="level2">
-<h2 class="anchored" data-anchor-id="train-the-model">Train the model</h2>
-<ul>
-<li>Just as in our first approach (see <a href="lesson4-2-supervised-learning.html#sec-training-model1" class="quarto-xref"><span>Training the model</span></a>), we need to train the model</li>
-<li>This time, we have more features to train the model</li>
-</ul>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>cart_modelb <span class="ot">&lt;-</span> <span class="fu">rpart</span>(class<span class="sc">~</span>., <span class="at">data =</span> data_train2_b, <span class="at">method =</span> <span class="st">"class"</span>)</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rpart.plot)</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="fu">rpart.plot</span>(cart_modelb, <span class="at">type =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
+<div id="cell-4" class="cell" data-execution_count="3">
+<div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="lesson4-2-feature-engineering_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="lesson5-supervised_learning_focal_files/figure-html/cell-4-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
-</section>
-<section id="predict-the-classes" class="level2">
-<h2 class="anchored" data-anchor-id="predict-the-classes">Predict the classes</h2>
-<p>See <a href="lesson4-2-supervised-learning.html#sec-prediction-per-class" class="quarto-xref"><span>Predicting the probabilities per class for each pixel</span></a> and <a href="lesson4-2-supervised-learning.html#sec-highest-probability-class" class="quarto-xref"><span>Highest probability class</span></a>.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Probability per class</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>ces1961_predictb <span class="ot">&lt;-</span> <span class="fu">predict</span>(ces, cart_modelb)</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Class with highest probability</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>ces1961_predict2b <span class="ot">&lt;-</span> <span class="fu">which.max</span>(ces1961_predictb)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</section>
-<section id="evaluate-the-model" class="level2">
-<h2 class="anchored" data-anchor-id="evaluate-the-model">Evaluate the model</h2>
-<p>See <a href="lesson4-2-supervised-learning.html#sec-model-evaluation-1" class="quarto-xref"><span>Model Evaluation I</span></a> and <a href="lesson4-2-supervised-learning.html#sec-model-evaluation-2" class="quarto-xref"><span>Model Evaluation I</span></a></p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>test_featuresb <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">extract</span>(ces1961_predict2b, data_test, <span class="at">ID =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>confusion_matrixb <span class="ot">&lt;-</span> <span class="fu">cbind</span>(data_test, test_featuresb) <span class="sc">|&gt;</span> </span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_drop_geometry</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transmute</span>(<span class="at">predicted =</span> class<span class="fl">.1</span>, <span class="at">actual =</span> class) <span class="sc">|&gt;</span> </span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">table</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell">
-<div class="cell-output-display">
-<table class="table caption-top table-sm table-striped small" data-quarto-postprocess="true">
-<colgroup>
-<col style="width: 20%">
-<col style="width: 20%">
-<col style="width: 20%">
-<col style="width: 20%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th" style="text-align: left; empty-cells: hide; border-bottom: hidden;"></th>
-<th colspan="4" data-quarto-table-cell-role="th" style="text-align: center; border-bottom: hidden; padding-bottom: 0; padding-left: 3px; padding-right: 3px;"><div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
-Actual
-</div></th>
-</tr>
-<tr class="odd">
-<th style="text-align: left;" data-quarto-table-cell-role="th"></th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">Agriculture</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">Buildings</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">Forest</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">Shadows</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left; font-weight: bold;">Agriculture</td>
-<td style="text-align: right; background-color: red !important;">38</td>
-<td style="text-align: right; background-color: white !important;">5</td>
-<td style="text-align: right; background-color: white !important;">11</td>
-<td style="text-align: right; background-color: white !important;">0</td>
-</tr>
-<tr class="even">
-<td style="text-align: left; font-weight: bold;">Buildings</td>
-<td style="text-align: right; background-color: white !important;">0</td>
-<td style="text-align: right; background-color: red !important;">4</td>
-<td style="text-align: right; background-color: white !important;">0</td>
-<td style="text-align: right; background-color: white !important;">0</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left; font-weight: bold;">Forest</td>
-<td style="text-align: right; background-color: white !important;">3</td>
-<td style="text-align: right; background-color: white !important;">0</td>
-<td style="text-align: right; background-color: red !important;">28</td>
-<td style="text-align: right; background-color: white !important;">1</td>
-</tr>
-<tr class="even">
-<td style="text-align: left; font-weight: bold;">Shadows</td>
-<td style="text-align: right; background-color: white !important;">0</td>
-<td style="text-align: right; background-color: white !important;">0</td>
-<td style="text-align: right; background-color: white !important;">0</td>
-<td style="text-align: right; background-color: red !important;">19</td>
-</tr>
-</tbody>
-</table>
-
-
+<p>Data labelling</p>
+<p>In preparation, I used QGIS to create labelled points for the following classes:</p>
+<pre><code>Forest
+Buildings
+Agriculture
+Shadows</code></pre>
+<div id="cell-6" class="cell" data-execution_count="4">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lesson5-supervised_learning_focal_files/figure-html/cell-5-output-1.png" class="img-fluid figure-img"></p>
+</figure>
 </div>
 </div>
-<ul>
-<li>In our first approach, we achieved an accuracy of <em>0.69</em> (see <a href="lesson4-2-supervised-learning.html#sec-model-evaluation-1" class="quarto-xref"><span>Model Evaluation I</span></a>)</li>
-<li>With our additional features, the overall accuracy is <em>0.82</em></li>
-<li>We can further improve our model by adding more features in this way</li>
-</ul>
-</section>
-<section id="tasks" class="level2">
-<h2 class="anchored" data-anchor-id="tasks">Tasks</h2>
-<ol type="1">
-<li>First do the tasks described here: <a href="lesson4-2-supervised-learning.html#sec-tasks-supervised-learning" class="quarto-xref"><span>Tasks</span></a></li>
-<li>Use the <code>focal</code> function to create new features as described above</li>
-<li>Evaluate your new model</li>
-</ol>
+</div>
+<p>Splitting the data</p>
+<pre><code>We need to split our data into training and testing data
+We will randomly select 70% of the data for training and the remaining 30% for testing</code></pre>
+<div id="cell-8" class="cell" data-execution_count="5">
+<div class="cell-output cell-output-stdout">
+<pre><code>         class                         geometry
+0       Forest   POINT (2705962.315 1144392.76)
+1  Agriculture  POINT (2706346.759 1143465.656)
+2    Buildings  POINT (2706014.148 1144272.433)
+3  Agriculture  POINT (2706503.699 1143834.248)
+4    Buildings  POINT (2706361.604 1143918.234)
+         class                         geometry
+0       Forest  POINT (2705834.842 1144688.129)
+1  Agriculture  POINT (2705445.799 1142891.503)
+2  Agriculture  POINT (2706611.137 1143654.776)
+3       Forest  POINT (2706094.926 1142971.742)
+4       Forest  POINT (2706686.436 1143837.237)</code></pre>
+</div>
+</div>
+<div id="cell-9" class="cell" data-execution_count="6">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lesson5-supervised_learning_focal_files/figure-html/cell-7-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Focal filters</p>
+<pre><code>Focal Filters, as we have seen in the chapter Focal, aggregate the values over a (moving) neighborhood of pixels.
+We can determine the size and shape of this neighborhood by specifying a matrix</code></pre>
+<div id="cell-11" class="cell" data-execution_count="8">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lesson5-supervised_learning_focal_files/figure-html/cell-8-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Using focal filters as features</p>
+<pre><code>To use the focal filters as features, the values of the focal filters need to be normalized to [0,1]
+A simple way to do this is to use the min-max normalization:</code></pre>
+<div id="cell-13" class="cell" data-execution_count="9">
+<div class="cell-output cell-output-display" data-execution_count="9">
+<pre><code>(4788, 4656, 2)</code></pre>
+</div>
+</div>
+<p>Feature Extraction</p>
+<pre><code>We need to extract the values of the raster data at the labelled points
+Since we only have one band, our result is a data.frame with one column</code></pre>
+<div id="cell-15" class="cell" data-execution_count="10">
+<div class="cell-output cell-output-stdout">
+<pre><code>[[0.10196079 0.26214316]
+ [0.6509804  0.07786678]
+ [0.9647059  0.08606696]
+ [0.63529414 0.05931668]
+ [0.85490197 0.07124717]
+ [0.32156864 0.28289023]
+ [0.42352942 0.41459754]
+ [0.5921569  0.17525773]
+ [0.62352943 0.06355354]
+ [0.84705883 0.07191712]
+ [0.6901961  0.16585611]
+ [0.19607843 0.07138631]
+ [0.21960784 0.06144182]
+ [0.20784314 0.12172291]
+ [0.6784314  0.13645704]
+ [0.3137255  0.06615763]
+ [0.39607844 0.18736853]
+ [0.65882355 0.07743527]
+ [0.19607843 0.26552513]
+ [0.6431373  0.06810501]
+ [0.16078432 0.08212049]
+ [0.75686276 0.08666154]
+ [0.5294118  0.20082372]
+ [0.61960787 0.060615  ]
+ [0.57254905 0.10142409]
+ [0.6745098  0.12465487]
+ [0.5647059  0.1163436 ]
+ [0.39607844 0.18375674]
+ [0.6784314  0.06730606]
+ [0.6745098  0.21106921]
+ [0.35686275 0.26777354]
+ [0.6        0.08929179]
+ [0.33333334 0.4465743 ]
+ [0.23137255 0.13758075]
+ [0.61960787 0.0871853 ]
+ [0.654902   0.0693176 ]
+ [0.62352943 0.08283527]
+ [0.32156864 0.3383572 ]
+ [0.58431375 0.124191  ]
+ [0.6509804  0.13314825]
+ [0.37254903 0.25614962]
+ [0.69803923 0.11503437]
+ [0.85882354 0.10232644]
+ [0.19607843 0.23494114]
+ [0.1254902  0.10515729]
+ [0.72156864 0.08894055]
+ [0.49411765 0.27382034]
+ [0.62352943 0.0990601 ]
+ [0.19607843 0.30660784]
+ [0.6039216  0.12460324]
+ [0.52156866 0.18766269]
+ [0.1254902  0.09180592]
+ [0.22352941 0.09642392]
+ [0.54901963 0.12128258]
+ [0.4392157  0.17400472]
+ [0.7294118  0.10015834]
+ [0.24313726 0.31338406]
+ [0.5019608  0.06029467]
+ [0.5411765  0.18511829]
+ [0.3019608  0.13152792]
+ [0.14901961 0.09406068]
+ [0.44705883 0.14289346]
+ [0.36862746 0.22460632]
+ [0.6509804  0.08583052]
+ [0.4862745  0.1030292 ]
+ [0.20392157 0.17741884]
+ [0.13725491 0.08529742]
+ [0.75686276 0.10099798]
+ [0.5058824  0.24661186]
+ [0.15294118 0.07253292]
+ [0.6313726  0.14117849]
+ [0.5137255  0.3132483 ]
+ [0.47058824 0.47003117]
+ [0.62352943 0.10708927]
+ [0.15686275 0.09963605]
+ [0.49803922 0.10050751]
+ [0.5764706  0.10126838]
+ [0.6666667  0.25481573]
+ [0.5803922  0.09387556]
+ [0.6313726  0.06895429]
+ [0.6509804  0.11387661]
+ [0.62352943 0.0914367 ]
+ [0.5647059  0.10461211]
+ [0.22352941 0.09120123]
+ [0.23921569 0.34999523]
+ [0.6039216  0.1518055 ]
+ [0.7647059  0.3927225 ]
+ [0.13725491 0.1013549 ]
+ [0.3019608  0.09672742]
+ [0.5294118  0.09907246]
+ [0.654902   0.08620296]
+ [0.6901961  0.08912117]
+ [0.64705884 0.08590272]
+ [0.5803922  0.06125949]
+ [0.6156863  0.08497412]
+ [0.07843138 0.13085762]
+ [0.63529414 0.08251596]
+ [0.6392157  0.11953335]
+ [0.16862746 0.11810128]
+ [0.83137256 0.05382076]
+ [0.6431373  0.13000493]
+ [0.69411767 0.06544764]
+ [0.28627452 0.35968328]
+ [0.6156863  0.13763966]
+ [0.59607846 0.09366969]
+ [0.6901961  0.10381914]
+ [0.7607843  0.46183786]
+ [0.4392157  0.08553918]
+ [0.63529414 0.12763865]
+ [0.18039216 0.26416656]
+ [0.56078434 0.11320527]
+ [0.2627451  0.08335342]
+ [0.59607846 0.10648851]
+ [0.20784314 0.10853735]
+ [0.65882355 0.04660885]
+ [0.76862746 0.07462181]
+ [0.6901961  0.10219085]
+ [0.6509804  0.10605752]
+ [0.7647059  0.07579523]
+ [0.83137256 0.07079514]
+ [0.40392157 0.41265163]
+ [0.34509805 0.21968694]
+ [0.1882353  0.10568993]
+ [0.5686275  0.08171288]
+ [0.5568628  0.08707839]
+ [0.25490198 0.2769741 ]
+ [0.43529412 0.3239646 ]
+ [0.8784314  0.08324837]
+ [0.7764706  0.09199098]
+ [0.48235294 0.08768069]
+ [0.6313726  0.5530043 ]
+ [0.49019608 0.2275861 ]
+ [0.59607846 0.08091126]
+ [0.21176471 0.09374393]
+ [0.63529414 0.21039213]
+ [0.6313726  0.10897567]
+ [0.5568628  0.11303923]
+ [0.6156863  0.07608557]
+ [0.38431373 0.13225892]
+ [0.5686275  0.09939864]
+ [0.5529412  0.15491095]
+ [0.5529412  0.12386692]
+ [0.2784314  0.35426846]
+ [0.54509807 0.17314   ]
+ [0.29803923 0.41869426]
+ [0.23921569 0.28350934]
+ [0.14901961 0.07287155]
+ [0.14117648 0.14113374]
+ [0.5058824  0.0964203 ]
+ [0.6039216  0.0735746 ]
+ [0.5882353  0.08311637]
+ [0.6392157  0.09027306]
+ [0.21960784 0.47516483]
+ [0.57254905 0.09677251]
+ [0.19215687 0.34971985]
+ [0.59607846 0.1591405 ]
+ [0.69803923 0.08446677]
+ [0.16862746 0.11143788]
+ [0.5647059  0.10157786]
+ [0.6313726  0.11684499]
+ [0.6156863  0.11913646]
+ [0.21176471 0.08491337]
+ [0.6862745  0.14261508]
+ [0.654902   0.08623093]
+ [0.41960785 0.21896833]
+ [0.49803922 0.15982881]
+ [0.5921569  0.05954251]
+ [0.21568628 0.31156158]
+ [0.3137255  0.33169332]
+ [0.6156863  0.0553725 ]
+ [0.90588236 0.07196159]
+ [0.6039216  0.10195018]
+ [0.28235295 0.33381876]
+ [0.19215687 0.13310237]
+ [0.64705884 0.15526712]
+ [0.20392157 0.10219085]
+ [0.6156863  0.08063827]
+ [0.34901962 0.18862654]
+ [0.6392157  0.10385638]
+ [0.6117647  0.06745463]
+ [0.08627451 0.1282476 ]
+ [0.5294118  0.09550096]
+ [0.40392157 0.21939215]
+ [0.6627451  0.23585008]
+ [0.47058824 0.13695094]
+ [0.5176471  0.1261194 ]
+ [0.2        0.09713975]
+ [0.23137255 0.09707684]
+ [0.5921569  0.1126986 ]
+ [0.7019608  0.12127965]
+ [0.6862745  0.05326508]
+ [0.5176471  0.11041094]
+ [0.14509805 0.10862352]
+ [0.6039216  0.07093266]
+ [0.54509807 0.15839772]
+ [0.18431373 0.28770727]
+ [0.57254905 0.10588135]
+ [0.16078432 0.13008767]
+ [0.7647059  0.3927225 ]
+ [0.1882353  0.09250477]
+ [0.21176471 0.08081824]
+ [0.53333336 0.08619297]
+ [0.69803923 0.08473092]
+ [0.88235295 0.09996233]
+ [0.6509804  0.08148215]
+ [0.28235295 0.1024053 ]
+ [0.50980395 0.11981462]
+ [0.14117648 0.07092556]
+ [0.1882353  0.35897404]
+ [0.16470589 0.09132853]
+ [0.11372549 0.12587096]
+ [0.27450982 0.13414745]
+ [0.42352942 0.17921814]
+ [0.6156863  0.08936732]
+ [0.6039216  0.14398317]
+ [0.54901963 0.09759886]
+ [0.5882353  0.09884445]
+ [0.5529412  0.10865927]
+ [0.7254902  0.2475318 ]
+ [0.5686275  0.14990848]
+ [0.19215687 0.20457283]
+ [0.5254902  0.17325412]
+ [0.3372549  0.30805764]
+ [0.29411766 0.22752243]
+ [0.49411765 0.11423267]
+ [0.54901963 0.10419437]
+ [0.13725491 0.08473296]
+ [0.6784314  0.12289291]
+ [0.6627451  0.11744136]
+ [0.6039216  0.1347266 ]
+ [0.5411765  0.19917668]
+ [0.5137255  0.16365586]
+ [0.65882355 0.07475323]
+ [0.65882355 0.11516236]
+ [0.41568628 0.24492726]
+ [0.60784316 0.11707294]
+ [0.57254905 0.07021881]
+ [0.44313726 0.18710338]
+ [0.12941177 0.08108649]
+ [0.21568628 0.07112908]
+ [0.59607846 0.09701568]
+ [0.30588236 0.12815678]
+ [0.627451   0.08687813]
+ [0.58431375 0.14373189]
+ [0.5647059  0.08196393]
+ [0.8862745  0.09798294]
+ [0.5529412  0.13633166]
+ [0.54509807 0.09737314]
+ [0.35686275 0.34160855]
+ [0.81960785 0.07126841]]
+         class  luminosity  focal3by3
+0       Forest    0.101961   0.262143
+1  Agriculture    0.650980   0.077867
+2    Buildings    0.964706   0.086067
+3  Agriculture    0.635294   0.059317
+4    Buildings    0.854902   0.071247</code></pre>
+</div>
+</div>
+<p>Training the model</p>
+<pre><code>We will use the rpart package to train a classification tree
+The classification tree is also known as a decision tree
+A decision tree has a flowchart-like structure (see Figure 6.1)
+Classification trees does not always produce the best results, but they are simple and interpretable</code></pre>
+<div id="cell-17" class="cell" data-execution_count="12">
+<div class="cell-output cell-output-display" data-execution_count="12">
+<style>#sk-container-id-1 {
+  /* Definition of color scheme common for light and dark mode */
+  --sklearn-color-text: black;
+  --sklearn-color-line: gray;
+  /* Definition of color scheme for unfitted estimators */
+  --sklearn-color-unfitted-level-0: #fff5e6;
+  --sklearn-color-unfitted-level-1: #f6e4d2;
+  --sklearn-color-unfitted-level-2: #ffe0b3;
+  --sklearn-color-unfitted-level-3: chocolate;
+  /* Definition of color scheme for fitted estimators */
+  --sklearn-color-fitted-level-0: #f0f8ff;
+  --sklearn-color-fitted-level-1: #d4ebff;
+  --sklearn-color-fitted-level-2: #b3dbfd;
+  --sklearn-color-fitted-level-3: cornflowerblue;
+
+  /* Specific color for light theme */
+  --sklearn-color-text-on-default-background: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, black)));
+  --sklearn-color-background: var(--sg-background-color, var(--theme-background, var(--jp-layout-color0, white)));
+  --sklearn-color-border-box: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, black)));
+  --sklearn-color-icon: #696969;
+
+  @media (prefers-color-scheme: dark) {
+    /* Redefinition of color scheme for dark theme */
+    --sklearn-color-text-on-default-background: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, white)));
+    --sklearn-color-background: var(--sg-background-color, var(--theme-background, var(--jp-layout-color0, #111)));
+    --sklearn-color-border-box: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, white)));
+    --sklearn-color-icon: #878787;
+  }
+}
+
+#sk-container-id-1 {
+  color: var(--sklearn-color-text);
+}
+
+#sk-container-id-1 pre {
+  padding: 0;
+}
+
+#sk-container-id-1 input.sk-hidden--visually {
+  border: 0;
+  clip: rect(1px 1px 1px 1px);
+  clip: rect(1px, 1px, 1px, 1px);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
+
+#sk-container-id-1 div.sk-dashed-wrapped {
+  border: 1px dashed var(--sklearn-color-line);
+  margin: 0 0.4em 0.5em 0.4em;
+  box-sizing: border-box;
+  padding-bottom: 0.4em;
+  background-color: var(--sklearn-color-background);
+}
+
+#sk-container-id-1 div.sk-container {
+  /* jupyter's `normalize.less` sets `[hidden] { display: none; }`
+     but bootstrap.min.css set `[hidden] { display: none !important; }`
+     so we also need the `!important` here to be able to override the
+     default hidden behavior on the sphinx rendered scikit-learn.org.
+     See: https://github.com/scikit-learn/scikit-learn/issues/21755 */
+  display: inline-block !important;
+  position: relative;
+}
+
+#sk-container-id-1 div.sk-text-repr-fallback {
+  display: none;
+}
+
+div.sk-parallel-item,
+div.sk-serial,
+div.sk-item {
+  /* draw centered vertical line to link estimators */
+  background-image: linear-gradient(var(--sklearn-color-text-on-default-background), var(--sklearn-color-text-on-default-background));
+  background-size: 2px 100%;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+/* Parallel-specific style estimator block */
+
+#sk-container-id-1 div.sk-parallel-item::after {
+  content: "";
+  width: 100%;
+  border-bottom: 2px solid var(--sklearn-color-text-on-default-background);
+  flex-grow: 1;
+}
+
+#sk-container-id-1 div.sk-parallel {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  background-color: var(--sklearn-color-background);
+  position: relative;
+}
+
+#sk-container-id-1 div.sk-parallel-item {
+  display: flex;
+  flex-direction: column;
+}
+
+#sk-container-id-1 div.sk-parallel-item:first-child::after {
+  align-self: flex-end;
+  width: 50%;
+}
+
+#sk-container-id-1 div.sk-parallel-item:last-child::after {
+  align-self: flex-start;
+  width: 50%;
+}
+
+#sk-container-id-1 div.sk-parallel-item:only-child::after {
+  width: 0;
+}
+
+/* Serial-specific style estimator block */
+
+#sk-container-id-1 div.sk-serial {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: var(--sklearn-color-background);
+  padding-right: 1em;
+  padding-left: 1em;
+}
 
 
-</section>
+/* Toggleable style: style used for estimator/Pipeline/ColumnTransformer box that is
+clickable and can be expanded/collapsed.
+- Pipeline and ColumnTransformer use this feature and define the default style
+- Estimators will overwrite some part of the style using the `sk-estimator` class
+*/
+
+/* Pipeline and ColumnTransformer style (default) */
+
+#sk-container-id-1 div.sk-toggleable {
+  /* Default theme specific background. It is overwritten whether we have a
+  specific estimator or a Pipeline/ColumnTransformer */
+  background-color: var(--sklearn-color-background);
+}
+
+/* Toggleable label */
+#sk-container-id-1 label.sk-toggleable__label {
+  cursor: pointer;
+  display: block;
+  width: 100%;
+  margin-bottom: 0;
+  padding: 0.5em;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+#sk-container-id-1 label.sk-toggleable__label-arrow:before {
+  /* Arrow on the left of the label */
+  content: "▸";
+  float: left;
+  margin-right: 0.25em;
+  color: var(--sklearn-color-icon);
+}
+
+#sk-container-id-1 label.sk-toggleable__label-arrow:hover:before {
+  color: var(--sklearn-color-text);
+}
+
+/* Toggleable content - dropdown */
+
+#sk-container-id-1 div.sk-toggleable__content {
+  max-height: 0;
+  max-width: 0;
+  overflow: hidden;
+  text-align: left;
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-0);
+}
+
+#sk-container-id-1 div.sk-toggleable__content.fitted {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-0);
+}
+
+#sk-container-id-1 div.sk-toggleable__content pre {
+  margin: 0.2em;
+  border-radius: 0.25em;
+  color: var(--sklearn-color-text);
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-0);
+}
+
+#sk-container-id-1 div.sk-toggleable__content.fitted pre {
+  /* unfitted */
+  background-color: var(--sklearn-color-fitted-level-0);
+}
+
+#sk-container-id-1 input.sk-toggleable__control:checked~div.sk-toggleable__content {
+  /* Expand drop-down */
+  max-height: 200px;
+  max-width: 100%;
+  overflow: auto;
+}
+
+#sk-container-id-1 input.sk-toggleable__control:checked~label.sk-toggleable__label-arrow:before {
+  content: "▾";
+}
+
+/* Pipeline/ColumnTransformer-specific style */
+
+#sk-container-id-1 div.sk-label input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  color: var(--sklearn-color-text);
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+#sk-container-id-1 div.sk-label.fitted input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+/* Estimator-specific style */
+
+/* Colorize estimator box */
+#sk-container-id-1 div.sk-estimator input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+#sk-container-id-1 div.sk-estimator.fitted input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+#sk-container-id-1 div.sk-label label.sk-toggleable__label,
+#sk-container-id-1 div.sk-label label {
+  /* The background is the default theme color */
+  color: var(--sklearn-color-text-on-default-background);
+}
+
+/* On hover, darken the color of the background */
+#sk-container-id-1 div.sk-label:hover label.sk-toggleable__label {
+  color: var(--sklearn-color-text);
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+/* Label box, darken color on hover, fitted */
+#sk-container-id-1 div.sk-label.fitted:hover label.sk-toggleable__label.fitted {
+  color: var(--sklearn-color-text);
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+/* Estimator label */
+
+#sk-container-id-1 div.sk-label label {
+  font-family: monospace;
+  font-weight: bold;
+  display: inline-block;
+  line-height: 1.2em;
+}
+
+#sk-container-id-1 div.sk-label-container {
+  text-align: center;
+}
+
+/* Estimator-specific */
+#sk-container-id-1 div.sk-estimator {
+  font-family: monospace;
+  border: 1px dotted var(--sklearn-color-border-box);
+  border-radius: 0.25em;
+  box-sizing: border-box;
+  margin-bottom: 0.5em;
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-0);
+}
+
+#sk-container-id-1 div.sk-estimator.fitted {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-0);
+}
+
+/* on hover */
+#sk-container-id-1 div.sk-estimator:hover {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+#sk-container-id-1 div.sk-estimator.fitted:hover {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+/* Specification for estimator info (e.g. "i" and "?") */
+
+/* Common style for "i" and "?" */
+
+.sk-estimator-doc-link,
+a:link.sk-estimator-doc-link,
+a:visited.sk-estimator-doc-link {
+  float: right;
+  font-size: smaller;
+  line-height: 1em;
+  font-family: monospace;
+  background-color: var(--sklearn-color-background);
+  border-radius: 1em;
+  height: 1em;
+  width: 1em;
+  text-decoration: none !important;
+  margin-left: 1ex;
+  /* unfitted */
+  border: var(--sklearn-color-unfitted-level-1) 1pt solid;
+  color: var(--sklearn-color-unfitted-level-1);
+}
+
+.sk-estimator-doc-link.fitted,
+a:link.sk-estimator-doc-link.fitted,
+a:visited.sk-estimator-doc-link.fitted {
+  /* fitted */
+  border: var(--sklearn-color-fitted-level-1) 1pt solid;
+  color: var(--sklearn-color-fitted-level-1);
+}
+
+/* On hover */
+div.sk-estimator:hover .sk-estimator-doc-link:hover,
+.sk-estimator-doc-link:hover,
+div.sk-label-container:hover .sk-estimator-doc-link:hover,
+.sk-estimator-doc-link:hover {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-3);
+  color: var(--sklearn-color-background);
+  text-decoration: none;
+}
+
+div.sk-estimator.fitted:hover .sk-estimator-doc-link.fitted:hover,
+.sk-estimator-doc-link.fitted:hover,
+div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
+.sk-estimator-doc-link.fitted:hover {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-3);
+  color: var(--sklearn-color-background);
+  text-decoration: none;
+}
+
+/* Span, style for the box shown on hovering the info icon */
+.sk-estimator-doc-link span {
+  display: none;
+  z-index: 9999;
+  position: relative;
+  font-weight: normal;
+  right: .2ex;
+  padding: .5ex;
+  margin: .5ex;
+  width: min-content;
+  min-width: 20ex;
+  max-width: 50ex;
+  color: var(--sklearn-color-text);
+  box-shadow: 2pt 2pt 4pt #999;
+  /* unfitted */
+  background: var(--sklearn-color-unfitted-level-0);
+  border: .5pt solid var(--sklearn-color-unfitted-level-3);
+}
+
+.sk-estimator-doc-link.fitted span {
+  /* fitted */
+  background: var(--sklearn-color-fitted-level-0);
+  border: var(--sklearn-color-fitted-level-3);
+}
+
+.sk-estimator-doc-link:hover span {
+  display: block;
+}
+
+/* "?"-specific style due to the `<a>` HTML tag */
+
+#sk-container-id-1 a.estimator_doc_link {
+  float: right;
+  font-size: 1rem;
+  line-height: 1em;
+  font-family: monospace;
+  background-color: var(--sklearn-color-background);
+  border-radius: 1rem;
+  height: 1rem;
+  width: 1rem;
+  text-decoration: none;
+  /* unfitted */
+  color: var(--sklearn-color-unfitted-level-1);
+  border: var(--sklearn-color-unfitted-level-1) 1pt solid;
+}
+
+#sk-container-id-1 a.estimator_doc_link.fitted {
+  /* fitted */
+  border: var(--sklearn-color-fitted-level-1) 1pt solid;
+  color: var(--sklearn-color-fitted-level-1);
+}
+
+/* On hover */
+#sk-container-id-1 a.estimator_doc_link:hover {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-3);
+  color: var(--sklearn-color-background);
+  text-decoration: none;
+}
+
+#sk-container-id-1 a.estimator_doc_link.fitted:hover {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-3);
+}
+</a></style><div id="sk-container-id-1" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>DecisionTreeClassifier(max_depth=10)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br>On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden=""><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-1" type="checkbox" checked=""><label for="sk-estimator-id-1" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;DecisionTreeClassifier<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.tree.DecisionTreeClassifier.html">?<span>Documentation for DecisionTreeClassifier</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>DecisionTreeClassifier(max_depth=10)</pre></div> </div></div></div></div>
+</div>
+</div>
+<div id="cell-18" class="cell" data-execution_count="13">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lesson5-supervised_learning_focal_files/figure-html/cell-12-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Highest probability class</p>
+<pre><code>We can combine the four layers into a single layer by assigning the class with the highest probability to each pixel
+For this, we can use the which.max function:</code></pre>
+<div id="cell-20" class="cell" data-execution_count="14">
+<div class="cell-output cell-output-stdout">
+<pre><code>Sample probabilities and predicted classes:
+[1. 0. 0. 0.]
+['Agriculture', 'Forest', 'Agriculture', 'Agriculture', 'Buildings']</code></pre>
+</div>
+</div>
+<p>Model Evaluation</p>
+<pre><code>To evaluate the model, we will use the testing data</code></pre>
+<div id="cell-22" class="cell" data-execution_count="26">
+<div class="cell-output cell-output-stdout">
+<pre><code>['Forest', 'Agriculture', 'Agriculture', 'Forest', 'Forest']</code></pre>
+</div>
+</div>
+<div id="cell-23" class="cell" data-execution_count="28">
+<div class="cell-output cell-output-stdout">
+<pre><code>             Agriculture  Buildings  Forest  Shadows
+Agriculture           30          0      11        0
+Buildings              5          2       2        0
+Forest                 9          0      30        0
+Shadows                0          0       4       16
+Accuracy: 0.72</code></pre>
+</div>
+</div>
+
+
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -1009,13 +1485,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./lesson4-2-supervised-learning.html" class="pagination-link" aria-label="Supervised learning">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Supervised learning</span></span>
+      <a href="./lesson4-2-feature-engineering.html" class="pagination-link" aria-label="Feature Engineering">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Feature Engineering</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./lesson5-supervised_learning_focal.html" class="pagination-link" aria-label="lesson5-supervised_learning_focal.html">
-        <span class="nav-page-text"><span class="chapter-title">lesson5-supervised_learning_focal.html</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./lesson5-supervised_learning.html" class="pagination-link" aria-label="lesson5-supervised_learning.html">
+        <span class="nav-page-text"><span class="chapter-title">lesson5-supervised_learning.html</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

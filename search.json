@@ -12,122 +12,122 @@
   {
     "objectID": "lesson1-1-tidy.html",
     "href": "lesson1-1-tidy.html",
-    "title": "From tidy data to raster",
+    "title": "From tabular data to raster",
     "section": "",
-    "text": "Tidy data\nstate\nyear\npcap\nhwy\nwater\nutil\npc\ngsp\nemp\nunemp\n\n\n\n\nALABAMA\n1970\n15032.67\n7325.80\n1655.68\n6051.20\n35793.80\n28418\n1010.5\n4.7\n\n\nALABAMA\n1971\n15501.94\n7525.94\n1721.02\n6254.98\n37299.91\n29375\n1021.9\n5.2\n\n\nALABAMA\n1972\n15972.41\n7765.42\n1764.75\n6442.23\n38670.30\n31303\n1072.3\n4.7\n\n\nALABAMA\n1973\n16406.26\n7907.66\n1742.41\n6756.19\n40084.01\n33430\n1135.5\n3.9\n\n\nALABAMA\n1974\n16762.67\n8025.52\n1734.85\n7002.29\n42057.31\n33749\n1169.8\n5.5\n\n\nALABAMA\n1975\n17316.26\n8158.23\n1752.27\n7405.76\n43971.71\n33604\n1155.4\n7.7",
+    "text": "Tabular data\nstate\nyear\npcap\nhwy\nwater\nutil\npc\ngsp\nemp\nunemp\n\n\n\n\nALABAMA\n1970\n15032.67\n7325.80\n1655.68\n6051.20\n35793.80\n28418\n1010.5\n4.7\n\n\nALABAMA\n1971\n15501.94\n7525.94\n1721.02\n6254.98\n37299.91\n29375\n1021.9\n5.2\n\n\nALABAMA\n1972\n15972.41\n7765.42\n1764.75\n6442.23\n38670.30\n31303\n1072.3\n4.7\n\n\nALABAMA\n1973\n16406.26\n7907.66\n1742.41\n6756.19\n40084.01\n33430\n1135.5\n3.9\n\n\nALABAMA\n1974\n16762.67\n8025.52\n1734.85\n7002.29\n42057.31\n33749\n1169.8\n5.5\n\n\nALABAMA\n1975\n17316.26\n8158.23\n1752.27\n7405.76\n43971.71\n33604\n1155.4\n7.7",
     "crumbs": [
       "Lesson 1",
-      "<span class='chapter-number'>1</span>  <span class='chapter-title'>From tidy data to raster</span>"
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>From tabular data to raster</span>"
     ]
   },
   {
-    "objectID": "lesson1-1-tidy.html#tidy-data",
-    "href": "lesson1-1-tidy.html#tidy-data",
-    "title": "From tidy data to raster",
+    "objectID": "lesson1-1-tidy.html#tabular-data",
+    "href": "lesson1-1-tidy.html#tabular-data",
+    "title": "From tabular data to raster",
     "section": "",
-    "text": "Wickham (2014): Tidy tabular data: Each variable is a column, each observation is a row, and each type of observational unit is a table.\nBelow is a dataset from Baltagi and Baltagi (2008)\nObservation is a state in a perticular year\nVariable is a measured parameter (see below)\n\n\n\n\n\n\n\nParameter\n\n\n\n\n\n\npcap: public capital stock\nhwy: highway and streets\nwater: water and sewer facilities\nutil: other public buildings and structures\npc: private capital stock\ngsp: gross state product\nemp: labor input measured by the employment in non–agricultural payrolls\nunemp: state unemployment rate\n\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\n\n\n\nThis is considered a long table and is great for modelling and visualization.\nIts bad for memory (a lot of repetitions)",
+    "text": "Wickham (2014): Tidy tabular data: Each variable is a column, each observation is a row, and each type of observational unit is a table.\nBelow is a dataset from Baltagi and Baltagi (2008)\nObservation is a state in a perticular year\nVariable is a measured parameter (see below)\n\n\n\n\n\n\n\nNoteParameter\n\n\n\n\n\n\npcap: public capital stock\nhwy: highway and streets\nwater: water and sewer facilities\nutil: other public buildings and structures\npc: private capital stock\ngsp: gross state product\nemp: labor input measured by the employment in non–agricultural payrolls\nunemp: state unemployment rate\n\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\n\n\n\nThis is considered a long table and is great for modelling and visualization.\nIts bad for memory (a lot of repetitions)",
     "crumbs": [
       "Lesson 1",
-      "<span class='chapter-number'>1</span>  <span class='chapter-title'>From tidy data to raster</span>"
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>From tabular data to raster</span>"
     ]
   },
   {
     "objectID": "lesson1-1-tidy.html#long-tables-have-a-lot-of-repetitions",
     "href": "lesson1-1-tidy.html#long-tables-have-a-lot-of-repetitions",
-    "title": "From tidy data to raster",
+    "title": "From tabular data to raster",
     "section": "Long tables have a lot of repetitions:",
     "text": "Long tables have a lot of repetitions:\n\nlength(Produc$state)\n## [1] 815\nn_distinct(Produc$state)\n## [1] 48\n\nlength(Produc$year)\n## [1] 815\nn_distinct(Produc$year)\n## [1] 17\n\n\nn_values &lt;- dim(Produc) |&gt; \n  prod()\n\nn_values\n## [1] 8150",
     "crumbs": [
       "Lesson 1",
-      "<span class='chapter-number'>1</span>  <span class='chapter-title'>From tidy data to raster</span>"
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>From tabular data to raster</span>"
     ]
   },
   {
     "objectID": "lesson1-1-tidy.html#wide-tables-have-less-repetitions.",
     "href": "lesson1-1-tidy.html#wide-tables-have-less-repetitions.",
-    "title": "From tidy data to raster",
+    "title": "From tabular data to raster",
     "section": "Wide tables have less repetitions.",
     "text": "Wide tables have less repetitions.\nTo demonstrate we convert a long to wide.\n\n# Pivoting must be done per variable\nProduc_wide &lt;- Produc |&gt; \n    select(state, year, unemp) |&gt; \n    pivot_wider(names_from = state, values_from = unemp) |&gt; \n    column_to_rownames(\"year\")\n\n\n\n\n\n\n\nNote\n\n\n\n\n\nWe can either omit the column “year”, (since this is implicit knowledge, \\(row_i + 1970\\)), or use it as a rowname.",
     "crumbs": [
       "Lesson 1",
-      "<span class='chapter-number'>1</span>  <span class='chapter-title'>From tidy data to raster</span>"
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>From tabular data to raster</span>"
     ]
   },
   {
     "objectID": "lesson1-1-tidy.html#long-vs-wide",
     "href": "lesson1-1-tidy.html#long-vs-wide",
-    "title": "From tidy data to raster",
+    "title": "From tabular data to raster",
     "section": "Long vs Wide",
     "text": "Long vs Wide\nLong / tidy:\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nstate\nyear\npcap\nhwy\nwater\nutil\npc\ngsp\nemp\nunemp\n\n\n\n\nALABAMA\n1970\n15032.67\n7325.80\n1655.68\n6051.20\n35793.80\n28418\n1010.5\n4.7\n\n\nALABAMA\n1971\n15501.94\n7525.94\n1721.02\n6254.98\n37299.91\n29375\n1021.9\n5.2\n\n\nALABAMA\n1972\n15972.41\n7765.42\n1764.75\n6442.23\n38670.30\n31303\n1072.3\n4.7\n\n\nALABAMA\n1973\n16406.26\n7907.66\n1742.41\n6756.19\n40084.01\n33430\n1135.5\n3.9\n\n\nALABAMA\n1974\n16762.67\n8025.52\n1734.85\n7002.29\n42057.31\n33749\n1169.8\n5.5\n\n\n\n\n\n\nWide / untidy:\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nALABAMA\nARIZONA\nARKANSAS\nCALIFORNIA\nCOLORADO\nCONNECTICUT\nDELAWARE\nFLORIDA\nGEORGIA\nIDAHO\nILLINOIS\nINDIANA\nIOWA\nKANSAS\nKENTUCKY\nLOUISIANA\nMAINE\nMARYLAND\nMASSACHUSETTS\nMICHIGAN\nMINNESOTA\nMISSISSIPPI\nMISSOURI\nMONTANA\nNEBRASKA\nNEVADA\nNEW_HAMPSHIRE\nNEW_JERSEY\nNEW_MEXICO\nNEW_YORK\nNORTH_CAROLINA\nNORTH_DAKOTA\nOHIO\nOKLAHOMA\nOREGON\nPENNSYLVANIA\nRHODE_ISLAND\nSOUTH_CAROLINA\nSOUTH_DAKOTA\nTENNESSE\nTEXAS\nUTAH\nVERMONT\nVIRGINIA\nWASHINGTON\nWEST_VIRGINIA\nWISCONSIN\nWYOMING\n\n\n\n\n1970\n4.7\n4.4\n5.0\n7.2\n4.4\n5.6\n4.8\n4.4\n4.1\n5.8\n4.1\n5.0\n3.7\n4.8\n5.0\n6.6\n5.7\n3.3\n4.6\n6.7\n4.2\n4.8\n3.3\n5.5\n3.1\n5.9\n3.3\n4.6\n5.9\n4.5\n4.3\n4.6\n5.4\n4.4\n6.2\n4.5\n5.2\n5.0\n3.3\n4.8\n4.4\n6.1\n4.9\n3.4\n9.1\n6.1\n3.9\n4.5\n\n\n1971\n5.2\nNA\n5.4\n8.8\n4.0\n8.9\n5.7\n4.9\n3.9\n6.3\n5.1\n5.7\n4.2\n5.5\n5.5\n7.0\n7.6\n4.2\n6.6\n7.6\n4.4\n4.8\n4.9\n6.3\n3.6\n7.0\n4.7\n5.7\n6.2\n6.6\n4.8\n5.3\n6.5\n4.9\n6.6\n5.4\n6.8\n5.3\n3.7\n5.0\n4.9\n6.4\n6.8\n3.6\n10.0\n6.5\n4.5\n4.5\n\n\n1972\n4.7\n4.2\n4.6\n7.6\n3.6\n8.2\n4.7\n4.5\n4.1\n6.2\n5.1\n4.5\n3.6\n4.0\n4.8\n6.1\n7.0\n4.7\n6.4\n7.0\n4.3\n3.9\n4.2\n6.2\n3.4\n7.0\n4.5\n5.8\n5.8\n6.7\n4.0\n4.9\n5.5\n4.5\n5.7\n5.4\n6.5\n4.2\n3.7\n3.6\n4.5\n6.1\n6.5\n3.6\n9.5\n6.5\n4.2\n4.0\n\n\n1973\n3.9\n4.1\n4.1\n7.0\n3.4\n5.7\n4.6\n4.3\n3.9\n5.6\n4.1\n4.2\n2.9\n3.1\n4.4\n6.0\n5.9\n3.5\n6.7\n5.8\n4.4\n3.6\n3.7\n6.3\n3.3\n6.2\n3.9\n5.6\n5.7\n5.4\n3.5\n5.1\n4.3\n4.2\n5.3\n4.8\n6.2\n3.7\n3.3\n3.0\n3.9\n5.7\n5.6\n3.6\n7.7\n5.7\n4.1\n3.5\n\n\n1974\n5.5\n5.6\n4.8\n7.7\n3.8\n6.2\n6.0\n6.2\n5.0\n6.0\n4.5\n5.9\n3.0\n3.5\n4.5\n6.7\n6.7\n3.7\n7.2\n8.7\n4.3\n4.1\n4.5\n6.7\n3.8\n7.5\n3.6\n6.9\n6.3\n6.3\n4.5\n3.0\n5.0\n4.4\n7.5\n5.1\n7.3\n4.5\n3.5\n3.9\n4.3\n5.9\n6.9\n4.0\n7.2\n5.9\n4.6\n3.6",
     "crumbs": [
       "Lesson 1",
-      "<span class='chapter-number'>1</span>  <span class='chapter-title'>From tidy data to raster</span>"
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>From tabular data to raster</span>"
     ]
   },
   {
     "objectID": "lesson1-1-tidy.html#long-vs.-wide-number-of-cells",
     "href": "lesson1-1-tidy.html#long-vs.-wide-number-of-cells",
-    "title": "From tidy data to raster",
+    "title": "From tabular data to raster",
     "section": "Long vs. Wide: Number of cells",
     "text": "Long vs. Wide: Number of cells\nHow many cells / values do we have after this transformation?\n\nn_values_new &lt;- Produc_wide |&gt; \n    dim() |&gt; \n    prod()\n\n# since we have 8 variables, we multiply by 8:\nn_values_new &lt;- n_values_new*8 \n\nn_values_new\n\n[1] 6528\n\n# before we had:\nn_values\n\n[1] 8150\n\n\n→ This is a reduction of 20%",
     "crumbs": [
       "Lesson 1",
-      "<span class='chapter-number'>1</span>  <span class='chapter-title'>From tidy data to raster</span>"
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>From tabular data to raster</span>"
     ]
   },
   {
     "objectID": "lesson1-1-tidy.html#dataframe-matrix",
     "href": "lesson1-1-tidy.html#dataframe-matrix",
-    "title": "From tidy data to raster",
+    "title": "From tabular data to raster",
     "section": "Dataframe → Matrix",
-    "text": "Dataframe → Matrix\nLess repetitions / smaller memory footprint is only part of the advantage:\n\nAll columns now have the same datatype (dbl)\n\nThis means, they can be stored in a matrix / array\nThis gives us a big speed advantage (e.g. calculating the mean over all values is 8x faster)",
+    "text": "Dataframe → Matrix\nLess repetitions / smaller memory footprint is only part of the advantage:\n\nAll columns now have the same datatype (dbl)\n\nThis means, they can be stored in a matrix / array\nThis gives us a big speed advantage (e.g. calculating the mean over all values is 12x faster)",
     "crumbs": [
       "Lesson 1",
-      "<span class='chapter-number'>1</span>  <span class='chapter-title'>From tidy data to raster</span>"
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>From tabular data to raster</span>"
     ]
   },
   {
     "objectID": "lesson1-1-tidy.html#dataframe-matrix-1",
     "href": "lesson1-1-tidy.html#dataframe-matrix-1",
-    "title": "From tidy data to raster",
+    "title": "From tabular data to raster",
     "section": "Dataframe → Matrix",
     "text": "Dataframe → Matrix\n\nMissing values are now explicit\n\n\nwhich(is.na(Produc_matrix))\n\n[1] 19\n\n\n\nBefore, missing values were implicit:\n\n\n\n# A tibble: 6 × 10\n  state    year   pcap   hwy water  util     pc   gsp   emp unemp\n  &lt;chr&gt;   &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;\n1 ALABAMA  1984 19257. 8656. 2235. 8366. 59447. 45118 1388.  11  \n2 ALABAMA  1985 19433. 8726. 2253. 8454. 60688. 46849 1427.   8.9\n3 ALABAMA  1986 19723. 8813. 2309. 8601. 61629. 48409 1463.   9.8\n4 ARIZONA  1970 10148. 4557. 1628. 3964. 23586. 19288  547.   4.4\n5 ARIZONA  1972 10978. 4848. 1615. 4515. 26059. 23289  646.   4.2\n6 ARIZONA  1973 11598. 4963. 1648. 4987. 27305. 25244  714.   4.1",
     "crumbs": [
       "Lesson 1",
-      "<span class='chapter-number'>1</span>  <span class='chapter-title'>From tidy data to raster</span>"
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>From tabular data to raster</span>"
     ]
   },
   {
     "objectID": "lesson1-1-tidy.html#dataframe-matrix-2",
     "href": "lesson1-1-tidy.html#dataframe-matrix-2",
-    "title": "From tidy data to raster",
+    "title": "From tabular data to raster",
     "section": "Dataframe → Matrix",
     "text": "Dataframe → Matrix\nTo detect missing values, cases must be made complete first:\n\nProduc |&gt; \n    complete(state, year) |&gt;                    # ← make cases complete \n    filter(is.na(pcap)) # ← filter by NA\n\n# A tibble: 1 × 10\n  state    year  pcap   hwy water  util    pc   gsp   emp unemp\n  &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;\n1 ARIZONA  1971    NA    NA    NA    NA    NA    NA    NA    NA",
     "crumbs": [
       "Lesson 1",
-      "<span class='chapter-number'>1</span>  <span class='chapter-title'>From tidy data to raster</span>"
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>From tabular data to raster</span>"
     ]
   },
   {
     "objectID": "lesson1-1-tidy.html#limitations",
     "href": "lesson1-1-tidy.html#limitations",
-    "title": "From tidy data to raster",
+    "title": "From tabular data to raster",
     "section": "Limitations",
     "text": "Limitations\n\nMatrices are only advantages if they are densely populated (little NAs)\nSpeed and memory footprint is only relevant if the data is large",
     "crumbs": [
       "Lesson 1",
-      "<span class='chapter-number'>1</span>  <span class='chapter-title'>From tidy data to raster</span>"
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>From tabular data to raster</span>"
     ]
   },
   {
     "objectID": "lesson1-1-tidy.html#tasks-exercises",
     "href": "lesson1-1-tidy.html#tasks-exercises",
-    "title": "From tidy data to raster",
+    "title": "From tabular data to raster",
     "section": "Tasks / Exercises",
     "text": "Tasks / Exercises\n\nImport the Produc dataset (from the package plm) using the following code:\n\ndata(Produc, package = \"plm\")\n\nConvert the data from long to wide\nConvert the data to a matrix\nCalculate mean unemployment first using the original dataframe, then the new matrix. Compare the speed difference.\n\n\n\n\n\nBaltagi, Badi Hani, and Badi H Baltagi. 2008. Econometric Analysis of Panel Data. Vol. 4. Springer. https://bcs.wiley.com/he-bcs/Books?action=resource&bcsId=4338&itemId=1118672321&resourceId=13452.\n\n\nWickham, Hadley. 2014. “Tidy Data.” Journal of Statistical Software 59 (10): 1–23. https://doi.org/10.18637/jss.v059.i10.",
     "crumbs": [
       "Lesson 1",
-      "<span class='chapter-number'>1</span>  <span class='chapter-title'>From tidy data to raster</span>"
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>From tabular data to raster</span>"
     ]
   },
   {
@@ -146,7 +146,7 @@
     "href": "lesson1-2-imagery.html#images-are-rasters",
     "title": "Imagery Data",
     "section": "",
-    "text": "The spatial raster data model represents the world with the continuous grid of cells (a.k.a. pixels)\nThis data model often refers to so-called regular grids, in which each cell has the same, constant size\nThrough its inherent model this data is naturally fits into the wide data structure\n\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\n\n\nWe will focus on the regular grids only. However, several other types of grids exist, including rotated, sheared, rectilinear, and curvilinear grids (see Chapter 1 of Pebesma and Bivand (2023)).",
+    "text": "The spatial raster data model represents the world with the continuous grid of cells (a.k.a. pixels)\nThis data model often refers to so-called regular grids, in which each cell has the same, constant size\nThrough its inherent model this data is naturally fits into the wide data structure\n\n\n\n\n\n\n\n\nNote\n\n\n\n\n\nWe will focus on the regular grids only. However, several other types of grids exist, including rotated, sheared, rectilinear, and curvilinear grids (see Chapter 1 of Pebesma and Bivand (2023)).",
     "crumbs": [
       "Lesson 1",
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>Imagery Data</span>"
@@ -179,7 +179,7 @@
     "href": "lesson1-2-imagery.html#a-more-complex-example-spectral-data",
     "title": "Imagery Data",
     "section": "A more complex example: Spectral data",
-    "text": "A more complex example: Spectral data\n\nTypically, RS imagery consists of more than 1 band\nIn this case, the data is stored in a 3 dimensional array (where band is the 3rd-dimesion)\nA RS image can contain any number of bands.\nThe most well known type of RS imagery consists of 3 Bands from the red, blue and green spectrum\n\n\n\n\n\n\n\n\n\n\n\n\n\nFigure 2.4: The bands stored internally\n\n\n\n\n\n\n\n\n\n\n\nFigure 2.5: The RGB Composite",
+    "text": "A more complex example: Spectral data\n\nTypically, RS imagery consists of more than 1 band\nIn this case, the data is stored in a 3 dimensional array (where band is the 3rd-dimesion)\nA RS image can contain any number of bands.\nThe most well known type of RS imagery consists of 3 Bands from the red, blue and green spectrum\n\n\n\n\n\n\n\n\n\n\nFigure 2.4: The bands stored internally\n\n\n\n\n\n\n\n\n\n\n\nFigure 2.5: The RGB Composite",
     "crumbs": [
       "Lesson 1",
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>Imagery Data</span>"
@@ -190,7 +190,7 @@
     "href": "lesson1-2-imagery.html#each-band-is-a-2d-matrix",
     "title": "Imagery Data",
     "section": "Each band is a 2D matrix",
-    "text": "Each band is a 2D matrix\n\n\n\n\n\n\n\n\n\n\n\n\nFigure 2.6: Band values\n\n\n\n\n\n\n\n\n\n\n\nFigure 2.7: RGB True Color Image",
+    "text": "Each band is a 2D matrix\n\n\n\n\n\n\n\n\n\nFigure 2.6: Band values\n\n\n\n\n\n\n\n\n\n\n\nFigure 2.7: RGB True Color Image",
     "crumbs": [
       "Lesson 1",
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>Imagery Data</span>"
@@ -212,7 +212,7 @@
     "href": "lesson1-2-imagery.html#nirgb-image",
     "title": "Imagery Data",
     "section": "NirGB Image",
-    "text": "NirGB Image\n\n\n\n\n\n\n\n\n\n\n\n\nFigure 2.8: Band values\n\n\n\n\n\n\n\n\n\n\n\nFigure 2.9: NIR-GB False Color Image",
+    "text": "NirGB Image\n\n\n\n\n\n\n\n\n\nFigure 2.8: Band values\n\n\n\n\n\n\n\n\n\n\n\nFigure 2.9: NIR-GB False Color Image",
     "crumbs": [
       "Lesson 1",
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>Imagery Data</span>"
@@ -223,7 +223,7 @@
     "href": "lesson1-2-imagery.html#representations-of-multispectral-data",
     "title": "Imagery Data",
     "section": "Representations of multispectral data",
-    "text": "Representations of multispectral data\n\nA true color image is created by using the Red (3), Green (2) and Blue (1) Band and mapping these to RGB\nA false color image is created by mapping other bands to RGB\n\n\n\n\n\n\n\n\n\n\n\n\n\nFigure 2.10: The R, G and B bands mapped to RGB\n\n\n\n\n\n\n\n\n\n\n\nFigure 2.11: NIR, G and B bands mapped to RGB",
+    "text": "Representations of multispectral data\n\nA true color image is created by using the Red (3), Green (2) and Blue (1) Band and mapping these to RGB\nA false color image is created by mapping other bands to RGB\n\n\n\n\n\n\n\n\n\n\nFigure 2.10: The R, G and B bands mapped to RGB\n\n\n\n\n\n\n\n\n\n\n\nFigure 2.11: NIR, G and B bands mapped to RGB",
     "crumbs": [
       "Lesson 1",
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>Imagery Data</span>"
@@ -241,616 +241,11 @@
     ]
   },
   {
-    "objectID": "lesson2-1-operations.html",
-    "href": "lesson2-1-operations.html",
-    "title": "Raster Operations / Map algebra",
-    "section": "",
-    "text": "Introduction",
-    "crumbs": [
-      "Lesson 2",
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Raster Operations / Map algebra</span>"
-    ]
-  },
-  {
-    "objectID": "lesson2-1-operations.html#introduction",
-    "href": "lesson2-1-operations.html#introduction",
-    "title": "Raster Operations / Map algebra",
-    "section": "",
-    "text": "Map algebra can be defined as operations that modify or summarize raster cell values, with reference to surrounding cells, zones, or statistical functions that apply to every cell.\nMap algebra divides raster operations into four subclasses:\n\nLocal or per-cell operations\nFocal or neighborhood operations. Most often the output cell value is the result of a 3 x 3 input cell block\nZonal operations are similar to focal operations, but the surrounding pixel grid on which new values are computed can have irregular sizes and shapes\nGlobal or per-raster operations. That means the output cell derives its value potentially from one or several entire rasters",
-    "crumbs": [
-      "Lesson 2",
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Raster Operations / Map algebra</span>"
-    ]
-  },
-  {
-    "objectID": "lesson2-1-operations.html#global-operation-1",
-    "href": "lesson2-1-operations.html#global-operation-1",
-    "title": "Raster Operations / Map algebra",
-    "section": "Global Operation (1)",
-    "text": "Global Operation (1)\n\nThe most common global operations are descriptive statistics for the entire raster dataset such as the minimum, maximum or mean value.\nFor example: What is the mean elevation value for Luxembourg?\n\n\n\n\n\n\n\n\n\nFigure 3.1: Elevation of Luxembourg\n\n\n\n\n\n\n# note: mean(r) does not work, since \"mean\" is used as a local operator\nmean_elev &lt;- global(r, mean, na.rm = TRUE)\n\nmean_elev\n\n              mean\nelevation 347.6488",
-    "crumbs": [
-      "Lesson 2",
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Raster Operations / Map algebra</span>"
-    ]
-  },
-  {
-    "objectID": "lesson2-1-operations.html#global-operation-2",
-    "href": "lesson2-1-operations.html#global-operation-2",
-    "title": "Raster Operations / Map algebra",
-    "section": "Global Operation (2)",
-    "text": "Global Operation (2)\n\nAnother type of “global” operation is distance\nThis function calculates the distance from each cell to a specific target cell\nFor example, what is the distance from each cell to Luxembourg City, the capital of Luxembourg?\n\n\n\n\n\n\n\n\n\n\n\nr_dist &lt;- distance(r, luxembourg_city)\nr_dist &lt;- mask(r_dist, r)",
-    "crumbs": [
-      "Lesson 2",
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Raster Operations / Map algebra</span>"
-    ]
-  },
-  {
-    "objectID": "lesson2-1-operations.html#zonal",
-    "href": "lesson2-1-operations.html#zonal",
-    "title": "Raster Operations / Map algebra",
-    "section": "Zonal",
-    "text": "Zonal\n\nZonal operations apply an aggregation function to multiple raster cells\nA second raster with categorical values define the “zones”\n\nWhat is the mean altitude per municipality?\n\nmean_vals &lt;- zonal(r, zones, fun = mean, na.rm = TRUE)\n\n\n\n\n\n\n\n\n\n\n\n\n\nFigure 3.2: The original Zones (E.g. municipalities of Luxembourg)\n\n\n\n\n\n\n\n\n\n\n\nFigure 3.3: Mean elevation per zone / per municipality\n\n\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\n\n\n\nThe global operation can be seen as a special case of a zonal operation, where the only “Zone” is the entire dataset",
-    "crumbs": [
-      "Lesson 2",
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Raster Operations / Map algebra</span>"
-    ]
-  },
-  {
-    "objectID": "lesson2-1-operations.html#local-1",
-    "href": "lesson2-1-operations.html#local-1",
-    "title": "Raster Operations / Map algebra",
-    "section": "Local (1)",
-    "text": "Local (1)\n\nLocal operations comprise all cell-by-cell operations in one or several layers.\nFor example, we can classify the elevation into values above and below a certain threshold\n\n\n# first, create a boolean copy of the raster\nr_bool &lt;- as.logical(r)\n\nmean_elev &lt;- as.numeric(mean_elev)\nmean_elev\n\n[1] 347.6488\n\nr_bool[r &gt; mean_elev] &lt;- FALSE\nr_bool[r &lt;= mean_elev] &lt;- TRUE",
-    "crumbs": [
-      "Lesson 2",
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Raster Operations / Map algebra</span>"
-    ]
-  },
-  {
-    "objectID": "lesson2-1-operations.html#local-2",
-    "href": "lesson2-1-operations.html#local-2",
-    "title": "Raster Operations / Map algebra",
-    "section": "Local (2)",
-    "text": "Local (2)\n\nThis type of (re-) classification is a very common operation\nFor more than 2 categories, we can use classify\n\n\ncuts &lt;- global(r, quantile, probs = c(0, .33, .66, 1), na.rm = TRUE)\n\nr_classify &lt;- classify(r, as.numeric(cuts))\n\n# this next line just replaces the default labels with some custom ones\nlevels(r_classify) &lt;- data.frame(ID = 0:2, category = c(\"low\",\"mid\",\"high\"))\n\np + tm_shape(r_classify) +\n    tm_raster(style = \"cat\",legend.show = TRUE, palette = \"viridis\", title = \"Elevation\") +\n    tm_layout(legend.show = TRUE)",
-    "crumbs": [
-      "Lesson 2",
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Raster Operations / Map algebra</span>"
-    ]
-  },
-  {
-    "objectID": "lesson2-1-operations.html#local-3",
-    "href": "lesson2-1-operations.html#local-3",
-    "title": "Raster Operations / Map algebra",
-    "section": "Local (3)",
-    "text": "Local (3)\n\nLocal operations are often used with multiple bands\nFor example, we could calculate the mean intensity values of red, green and blue:\n\n\nl7 &lt;- rast(system.file(\"tif/L7_ETMs.tif\",package = \"stars\"))\n\nnames(l7) &lt;- c(\"B\", \"G\", \"R\", \"NIR\", \"SWIR\", \"MIR\")\n\nl7_rgb &lt;- l7[[c(\"R\",\"G\", \"B\")]]\n\nplot(l7_rgb, nr = 1)\n\n\n\n\n\n\n\n\n\nl7_rgb_mean &lt;- mean(l7_rgb)\n\nplot(l7_rgb_mean)",
-    "crumbs": [
-      "Lesson 2",
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Raster Operations / Map algebra</span>"
-    ]
-  },
-  {
-    "objectID": "lesson2-1-operations.html#local-4",
-    "href": "lesson2-1-operations.html#local-4",
-    "title": "Raster Operations / Map algebra",
-    "section": "Local (4)",
-    "text": "Local (4)\n\nIn a more complex usecase, we could use the R, G and B band to calculate a grayscale value (\\(L^*\\)) using the following formula (from here):\n\n\\[\\begin{aligned}\n\nL^* &= 116 \\times Y ^ {\\frac{1}{3}} - 16\\\\\n\nY &= 0.2126 \\times R^\\gamma+0.7152 \\times G^\\gamma+0.0722 \\times B^\\gamma \\\\\n\n\n\\gamma &= 2.2\n\n\\end{aligned}\\]\n\ng &lt;- 2.2\n\nl7 &lt;- l7/255 # scale values to 0-1 (probabbly not necessary)\n\nY &lt;- 0.2126 * l7[[\"R\"]]^g + 0.7152 * l7[[\"G\"]]^g + 0.0722 * l7[[\"B\"]]^g\n\nL &lt;- 116* Y^(1/3)-16",
-    "crumbs": [
-      "Lesson 2",
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Raster Operations / Map algebra</span>"
-    ]
-  },
-  {
-    "objectID": "lesson2-1-operations.html#sec-focal-1",
-    "href": "lesson2-1-operations.html#sec-focal-1",
-    "title": "Raster Operations / Map algebra",
-    "section": "Focal",
-    "text": "Focal\n\nWhile local functions operate on one cell focal operations take into account a central (focal) cell and its neighbors.\nThe neighborhood (also named kernel, filter or moving window) under consideration is typically of size 3-by-3 cells (that is the central cell and its eight surrounding neighbors), but can take on any other size or shape as defined by the user.\nA focal operation applies an aggregation function to all cells within the specified neighborhood, uses the corresponding output as the new value for the central cell, and moves on to the next central cell\n\n\n\n\n\n\n\nFigure 3.4: Note how, depnding on the size of your moving window, NA’s are produced. Source: Lovelace, Nowosad, and Muenchow (2019)\n\n\n\n\nfocal3by3 &lt;- matrix(rep(1,9), ncol = 3)\n\n\nfocal11by11 &lt;- matrix(rep(1,121), ncol = 11)\n\n\nr_foc3 &lt;- focal(r, focal3by3, fun = mean, fillNA = TRUE)\n\nr_foc11 &lt;- focal(r, focal11by11, fun = mean, fillNA = TRUE)\n\n\n\n\n\n\n\n\n\n\n\n\n\nFigure 3.5: Original values\n\n\n\n\n\n\n\n\n\n\n\nFigure 3.6: Result of a 3x3 Focal Window\n\n\n\n\n\n\n\n\n\n\n\nFigure 3.7: Result of a 11x11 Focal Window\n\n\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\n\n\n\nNote how the output raster is smaller as the focal window is larger (edge effect)",
-    "crumbs": [
-      "Lesson 2",
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Raster Operations / Map algebra</span>"
-    ]
-  },
-  {
-    "objectID": "lesson2-1-operations.html#focal-weights-1",
-    "href": "lesson2-1-operations.html#focal-weights-1",
-    "title": "Raster Operations / Map algebra",
-    "section": "Focal weights (1)",
-    "text": "Focal weights (1)\n\nThe focal weights we used above were square and evenly weighted\n\n\nfocal3by3\n\n     [,1] [,2] [,3]\n[1,]    1    1    1\n[2,]    1    1    1\n[3,]    1    1    1\n\n\n\nfocal11by11\n\n      [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10] [,11]\n [1,]    1    1    1    1    1    1    1    1    1     1     1\n [2,]    1    1    1    1    1    1    1    1    1     1     1\n [3,]    1    1    1    1    1    1    1    1    1     1     1\n [4,]    1    1    1    1    1    1    1    1    1     1     1\n [5,]    1    1    1    1    1    1    1    1    1     1     1\n [6,]    1    1    1    1    1    1    1    1    1     1     1\n [7,]    1    1    1    1    1    1    1    1    1     1     1\n [8,]    1    1    1    1    1    1    1    1    1     1     1\n [9,]    1    1    1    1    1    1    1    1    1     1     1\n[10,]    1    1    1    1    1    1    1    1    1     1     1\n[11,]    1    1    1    1    1    1    1    1    1     1     1",
-    "crumbs": [
-      "Lesson 2",
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Raster Operations / Map algebra</span>"
-    ]
-  },
-  {
-    "objectID": "lesson2-1-operations.html#focal-weights-2",
-    "href": "lesson2-1-operations.html#focal-weights-2",
-    "title": "Raster Operations / Map algebra",
-    "section": "Focal weights (2)",
-    "text": "Focal weights (2)\n\nHowever, we can also create uneven weights:\n\nFor example, a laplacian filter is commonly used for edge detection.\n\nlaplacian &lt;- matrix(c(0,1,0,1,-4,1,0,1,0), nrow=3) \n\nlaplacian\n\n     [,1] [,2] [,3]\n[1,]    0    1    0\n[2,]    1   -4    1\n[3,]    0    1    0\n\n\nSo are the sobel filters\n\n\n     [,1] [,2] [,3]\n[1,]   -1    0    1\n[2,]   -2    0    2\n[3,]   -1    0    1\n\n\n     [,1] [,2] [,3]\n[1,]    1    2    1\n[2,]    0    0    0\n[3,]   -1   -2   -1\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nFigure 3.8: Laplacian Filter\n\n\n\n\n\n\n\n\n\n\n\nFigure 3.9: Sobel (x-direction)\n\n\n\n\n\n\n\n\n\n\n\nFigure 3.10: SObel (y-direction)",
-    "crumbs": [
-      "Lesson 2",
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Raster Operations / Map algebra</span>"
-    ]
-  },
-  {
-    "objectID": "lesson2-1-operations.html#focal-weights-3",
-    "href": "lesson2-1-operations.html#focal-weights-3",
-    "title": "Raster Operations / Map algebra",
-    "section": "Focal weights (3)",
-    "text": "Focal weights (3)\n\nWe can also create specific shapes using weights\nWe don’t need to create these matrices by hand. Rather, we can use the function focalMat to create different shapes automatically\n\n\n# Note \n# - \"d\" is evaluated in the units of \"x\" (in our case: meters)\n# - The sum of all weights equals to 1\n# - Note how the edges receive a value of 0\nfocal_circle3000 &lt;- focalMat(x = r, d = 3000, \"circle\")\n\nfocal_circle3000\n\n           [,1]       [,2]       [,3]       [,4]       [,5]\n[1,] 0.00000000 0.00000000 0.03703704 0.00000000 0.00000000\n[2,] 0.03703704 0.03703704 0.03703704 0.03703704 0.03703704\n[3,] 0.03703704 0.03703704 0.03703704 0.03703704 0.03703704\n[4,] 0.03703704 0.03703704 0.03703704 0.03703704 0.03703704\n[5,] 0.03703704 0.03703704 0.03703704 0.03703704 0.03703704\n[6,] 0.03703704 0.03703704 0.03703704 0.03703704 0.03703704\n[7,] 0.00000000 0.00000000 0.03703704 0.00000000 0.00000000\n\n\n\n\n\n\n\nA visual representation of the matrix / filter above\n\n\n\n\n\nfocal_gauss1000 &lt;- focalMat(x = r, d = 1000, \"Gauss\")\n\nfocal_gauss1000\n\n            [,1]        [,2]        [,3]        [,4]        [,5]\n[1,] 0.000241551 0.001082556 0.001784834 0.001082556 0.000241551\n[2,] 0.002942693 0.013188236 0.021743725 0.013188236 0.002942693\n[3,] 0.013188236 0.059105572 0.097448614 0.059105572 0.013188236\n[4,] 0.021743725 0.097448614 0.160665602 0.097448614 0.021743725\n[5,] 0.013188236 0.059105572 0.097448614 0.059105572 0.013188236\n[6,] 0.002942693 0.013188236 0.021743725 0.013188236 0.002942693\n[7,] 0.000241551 0.001082556 0.001784834 0.001082556 0.000241551\n\n\n\n\n\n\n\nA visual representation of the matrix / filter above",
-    "crumbs": [
-      "Lesson 2",
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Raster Operations / Map algebra</span>"
-    ]
-  },
-  {
-    "objectID": "lesson2-1-operations.html#focal-functions-in-terrain-processing",
-    "href": "lesson2-1-operations.html#focal-functions-in-terrain-processing",
-    "title": "Raster Operations / Map algebra",
-    "section": "Focal functions in terrain processing",
-    "text": "Focal functions in terrain processing\n\nFocal functions are used to calculate the slope of a specific location, e.g. using the algorithm by Horn (1981)\nSimilarly, calculating the aspect (azimuth) of a location is a very typical task when dealing with elevation data\nThese algorithms are used so often, that they are implemented in a dedicated function (terrain())\n\nterrain(r, \"slope\") |&gt; plot()\nterrain(r, \"aspect\") |&gt; plot()\n\n\n\n\n\n\n\n\n\nFigure 3.11: Calculating slope using a predefined algorithm\n\n\n\n\n\n\n\n\n\n\n\nFigure 3.12: Calculating aspect",
-    "crumbs": [
-      "Lesson 2",
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Raster Operations / Map algebra</span>"
-    ]
-  },
-  {
-    "objectID": "lesson2-1-operations.html#tasks-exercises",
-    "href": "lesson2-1-operations.html#tasks-exercises",
-    "title": "Raster Operations / Map algebra",
-    "section": "Tasks / Exercises",
-    "text": "Tasks / Exercises\n\nDownload and import the elevation of Luxembourg from Moodle (CW43 → Datasets)\nCalculate the mean, maximum and minimum elevation values\nCalculate slope and aspect (see terrain functions)\nDetermine suitable locations of solar panels using the following conditions:\n\nElevation: above 300 MASL\nSlope: Between 1 and 3°\nAspect: Southfacing (between 135 and 235°)\n\nDownload the Municipalities of Luxembourg from Moodle and calculate the minimum, maximum and mean elevation values per municipality.\nSmooth the elevation values using different focal windows\nImport the multispectral Landsat 7 as a raster using the following path\n\nsystem.file(\"tif/L7_ETMs.tif\",package = \"stars\")\n\nCalculate the NDVI using the following formula:\n\n\\[\\text{NDVI} = \\frac{\\text{NIR}-\\text{red}}{\\text{NIR}+\\text{red}}\\]\n\n\n\n\n\n\n\n\n\n\nDownload a Sentinel 2 Image from browser.dataspace.copernicus.eu for a location of your choosing. Import it as a raster image in R. Note that you have to import the individual bands and then recombine the image to a multiband raster.\nCreate a True-Color RGB Image and a False-Color NirGB Image using the appropriate bands (see Spectral Bands (Wikipedia))\nCalculate NDVI of the Sentinel 2 Image using the appropriate bands\n\n\n\n\n\nHorn, Berthold KP. 1981. “Hill Shading and the Reflectance Map.” Proceedings of the IEEE 69 (1): 14–47.\n\n\nLovelace, Robin, Jakub Nowosad, and Jannes Muenchow. 2019. Geocomputation with r. Chapman; Hall/CRC.",
-    "crumbs": [
-      "Lesson 2",
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Raster Operations / Map algebra</span>"
-    ]
-  },
-  {
-    "objectID": "lesson3-1-datatypes.html",
-    "href": "lesson3-1-datatypes.html",
-    "title": "Data Types, scale and offset",
-    "section": "",
-    "text": "Raster data types",
-    "crumbs": [
-      "Lesson 3",
-      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Data Types, scale and offset</span>"
-    ]
-  },
-  {
-    "objectID": "lesson3-1-datatypes.html#raster-data-types",
-    "href": "lesson3-1-datatypes.html#raster-data-types",
-    "title": "Data Types, scale and offset",
-    "section": "",
-    "text": "While R and Python have a variety of data types including character strings, raster data is always stored as numeric\nHowever, there are quite a number of numeric data types that can be used to store raster data, depending on the range of values and the precision required\nThe choice of data type can have a significant impact on the size of the file and the precision of the data stored\nSince raster data is powered by GDAL, most raster based software (including R and Python) use the same data types\nThe numeric data types are supported by gdal are summarized in Table 4.1\n\n\n\n\nTable 4.1: The possible ranges of different datatypes in gdal (source: Amatulli)\n\n\n\n\n\n\n\n\n\n\n\n\nData type\nMinimum\nMaximum\nSize1\nFactor\n\n\n\n\nByte\n0\n255\n39M\n1x\n\n\nUInt16\n0\n65,535\n78M\n2x\n\n\nInt16, CInt16\n-32,768\n32,767\n78M\n2x\n\n\nUInt32\n0\n4,294,967,295\n155M\n~4x\n\n\nInt32, CInt32\n-2,147,483,648\n2,147,483,647\n155M\n~4x\n\n\nFloat32, CFloat32\n-3.4E38\n3.4E38\n155M\n~4x\n\n\nFloat64, CFloat64\n-1.79E308\n1.79E308\n309M\n~8x\n\n\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\n\n\n\nIf you store categorical data, use integer datatype and store the corespondence in the metadata\nAlways be minimalistic about which datatype you need.\nQuestion if you have a continuous value from 0 to 1, which datatype do you use?\n\nNot Float32! But Multiply by 100 and use Byte or by 1000 (if you need more precision) and use UInt16\n\nQuestion: if you are measuring temperature, and your values are floating point ranging is -20 to +40 degrees, what datatype are you going to use?\n\nNot CFloat32!\nMultiply by 100 and use CInt16\n\nQuestion: if you compute NDVI and have values in the range 0 - 1, what datatype do you use?\n\nNot Float32, but not CInt16 either:\nTransform the values to 0 - 255",
-    "crumbs": [
-      "Lesson 3",
-      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Data Types, scale and offset</span>"
-    ]
-  },
-  {
-    "objectID": "lesson3-1-datatypes.html#choosing-a-data-type",
-    "href": "lesson3-1-datatypes.html#choosing-a-data-type",
-    "title": "Data Types, scale and offset",
-    "section": "Choosing a data type",
-    "text": "Choosing a data type\n\nTo minimize file size, it’s important to choose the data type that best fits the range of values in the raster\nAt a first glance, it might seem that the numeric values we measured / calculated determine the datatype we use\nHowever, we can transform the values to a different range to fit a different datatype\nFor example, if we have NDVI values ranging from -1 to 1, it might seem that we need to use CFloat32 to store these values. However, we can transform (rescale) these values to the range 0 - 255 and store them as Byte datatype.",
-    "crumbs": [
-      "Lesson 3",
-      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Data Types, scale and offset</span>"
-    ]
-  },
-  {
-    "objectID": "lesson3-1-datatypes.html#rescaling-transforming-values-to-0---255",
-    "href": "lesson3-1-datatypes.html#rescaling-transforming-values-to-0---255",
-    "title": "Data Types, scale and offset",
-    "section": "Rescaling / Transforming values to 0 - 255",
-    "text": "Rescaling / Transforming values to 0 - 255\nFrom Wikipedia:\n\nTo rescale a range between an arbitrary set of values [a, b], the formula becomes: \\[x' = a + \\frac{(x-min(x))\\times(b - a)}{max(x)-min(x)}\\]\n\nFor our usecase, we can consider:\n\n\\(x'\\) to be the stored value\n\\(x\\) to be the measured value\n\\(a\\) and \\(b\\) to be the maximum, minimum value of Byte (0 and 255 respectively)\n\\(min(x)\\) and \\(max(x)\\) the maximum and minimum measured values (-1 and 1 respectively)\n\nWe can use these values and simplify the formula as follows:\n\\[\\begin{align}\n\nx' &= 0 + \\frac{(x+1)\\times 255}{2} \\\\\n\nx' &= \\frac{255x+255}{2} \\\\\n\nx' &= 127.5x+127.5 \\\\\n\n\\end{align}\\]",
-    "crumbs": [
-      "Lesson 3",
-      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Data Types, scale and offset</span>"
-    ]
-  },
-  {
-    "objectID": "lesson3-1-datatypes.html#rescaling-ndvi-values",
-    "href": "lesson3-1-datatypes.html#rescaling-ndvi-values",
-    "title": "Data Types, scale and offset",
-    "section": "Rescaling NDVI values",
-    "text": "Rescaling NDVI values\n\nWe can now use this formula \\(x' = 127.5x+127.5\\) to rescale NDVI values to the range 0 - 255\nSo, rather than storing the NDVI value 0.2, for example, we store the value 153\nThis rescaling is determined by two values: scale and offset (127.5 for both values in our case)",
-    "crumbs": [
-      "Lesson 3",
-      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Data Types, scale and offset</span>"
-    ]
-  },
-  {
-    "objectID": "lesson3-1-datatypes.html#precision",
-    "href": "lesson3-1-datatypes.html#precision",
-    "title": "Data Types, scale and offset",
-    "section": "Precision",
-    "text": "Precision\nNote that this transformation to 255 values limits our precision:\n\nOur values are now limited to in their precision, since we only have 255 possible values\nWe can calculate the available precision like so: \\(\\frac{max(x)-min(x)}{b-a}\\)\nIn our case this is \\(\\frac{1 - (-1)}{255-0} = 0.0078\\).\nAny measured / calculated NDVI value will be rounded to a multiple of 0.0078.",
-    "crumbs": [
-      "Lesson 3",
-      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Data Types, scale and offset</span>"
-    ]
-  },
-  {
-    "objectID": "lesson3-1-datatypes.html#r-implementation-for-vectors",
-    "href": "lesson3-1-datatypes.html#r-implementation-for-vectors",
-    "title": "Data Types, scale and offset",
-    "section": "R Implementation for vectors",
-    "text": "R Implementation for vectors\n\nA generic way to implement this in R is as follows:\n\n\nscale_minmax &lt;- function(\n    x, \n    a = 0,          # the minimum value of the new range (default 0)\n    b = 255         # the maximum value of the new range (default 255)\n    ){\n  min_x = min(x) \n  max_x = max(x) \n  a + (x - min_x) * (b - a) / (max_x - min_x)\n}\n\nTake the following example:\n\n# this creates 100 random NDVI values between -1 and 1\nndvi_measured &lt;- runif(100, -1, 1)\n\nndvi_stored &lt;- scale_minmax(ndvi_measured)\n\ntibble(ndvi_measured, ndvi_stored) |&gt;\n  ggplot(aes(ndvi_measured, ndvi_stored)) + \n  geom_line(col = \"grey\") +\n  geom_point() +\n  labs(x = \"Measured NDVI (-1 to +1)\", y = \"Stored value (0 to 255)\") +\n  theme_minimal()",
-    "crumbs": [
-      "Lesson 3",
-      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Data Types, scale and offset</span>"
-    ]
-  },
-  {
-    "objectID": "lesson3-1-datatypes.html#restoring-the-original-values",
-    "href": "lesson3-1-datatypes.html#restoring-the-original-values",
-    "title": "Data Types, scale and offset",
-    "section": "Restoring the original values",
-    "text": "Restoring the original values\n\nImagine you stored the NDVI values in the range 0 - 255, stored these values in a Geotiff and sent it to a colleague.\nTo restore the original NDVI values the transformation (\\(x' = 127x+127.5\\)) needs to be known\nMore precisely, the scale and offset values need to be known\nWe can simply invert the transformation to get the original values back: \\(x = \\frac{x'-127.5}{127.5}\\)",
-    "crumbs": [
-      "Lesson 3",
-      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Data Types, scale and offset</span>"
-    ]
-  },
-  {
-    "objectID": "lesson3-1-datatypes.html#r-implementation-for-rasters-i",
-    "href": "lesson3-1-datatypes.html#r-implementation-for-rasters-i",
-    "title": "Data Types, scale and offset",
-    "section": "R implementation for rasters I",
-    "text": "R implementation for rasters I\n\nSince rescaling values is a common operation, it is supported by GDAL and therefore most raster libraries\nRather than transforming our values in memory, we can transform them when writing the raster to disk.\nFor this, we can use the arguments scale = and offset = in the writeRaster function\nTo use these arguments we need to calculate the scale and offset values first\nRewriting the formula above, we can calculate scale and offset:\n\n\\[\\begin{align}\n\\text{scale} &= \\frac{b - a}{max(x)-min(x)} \\\\\n\\text{offset} &= \\frac{a \\times max(x) - b \\times min(x)}{max(x)-min(x)}\n\\end{align}\\]\n\nTo implement this in R, I use two functions: get_scale and get_offset:\n\n\nget_scale &lt;- function(\n    x, \n    a = 0,          # the minimum value of the new range (default 0)\n    b = 255         # the maximum value of the new range (default 255)\n    ){\n  min_x = min(x)\n  max_x = max(x)\n  \n  scale &lt;- (b - a) / (max_x - min_x)\n  \n  scale\n}\n\nget_offset &lt;- function(\n    x, \n    a = 0,          \n    b = 255\n    ){\n  min_x = min(x)\n  max_x = max(x)\n  offset &lt;- (a * max_x - b * min_x) / (max_x - min_x)\n  \n  offset\n}\n\n\nget_scale(ndvi_measured)\n\n[1] 130.0526",
-    "crumbs": [
-      "Lesson 3",
-      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Data Types, scale and offset</span>"
-    ]
-  },
-  {
-    "objectID": "lesson3-1-datatypes.html#r-implementation-for-rasters-ii",
-    "href": "lesson3-1-datatypes.html#r-implementation-for-rasters-ii",
-    "title": "Data Types, scale and offset",
-    "section": "R implementation for rasters II",
-    "text": "R implementation for rasters II\n\nThe new function get_scale_offset works nicely with vectors, but not with rasters\nThe reason it does not work for raster is that min(x) (and max(x)) are local and not global functions\n\nThey return the minimum / maximum value per cell over all bands, not the global minimum / maximum value\nTo calculate the global minimum and maximum value, we can either use global, or the slightly faster minmax function\n\nAdditionally, the writeRaster function will divide by scale and subtract offset from the values (see writeRaster), so we need to invert the two values\nThis is how this is implemented in R:\n\n\nget_scale2 &lt;- function(\n    x, \n    a = 0,          \n    b = 255         \n    ){\n  library(terra)\n  min_max = minmax(x) \n  min_x &lt;- min_max[1,1]\n  max_x &lt;- min_max[2,1]\n\n  scale &lt;- (b - a) / (max_x - min_x)\n  \n  1/scale           # invert the scale, sincd writeRaster divides by scale\n}\n\n\nget_offset2 &lt;- function(\n    x, \n    a = 0,          \n    b = 255\n    ){\n  library(terra)\n  min_max = minmax(x) \n  min_x &lt;- min_max[1,1]   \n  max_x &lt;- min_max[2,1]\n  \n  offset &lt;- (a * max_x - b * min_x) / (max_x - min_x)\n  \n  offset * -1       # invert the offset, since writeRaster subtracts the offset\n}",
-    "crumbs": [
-      "Lesson 3",
-      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Data Types, scale and offset</span>"
-    ]
-  },
-  {
-    "objectID": "lesson3-1-datatypes.html#r-implementation-for-rasters-example",
-    "href": "lesson3-1-datatypes.html#r-implementation-for-rasters-example",
-    "title": "Data Types, scale and offset",
-    "section": "R implementation for rasters: example",
-    "text": "R implementation for rasters: example\n\nLet’s import a raster, calculate the scale and offset values and use these values to write to disk\n\n\nlibrary(terra)\n\nelev &lt;- rast(system.file(\"ex/elev.tif\", package=\"terra\"))\n\nplot(elev, main = paste(minmax(elev),collapse = \"-\"))\n\n\n\n\n\n\n\n\n\n# write to disk with the minimum data type that fits the range \n# without transformation \n\nscale &lt;- get_scale2(elev)\noffset &lt;- get_offset2(elev)\n\nwriteRaster(\n  elev, \n  \"data-out/datatypes/INT1U.tif\",\n  # datatype = \"INT1U\", \n  overwrite = TRUE, \n  scale = scale, \n  offset = offset\n  )",
-    "crumbs": [
-      "Lesson 3",
-      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Data Types, scale and offset</span>"
-    ]
-  },
-  {
-    "objectID": "lesson3-1-datatypes.html#r-implementation-for-rasters-example-1",
-    "href": "lesson3-1-datatypes.html#r-implementation-for-rasters-example-1",
-    "title": "Data Types, scale and offset",
-    "section": "R implementation for rasters: example",
-    "text": "R implementation for rasters: example\n\nSince GDAL stores the scale and offset values in the metadata, any software powered by GDAL will restore the original values on import\nIn other words, if you run rast(\"data-out/datatypes/INT1U.tif\") you will not notice the values were internally stored using 0 - 255. Instead, you will retrieve the original values.\nTo finish off, let’s compare the file sizes of the raster stored as INT1U (Byte) and FLT8S (Float32)\n\n\n\n[1] 0.6199451\n\n\n\n\n\n\nAmatulli, Giuseppe. “Geocomputation and Machine Learning for Environmental Applications.” http://spatial-ecology.net/docs/build/html/GDAL/gdal_osgeo.html.",
-    "crumbs": [
-      "Lesson 3",
-      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Data Types, scale and offset</span>"
-    ]
-  },
-  {
-    "objectID": "lesson3-1-datatypes.html#footnotes",
-    "href": "lesson3-1-datatypes.html#footnotes",
-    "title": "Data Types, scale and offset",
-    "section": "",
-    "text": "Difference in file size using constant dataset (same values and resolution) and varying the datatype↩︎",
-    "crumbs": [
-      "Lesson 3",
-      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Data Types, scale and offset</span>"
-    ]
-  },
-  {
-    "objectID": "lesson3-2-sentinel-data.html",
-    "href": "lesson3-2-sentinel-data.html",
-    "title": "Showcase: Importing Sentinel data",
-    "section": "",
-    "text": "Download data\nTo download Sentinel data:",
-    "crumbs": [
-      "Lesson 3",
-      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Showcase: Importing Sentinel data</span>"
-    ]
-  },
-  {
-    "objectID": "lesson3-2-sentinel-data.html#download-data",
-    "href": "lesson3-2-sentinel-data.html#download-data",
-    "title": "Showcase: Importing Sentinel data",
-    "section": "",
-    "text": "Go to the Copernicus Browser website\nLogin using your credentials\nGo to your area of interest\nClick on the “Search” Tab in the left panel\nIn Data Source, select Sentinel 2 → L2A\nChoose your desired time frame\nClick on the “Search” button\nFrom the search results, download one or two scenes",
-    "crumbs": [
-      "Lesson 3",
-      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Showcase: Importing Sentinel data</span>"
-    ]
-  },
-  {
-    "objectID": "lesson3-2-sentinel-data.html#copernicus-safe-format-i",
-    "href": "lesson3-2-sentinel-data.html#copernicus-safe-format-i",
-    "title": "Showcase: Importing Sentinel data",
-    "section": "Copernicus SAFE Format I",
-    "text": "Copernicus SAFE Format I\n\nSentinel 2 data is provided in SAFE format. This is a zipped file that contains the data in separate JP2 files\nThe Sentinel-SAFE format wraps a folder containing image data in a binary data format and product metadata in XML.\nThis includes:\n\nA ‘manifest.safe’ file which holds the general product information in XML.\nSubfolders for measurement datasets containing image data in various binary formats.\nA preview folder containing ‘quicklooks’ in PNG format, Google Earth overlays in KML format and HTML preview files.\nAn annotation folder containing the product metadata in XML as well as calibration data.\nA support folder containing the XML schemes describing the product XML.",
-    "crumbs": [
-      "Lesson 3",
-      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Showcase: Importing Sentinel data</span>"
-    ]
-  },
-  {
-    "objectID": "lesson3-2-sentinel-data.html#copernicus-safe-format-ii",
-    "href": "lesson3-2-sentinel-data.html#copernicus-safe-format-ii",
-    "title": "Showcase: Importing Sentinel data",
-    "section": "Copernicus SAFE Format II",
-    "text": "Copernicus SAFE Format II\nThe SAFE folder above includes the following content:\n\n\n                                                                     levelName\n1  data-large                                                                 \n2   °--S2B_MSIL2A_20240915T102559_N0511_R108_T32TMS_20240915T131207.SAFE      \n3       ¦--DATASTRIP                                                          \n4       ¦   °--DS_2BPS_20240915T131207_S20240915T102803                       \n5       ¦       ¦--MTD_DS.xml                                                 \n6       ¦       °--QI_DATA                                                    \n7       ¦           ¦--FORMAT_CORRECTNESS.xml                                 \n8       ¦           ¦--GENERAL_QUALITY.xml                                    \n9       ¦           ¦--GEOMETRIC_QUALITY.xml                                  \n10      ¦           ¦--RADIOMETRIC_QUALITY.xml                                \n11      ¦           °--SENSOR_QUALITY.xml                                     \n12      ¦--GRANULE                                                            \n13      ¦   °--L2A_T32TMS_A039316_20240915T102803                             \n14      ¦       ¦--AUX_DATA                                                   \n15      ¦       ¦   ¦--AUX_CAMSFO                                             \n16      ¦       ¦   °--AUX_ECMWFT                                             \n17      ¦       ¦--IMG_DATA                                                   \n18      ¦       ¦   ¦--R10m                                                   \n19      ¦       ¦   ¦   ¦--T32TMS_20240915T102559_AOT_10m.jp2                 \n20      ¦       ¦   ¦   ¦--T32TMS_20240915T102559_B02_10m.jp2                 \n21      ¦       ¦   ¦   °--... (etc)                                          \n22      ¦       ¦   ¦--R20m                                                   \n23      ¦       ¦   ¦   ¦--T32TMS_20240915T102559_AOT_20m.jp2                 \n24      ¦       ¦   ¦   ¦--T32TMS_20240915T102559_B01_20m.jp2                 \n25      ¦       ¦   ¦   °--... (etc)                                          \n26      ¦       ¦   °--R60m                                                   \n27      ¦       ¦       ¦--T32TMS_20240915T102559_AOT_60m.jp2                 \n28      ¦       ¦       ¦--T32TMS_20240915T102559_B01_60m.jp2                 \n29      ¦       ¦       °--... (etc)                                          \n30      ¦       ¦--MTD_TL.xml                                                 \n31      ¦       °--QI_DATA                                                    \n32      ¦           ¦--FORMAT_CORRECTNESS.xml                                 \n33      ¦           ¦--GENERAL_QUALITY.xml                                    \n34      ¦           ¦--GEOMETRIC_QUALITY.xml                                  \n35      ¦           ¦--L2A_QUALITY.xml                                        \n36      ¦           ¦--MSK_CLASSI_B00.jp2                                     \n37      ¦           ¦--MSK_CLDPRB_20m.jp2                                     \n38      ¦           ¦--MSK_CLDPRB_60m.jp2                                     \n39      ¦           ¦--MSK_DETFOO_B01.jp2                                     \n40      ¦           ¦--MSK_DETFOO_B02.jp2                                     \n41      ¦           ¦--... (etc)                                              \n42      ¦           ¦--MSK_QUALIT_B01.jp2                                     \n43      ¦           ¦--MSK_QUALIT_B02.jp2                                     \n44      ¦           ¦--MSK_SNWPRB_20m.jp2                                     \n45      ¦           ¦--MSK_SNWPRB_60m.jp2                                     \n46      ¦           ¦--SENSOR_QUALITY.xml                                     \n47      ¦           °--T32TMS_20240915T102559_PVI.jp2                         \n48      ¦--HTML                                                               \n49      ¦   ¦--banner_1.png                                                   \n50      ¦   ¦--banner_2.png                                                   \n51      ¦   ¦--banner_3.png                                                   \n52      ¦   ¦--star_bg.jpg                                                    \n53      ¦   ¦--UserProduct_index.html                                         \n54      ¦   °--UserProduct_index.xsl                                          \n55      ¦--INSPIRE.xml                                                        \n56      ¦--manifest.safe                                                      \n57      ¦--MTD_MSIL2A.xml                                                     \n58      ¦--rep_info                                                           \n59      ¦   ¦--S2_PDI_Level-2A_Datastrip_Metadata.xsd                         \n60      ¦   ¦--S2_PDI_Level-2A_Tile_Metadata.xsd                              \n61      ¦   °--S2_User_Product_Level-2A_Metadata.xsd                          \n62      °--S2B_MSIL2A_20240915T102559_N0511_R108_T32TMS_20240915T131207-ql.jpg\n\n\nThe data we are interested in is in the IMG_DATA folder. This folder contains the data in three different resolutions, where each band is a separate file jp2 File.\n\nlibrary(terra)\nlibrary(dplyr)\n\ns2_files &lt;- list.files(\"data-large/S2B_MSIL2A_20240915T102559_N0511_R108_T32TMS_20240915T131207.SAFE/GRANULE/L2A_T32TMS_A039316_20240915T102803/IMG_DATA/R60m/\", \"\\\\.jp2$\", full.names = TRUE)\n\n\nWe can import all jp2 files into a rast object in a singe rast() command.\nBefore we do this, let’s filter the data for the bands we are interested in (B01…B12)\nTo add reasonable names to the SpatRaster object, we can use str_split_fixed to extract the relevant information from the file names.\n\n\nlibrary(stringr)\n\n# selecting only the bands we are interested in:\ns2_files &lt;- s2_files[str_detect(s2_files, \"B\\\\d{2}\")]\n\ns2 &lt;- rast(s2_files)\n\n# Extracting the band names from the file names and adding these\nnames(s2) &lt;- str_split_fixed(names(s2), \"_\",4)[,3]\n\nnames(s2)\n\n [1] \"B01\" \"B02\" \"B03\" \"B04\" \"B05\" \"B06\" \"B07\" \"B09\" \"B11\" \"B12\"\n\n\n\nTest if the data is loaded correctly:\n\n\nplot(s2[[1]])\n\n\n\n\n\n\n\n\n\nNote how the values range from 0 to &gt; 15000. It seems that the values are not scaled yet (see Data Types, scale and offset)\nIf scale and offset values were set using GDAL flags, terra would automatically apply these values\nHowever, it seems that we have to apply these values manually: this website, writes the following:\n\n\nThe transformation of reflectances in 16 bit integers is performed according to the following equation: \\[\\text{L1C\\_DN} = \\rho \\times \\text{QUANTIFICATION\\_VALUE} - \\text{RADIO\\_ADD\\_OFFSET}\\] The L1C product’s metadata includes the values for the QUANTIFICATION_VALUE and RADIO_ADD_OFFSET.\n\n\nThis information is stored in the file MTD_MSIL2A.xml:\nThis file contains information about the bands, the scale factor, and the offset values.\nIf we search for QUANTIFICATION_VALUE, we find the following information:\n\n\n\n            &lt;QUANTIFICATION_VALUES_LIST&gt;\n                &lt;BOA_QUANTIFICATION_VALUE unit=\"none\"&gt;10000&lt;/BOA_QUANTIFICATION_VALUE&gt;\n                &lt;AOT_QUANTIFICATION_VALUE unit=\"none\"&gt;1000.0&lt;/AOT_QUANTIFICATION_VALUE&gt;\n                &lt;WVP_QUANTIFICATION_VALUE unit=\"cm\"&gt;1000.0&lt;/WVP_QUANTIFICATION_VALUE&gt;\n            &lt;/QUANTIFICATION_VALUES_LIST&gt;\n\n\n\nIf we search for ADD_OFFSET, we find the following information:\n\n\n\n            &lt;BOA_ADD_OFFSET_VALUES_LIST&gt;\n        &lt;BOA_ADD_OFFSET band_id=\"0\"&gt;-1000&lt;/BOA_ADD_OFFSET&gt;\n        &lt;BOA_ADD_OFFSET band_id=\"1\"&gt;-1000&lt;/BOA_ADD_OFFSET&gt;\n        &lt;BOA_ADD_OFFSET band_id=\"2\"&gt;-1000&lt;/BOA_ADD_OFFSET&gt;\n        &lt;BOA_ADD_OFFSET band_id=\"3\"&gt;-1000&lt;/BOA_ADD_OFFSET&gt;\n        &lt;BOA_ADD_OFFSET band_id=\"4\"&gt;-1000&lt;/BOA_ADD_OFFSET&gt;\n        &lt;BOA_ADD_OFFSET band_id=\"5\"&gt;-1000&lt;/BOA_ADD_OFFSET&gt;\n        &lt;BOA_ADD_OFFSET band_id=\"6\"&gt;-1000&lt;/BOA_ADD_OFFSET&gt;\n        &lt;BOA_ADD_OFFSET band_id=\"7\"&gt;-1000&lt;/BOA_ADD_OFFSET&gt;\n        &lt;BOA_ADD_OFFSET band_id=\"8\"&gt;-1000&lt;/BOA_ADD_OFFSET&gt;\n        &lt;BOA_ADD_OFFSET band_id=\"9\"&gt;-1000&lt;/BOA_ADD_OFFSET&gt;\n        &lt;BOA_ADD_OFFSET band_id=\"10\"&gt;-1000&lt;/BOA_ADD_OFFSET&gt;\n        &lt;BOA_ADD_OFFSET band_id=\"11\"&gt;-1000&lt;/BOA_ADD_OFFSET&gt;\n        &lt;BOA_ADD_OFFSET band_id=\"12\"&gt;-1000&lt;/BOA_ADD_OFFSET&gt;\n      &lt;/BOA_ADD_OFFSET_VALUES_LIST&gt;\n\n\n\n\n\n\n\n\nWe can now use the scale (10’000) and offset (-1’000) values to convert the data to reflectance values.\nWe can then use hist to get a histogram of the values in each band\nNote that most bands have values &gt; 1.\n\nWe have to decide how to handle these values\nOne option is to simply clip the values to the desired range\n\n\n\ns2b &lt;- (s2 - 1000)/10000\n\nhist(s2b)\n\n\n\n\n\n\n\n\n\n# function to clip values to the desired range\nforce_minmax &lt;- \\(x, min = 0, max = 1){\n  x[x&lt;min] &lt;- min\n  x[x&gt;max] &lt;- max\n  x\n}\n\nTo apply this function to all bands, we can use the app function.\n\ns2c &lt;- app(s2b, force_minmax)\n\n# If we now check the min/max values, we see that all values are between 0 and 1\nminmax(s2c)\n\n    B01 B02 B03 B04 B05 B06 B07 B09 B11 B12\nmin   0   0   0   0   0   0   0   0   0   0\nmax   1   1   1   1   1   1   1   1   1   1\n\n\nTo test if we processed the data correctly, let’s create a True Color image using the bands B04, B03, and B02.\n\nplotRGB(s2c,r = 4, g = 3, b = 2, stretch = \"histogram\", smooth = FALSE)\n\n\n\n\n\n\n\n\n\n# To export the R,G,B bands to a True Color Geotiff: \nwriteRaster(s2c[[c(4,3,2)]], \"data-out/sentinel-rgb.tif\", overwrite = TRUE)\n\nTo calculate NDVI, we can create our custom function and apply it to the s2c object using app:\n\nndvi &lt;- \\(x){(x[5]-x[4])/(x[5]+x[4])}\n\ns2_ndvi &lt;- app(s2c, ndvi)\n\nlibrary(tmap)\ntm_shape(s2_ndvi) + \n  tm_raster(style = \"cont\",midpoint = 0) + \n  tm_layout(legend.outside = TRUE)",
-    "crumbs": [
-      "Lesson 3",
-      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Showcase: Importing Sentinel data</span>"
-    ]
-  },
-  {
-    "objectID": "lesson4-2-supervised-learning.html",
-    "href": "lesson4-2-supervised-learning.html",
-    "title": "Supervised learning",
-    "section": "",
-    "text": "Introduction",
-    "crumbs": [
-      "Lesson 4",
-      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Supervised learning</span>"
-    ]
-  },
-  {
-    "objectID": "lesson4-2-supervised-learning.html#introduction",
-    "href": "lesson4-2-supervised-learning.html#introduction",
-    "title": "Supervised learning",
-    "section": "",
-    "text": "Supervised learning is a type of machine learning where the model is trained on a labelled dataset\nThe model learns to map input data to the correct output label\nSupervised learning is used extensively in remote sensing to enable quantitative analysis of satellite imagery\nWe will use historic satellite imagery to train a model to classify land cover types in a given area",
-    "crumbs": [
-      "Lesson 4",
-      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Supervised learning</span>"
-    ]
-  },
-  {
-    "objectID": "lesson4-2-supervised-learning.html#task-and-data",
-    "href": "lesson4-2-supervised-learning.html#task-and-data",
-    "title": "Supervised learning",
-    "section": "Task and Data",
-    "text": "Task and Data\n\nThe task we will perform is to quantitatively analyze forest cover change over time in the area surrounding the village Ces in Ticino, Switzerland\nWe are provided with historic areal imagery from 1961 from swisstopo [source]\nThe resolution of the imagery is 1 m/pixel and it contains only one single band (!!!)\n\n\nlibrary(terra)\nlibrary(purrr)\nlibrary(sf)\nlibrary(dplyr)\nlibrary(tmap)\n\nces1961 &lt;- rast(\"data-large/ces/1961.tif\")\n\nces1961 &lt;- ces1961/255 # normalize the values to [0,1]\n\nnames(ces1961) &lt;- \"luminosity\"\n\n\nplot(ces1961, col = grey.colors(255))",
-    "crumbs": [
-      "Lesson 4",
-      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Supervised learning</span>"
-    ]
-  },
-  {
-    "objectID": "lesson4-2-supervised-learning.html#approach",
-    "href": "lesson4-2-supervised-learning.html#approach",
-    "title": "Supervised learning",
-    "section": "Approach",
-    "text": "Approach\nTo solve this task\n\nWe first need to create some labelled data\nSplit our labelled data into training and testing data\nTrain a model on the training data\nEvaluate the model on the testing data",
-    "crumbs": [
-      "Lesson 4",
-      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Supervised learning</span>"
-    ]
-  },
-  {
-    "objectID": "lesson4-2-supervised-learning.html#data-labelling",
-    "href": "lesson4-2-supervised-learning.html#data-labelling",
-    "title": "Supervised learning",
-    "section": "Data labelling",
-    "text": "Data labelling\nIn preparation, I used QGIS to create labelled points for the following classes:\n\nForest\nBuildings\nAgriculture\nShadows\n\n\nlibrary(sf)\n\nlabelled_data &lt;- read_sf(\"data-large/ces/labelled-data.gpkg\")\n\n# We will turn the class into a factor, \n# which is useful for classification\nlabelled_data$class &lt;- factor(labelled_data$class)\n\ntmap_mode(\"view\")\ntm_shape(ces1961) + \n  tm_raster(palette = \"-Greys\",legend.show = FALSE) +\n  tm_shape(labelled_data) +\n  tm_dots(col = \"class\") +\n  tm_layout(legend.outside = TRUE)",
-    "crumbs": [
-      "Lesson 4",
-      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Supervised learning</span>"
-    ]
-  },
-  {
-    "objectID": "lesson4-2-supervised-learning.html#splitting-the-data",
-    "href": "lesson4-2-supervised-learning.html#splitting-the-data",
-    "title": "Supervised learning",
-    "section": "Splitting the data",
-    "text": "Splitting the data\n\nWe need to split our data into training and testing data\nWe will randomly select 70% of the data for training and the remaining 30% for testing\n\n\n\n\n\n\n\nImportant\n\n\n\nNote that this is not the recommended approach, instead we should use a spatially stratified split (see Brenning 2023; and Schratz et al. 2021). To keep things simple for this exercise however, we will use a random split.\n\n\n\nlabelled_data &lt;- labelled_data |&gt; \n  group_by(class) |&gt;            # for each class...\n  mutate(                       #\n    i = sample(seq_len(n())),   # ...assign a random number from 1 to n...\n    train = i &lt;= n()*0.7        # ...and assign the first 70% to \"training\"\n    )\n\ndata_train &lt;- labelled_data |&gt;  # filter the training data and store in a\n  filter(train) |&gt;              # a new data frame \n  select(-c(i,train))           # remove obsolete columns\n\n\ndata_test &lt;- labelled_data |&gt;  # same as above, but the filter is inverted\n  filter(!train) |&gt;            # for the testing data\n  select(-c(i,train))\n\ntmap_mode(\"plot\")\n\ntm_shape(labelled_data) + tm_dots(col = \"train\", palette = c(\"blue\",\"red\"))",
-    "crumbs": [
-      "Lesson 4",
-      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Supervised learning</span>"
-    ]
-  },
-  {
-    "objectID": "lesson4-2-supervised-learning.html#sec-feature-extraction1",
-    "href": "lesson4-2-supervised-learning.html#sec-feature-extraction1",
-    "title": "Supervised learning",
-    "section": "Feature Extraction",
-    "text": "Feature Extraction\n\nWe need to extract the values of the raster data at the labelled points\nSince we only have one band, our result is a data.frame with one column\n\n\n# ID = FALSE means that we do not want to add an ID column\ntrain_features &lt;- terra::extract(ces1961, data_train, ID = FALSE)\n\nhead(train_features)\n\n  luminosity\n1  0.3568627\n2  0.1960784\n3  0.4392157\n4  0.6313725\n5  0.2823529\n6  0.5294118\n\n\n\ndata_train2 &lt;- cbind(data_train, train_features) |&gt; \n  st_drop_geometry()",
-    "crumbs": [
-      "Lesson 4",
-      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Supervised learning</span>"
-    ]
-  },
-  {
-    "objectID": "lesson4-2-supervised-learning.html#sec-training-model1",
-    "href": "lesson4-2-supervised-learning.html#sec-training-model1",
-    "title": "Supervised learning",
-    "section": "Training the model",
-    "text": "Training the model\n\nWe will use the rpart package to train a classification tree\nThe classification tree is also known as a decision tree\nA decision tree has a flowchart-like structure (see Figure 6.1)\nClassification trees does not always produce the best results, but they are simple and interpretable\n\n\nlibrary(rpart)\ncart_model &lt;- rpart(class~., data = data_train2, method = \"class\")\n\n\nAs mentioned above, the decision tree is interpretable. We can visualize it using the rpart.plot package:\nEach pixel is classified into one of the four classes based on its value (luminosity) according to the decision tree in Figure 6.1\n\n\nlibrary(rpart.plot)\nrpart.plot(cart_model, type = 3)\n\n\n\n\n\n\n\nFigure 6.1: The resulting decision tree. Each internal node represents a test on an attribute, each branch represents the outcome of the test and each leaf node represents a class label",
-    "crumbs": [
-      "Lesson 4",
-      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Supervised learning</span>"
-    ]
-  },
-  {
-    "objectID": "lesson4-2-supervised-learning.html#sec-prediction-per-class",
-    "href": "lesson4-2-supervised-learning.html#sec-prediction-per-class",
-    "title": "Supervised learning",
-    "section": "Predicting the probabilities per class for each pixel",
-    "text": "Predicting the probabilities per class for each pixel\n\nWe will use the trained model to predict the probabilities of each class for each pixel in the raster data\nWe can use the predict function to do this\nThe result is a raster with one layer per class, giving the probability of each class for each pixel\n\n\nces1961_predict &lt;- predict(ces1961, cart_model)\n\ntm_shape(ces1961_predict) + tm_raster(style = \"cont\", midpoint = .5, palette = \"-Spectral\",title = \"probability\") +\n  tm_layout()",
-    "crumbs": [
-      "Lesson 4",
-      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Supervised learning</span>"
-    ]
-  },
-  {
-    "objectID": "lesson4-2-supervised-learning.html#sec-highest-probability-class",
-    "href": "lesson4-2-supervised-learning.html#sec-highest-probability-class",
-    "title": "Supervised learning",
-    "section": "Highest probability class",
-    "text": "Highest probability class\n\nWe can combine the four layers into a single layer by assigning the class with the highest probability to each pixel\nFor this, we can use the which.max function:\n\n\nces1961_predict2 &lt;- which.max(ces1961_predict)\n\n# the next three lines assign class labels to the raster (instead of numbers)\nclasses &lt;- levels(data_train2$class)\nclasses_df &lt;- data.frame(ID = seq_along(classes), class = classes)\nlevels(ces1961_predict2) &lt;- classes_df\n\n# visualize the result\ntmap_mode(\"view\")\ntm_shape(ces1961_predict2) + tm_raster(palette = c(\"gold\",\"gray\",\"palegreen4\",\"black\")) +\n  tm_layout(legend.outside = TRUE)",
-    "crumbs": [
-      "Lesson 4",
-      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Supervised learning</span>"
-    ]
-  },
-  {
-    "objectID": "lesson4-2-supervised-learning.html#sec-model-evaluation-1",
-    "href": "lesson4-2-supervised-learning.html#sec-model-evaluation-1",
-    "title": "Supervised learning",
-    "section": "Model Evaluation I",
-    "text": "Model Evaluation I\n\n\n\nTo evaluate the model, we will use the testing data\n\n\ntest_features &lt;- terra::extract(ces1961_predict2, data_test, ID = FALSE)\n\nconfusion_matrix &lt;- cbind(data_test, test_features) |&gt; \n  st_drop_geometry() |&gt; \n  transmute(predicted = class.1, actual = class) |&gt; \n  table()\n\n\n\n\n\nTable 6.1: The confusion matrix shows the predicted values (rows) against the actual values (columns). The diagonal cells (in red) shows the correct predictions. The results are better than expected, the model seems to haev the most problems with the class “agriculture”.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nActual\n\n\n\n\nAgriculture\nBuildings\nForest\nShadows\n\n\n\n\nAgriculture\n34\n4\n13\n0\n\n\nBuildings\n3\n5\n0\n0\n\n\nForest\n4\n0\n16\n2\n\n\nShadows\n0\n0\n10\n18",
-    "crumbs": [
-      "Lesson 4",
-      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Supervised learning</span>"
-    ]
-  },
-  {
-    "objectID": "lesson4-2-supervised-learning.html#sec-model-evaluation-2",
-    "href": "lesson4-2-supervised-learning.html#sec-model-evaluation-2",
-    "title": "Supervised learning",
-    "section": "Model Evaluation I",
-    "text": "Model Evaluation I\n\nA very simple measure to asses the model performance is the overall accuracy\nThis is the ratio of the number of features correctly classified (diagonals in Table 6.1) to the total number of features (sum of all column sums in Table 6.1):\n\n\\[\\frac{\\text{number of features correctly classified}}{\\text{total number of features}}\\]\n\nif we insert our values, we get:\n\n\\[\\frac{34+5+16+18)}{41+9+39+20}= 0.67\\]",
-    "crumbs": [
-      "Lesson 4",
-      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Supervised learning</span>"
-    ]
-  },
-  {
-    "objectID": "lesson4-2-supervised-learning.html#sec-feature-engineering0",
-    "href": "lesson4-2-supervised-learning.html#sec-feature-engineering0",
-    "title": "Supervised learning",
-    "section": "Feature Engineering",
-    "text": "Feature Engineering\n\nCurrently, our raster data only contains one band. In other words, our feature space is only one-dimensional\nIt’s actually quite a challenge to determine the land cover of a pixel if we regard just a single pixel. We humans rely on context (sorrounding pixels) to determine the land cover. You can test this by zooming in very closely on the raster image and try to distinguish the land cover types (see Figure 6.2)\nWe will have a look at possibilities to include context information in Feature Engineering\n\n\nxmin &lt;- 2706200\nxmax &lt;- xmin+100\nymin &lt;- 1143600\nymax &lt;- ymin+100\ne &lt;- ext(xmin, xmax, ymin, ymax)\n\ncrop(ces1961, e) |&gt; \n  plot( col = grey.colors(255))\n\n\n\n\n\n\n\nFigure 6.2: Zooming in on the raster image, it is difficult to determine the land cover types of individual pixels",
-    "crumbs": [
-      "Lesson 4",
-      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Supervised learning</span>"
-    ]
-  },
-  {
-    "objectID": "lesson4-2-supervised-learning.html#sec-tasks-supervised-learning",
-    "href": "lesson4-2-supervised-learning.html#sec-tasks-supervised-learning",
-    "title": "Supervised learning",
-    "section": "Tasks",
-    "text": "Tasks\n\nDownload the datasets labelled-points.gpkg and 1961.tif from moodle\nFollow the steps described above to train a model to classify the land cover types in the area surrounding the village Ces in Ticino\nEvaluate the model using the testing data\n\n\n\n\n\nBrenning, Alexander. 2023. “Spatial ML Model Assessment and Interpretation.” OpenGeoHub Summer School 2023. OpenGeoHub Foundation. https://doi.org/10.5446/63464.\n\n\nSchratz, Patrick, Marc Becker, Michel Lang, and Alexander Brenning. 2021. “Mlr3spatiotempcv: Spatiotemporal Resampling Methods for Machine Learning in r.” arXiv Preprint arXiv:2110.12674.",
-    "crumbs": [
-      "Lesson 4",
-      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Supervised learning</span>"
-    ]
-  },
-  {
-    "objectID": "lesson4-2-feature-engineering.html",
-    "href": "lesson4-2-feature-engineering.html",
-    "title": "Feature Engineering",
-    "section": "",
-    "text": "What is Feature Engineering?",
-    "crumbs": [
-      "Lesson 4",
-      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Feature Engineering</span>"
-    ]
-  },
-  {
-    "objectID": "lesson4-2-feature-engineering.html#what-is-feature-engineering",
-    "href": "lesson4-2-feature-engineering.html#what-is-feature-engineering",
-    "title": "Feature Engineering",
-    "section": "",
-    "text": "Feature Engineering is the process of using domain knowledge to extract features from raw data.\nThis is especially useful, when our raw data is not sufficient to build a model\nIn our previous example, we only had luminosity to predict the class of the raster cells\nAs discussed in the chapter Feature Engineering, we humans ourselves rely on context to determine the land cover types\nThis context is provided by the values of the sorrounding pixels\nWe can provide this context by applying focal filters to the raster data",
-    "crumbs": [
-      "Lesson 4",
-      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Feature Engineering</span>"
-    ]
-  },
-  {
-    "objectID": "lesson4-2-feature-engineering.html#focal-filters",
-    "href": "lesson4-2-feature-engineering.html#focal-filters",
-    "title": "Feature Engineering",
-    "section": "Focal filters",
-    "text": "Focal filters\n\nFocal Filters, as we have seen in the chapter Focal, aggregate the values over a (moving) neighborhood of pixels.\nWe can determine the size and shape of this neighborhood by specifying a matrix\n\n\nn &lt;- 5\nfocal3by3 &lt;- matrix(rep(1,n^2), ncol = n)\n\nr_foc3 &lt;- focal(ces1961, focal3by3, fun = sd, fillNA = TRUE)\n\nr_foc3 &lt;- r_foc3\n\n# plot(r_foc3)\n\n\n\n\n\n\n\n\n\n\n\n\n\nFigure 7.1: The original raster\n\n\n\n\n\n\n\n\n\n\n\nFigure 7.2: The raster after applying a focal filter",
-    "crumbs": [
-      "Lesson 4",
-      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Feature Engineering</span>"
-    ]
-  },
-  {
-    "objectID": "lesson4-2-feature-engineering.html#using-focal-filters-as-features",
-    "href": "lesson4-2-feature-engineering.html#using-focal-filters-as-features",
-    "title": "Feature Engineering",
-    "section": "Using focal filters as features",
-    "text": "Using focal filters as features\n\nTo use the focal filters as features, the values of the focal filters need to be normalized to [0,1]\nA simple way to do this is to use the min-max normalization:\n\n\\[x' = \\frac{x - min(x)}{\\max(x) - min(x)}\\]\n\nTo implement this in R, we need to use global(x, min) or (slightly faster) minmax(x).\n\n\nminmax_normalization &lt;- function(x){\n  minmax_vals &lt;- minmax(x)[,1]\n  minval &lt;- minmax_vals[1]\n  maxval &lt;- minmax_vals[2]\n  \n  (x-minval)/(maxval-minval)\n}\n\nr_foc3 &lt;- minmax_normalization(r_foc3)\n\nces &lt;- c(ces1961, r_foc3)\n\nnames(ces) &lt;- c(\"luminosity\", \"focal3by3\")",
-    "crumbs": [
-      "Lesson 4",
-      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Feature Engineering</span>"
-    ]
-  },
-  {
-    "objectID": "lesson4-2-feature-engineering.html#feature-extraction",
-    "href": "lesson4-2-feature-engineering.html#feature-extraction",
-    "title": "Feature Engineering",
-    "section": "Feature extraction",
-    "text": "Feature extraction\n\nJust as we did in our first approach (see Feature Extraction), we need to extract the features from the raster data at the labelled points\nNote that the resulting data frame now has two columns, rather than just a single column\n\n\ntrain_features_b &lt;- terra::extract(ces, data_train, ID = FALSE)\n\nhead(train_features_b)\n\n  luminosity  focal3by3\n1  0.3568627 0.22739583\n2  0.1960784 0.23494115\n3  0.4392157 0.17400471\n4  0.6313725 0.16638463\n5  0.2823529 0.33381873\n6  0.5294118 0.09907246\n\n\n\ndata_train2_b &lt;- cbind(data_train, train_features_b) |&gt; \n  st_drop_geometry()",
-    "crumbs": [
-      "Lesson 4",
-      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Feature Engineering</span>"
-    ]
-  },
-  {
-    "objectID": "lesson4-2-feature-engineering.html#train-the-model",
-    "href": "lesson4-2-feature-engineering.html#train-the-model",
-    "title": "Feature Engineering",
-    "section": "Train the model",
-    "text": "Train the model\n\nJust as in our first approach (see Training the model), we need to train the model\nThis time, we have more features to train the model\n\n\ncart_modelb &lt;- rpart(class~., data = data_train2_b, method = \"class\")\n\nlibrary(rpart.plot)\nrpart.plot(cart_modelb, type = 3)",
-    "crumbs": [
-      "Lesson 4",
-      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Feature Engineering</span>"
-    ]
-  },
-  {
-    "objectID": "lesson4-2-feature-engineering.html#predict-the-classes",
-    "href": "lesson4-2-feature-engineering.html#predict-the-classes",
-    "title": "Feature Engineering",
-    "section": "Predict the classes",
-    "text": "Predict the classes\nSee Predicting the probabilities per class for each pixel and Highest probability class.\n\n# Probability per class\nces1961_predictb &lt;- predict(ces, cart_modelb)\n\n# Class with highest probability\nces1961_predict2b &lt;- which.max(ces1961_predictb)",
-    "crumbs": [
-      "Lesson 4",
-      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Feature Engineering</span>"
-    ]
-  },
-  {
-    "objectID": "lesson4-2-feature-engineering.html#evaluate-the-model",
-    "href": "lesson4-2-feature-engineering.html#evaluate-the-model",
-    "title": "Feature Engineering",
-    "section": "Evaluate the model",
-    "text": "Evaluate the model\nSee Model Evaluation I and Model Evaluation I\n\ntest_featuresb &lt;- terra::extract(ces1961_predict2b, data_test, ID = FALSE)\n\nconfusion_matrixb &lt;- cbind(data_test, test_featuresb) |&gt; \n  st_drop_geometry() |&gt; \n  transmute(predicted = class.1, actual = class) |&gt; \n  table()\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nActual\n\n\n\n\nAgriculture\nBuildings\nForest\nShadows\n\n\n\n\nAgriculture\n33\n3\n6\n1\n\n\nBuildings\n2\n5\n0\n0\n\n\nForest\n6\n1\n32\n0\n\n\nShadows\n0\n0\n1\n19\n\n\n\n\n\n\n\n\nIn our first approach, we achieved an accuracy of 0.67 (see Model Evaluation I)\nWith our additional features, the overall accuracy is 0.82\nWe can further improve our model by adding more features in this way",
-    "crumbs": [
-      "Lesson 4",
-      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Feature Engineering</span>"
-    ]
-  },
-  {
-    "objectID": "lesson4-2-feature-engineering.html#tasks",
-    "href": "lesson4-2-feature-engineering.html#tasks",
-    "title": "Feature Engineering",
-    "section": "Tasks",
-    "text": "Tasks\n\nFirst do the tasks described here: Tasks\nUse the focal function to create new features as described above\nEvaluate your new model",
-    "crumbs": [
-      "Lesson 4",
-      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Feature Engineering</span>"
-    ]
-  },
-  {
     "objectID": "references.html",
     "href": "references.html",
     "title": "References",
     "section": "",
-    "text": "Amatulli, Giuseppe. “Geocomputation and Machine Learning for\nEnvironmental Applications.” http://spatial-ecology.net/docs/build/html/GDAL/gdal_osgeo.html.\n\n\nBaltagi, Badi Hani, and Badi H Baltagi. 2008. Econometric Analysis\nof Panel Data. Vol. 4. Springer. https://bcs.wiley.com/he-bcs/Books?action=resource&bcsId=4338&itemId=1118672321&resourceId=13452.\n\n\nBrenning, Alexander. 2023. “Spatial ML Model Assessment and\nInterpretation.” OpenGeoHub Summer School 2023. OpenGeoHub\nFoundation. https://doi.org/10.5446/63464.\n\n\nHorn, Berthold KP. 1981. “Hill Shading and the Reflectance\nMap.” Proceedings of the IEEE 69 (1): 14–47.\n\n\nLovelace, Robin, Jakub Nowosad, and Jannes Muenchow. 2019.\nGeocomputation with r. Chapman; Hall/CRC.\n\n\nPebesma, Edzer, and Roger Bivand. 2023. Spatial Data Science: With\nApplications in R. Boca Raton: Chapman; Hall/CRC. https://doi.org/10.1201/9780429459016.\n\n\nSchratz, Patrick, Marc Becker, Michel Lang, and Alexander Brenning.\n2021. “Mlr3spatiotempcv: Spatiotemporal Resampling Methods for\nMachine Learning in r.” arXiv Preprint arXiv:2110.12674.\n\n\nWickham, Hadley. 2014. “Tidy Data.” Journal of\nStatistical Software 59 (10): 1–23. https://doi.org/10.18637/jss.v059.i10.",
+    "text": "Baltagi, Badi Hani, and Badi H Baltagi. 2008. Econometric Analysis\nof Panel Data. Vol. 4. Springer. https://bcs.wiley.com/he-bcs/Books?action=resource&bcsId=4338&itemId=1118672321&resourceId=13452.\n\n\nPebesma, Edzer, and Roger Bivand. 2023. Spatial Data Science: With\nApplications in R. Boca Raton: Chapman; Hall/CRC. https://doi.org/10.1201/9780429459016.\n\n\nWickham, Hadley. 2014. “Tidy Data.” Journal of\nStatistical Software 59 (10): 1–23. https://doi.org/10.18637/jss.v059.i10.",
     "crumbs": [
       "References"
     ]
