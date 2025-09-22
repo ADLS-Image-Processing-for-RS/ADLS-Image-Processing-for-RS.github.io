@@ -1,4 +1,4 @@
-# From tidy data to raster {#sec-tidy-to-raster}
+# From tabular data to raster {#sec-tidy-to-raster}
 
 <!-- Todo: This is too long and takes up too much time -->
 
@@ -19,7 +19,7 @@ library(abind)
 
 
 
-## Tidy data
+## Tabular data
 
 - @wickham2014: Tidy tabular data: Each variable is a column, each observation is a row, and each type of observational unit
 is a table.

@@ -273,7 +273,13 @@ plot(l7_rgb_mean)
 
 - In a more complex usecase, we could use the R, G and B band to calculate a grayscale value ($L^*$) using the following formula (from [here](https://stackoverflow.com/a/689547/4139249)):
 
-\begin{aligned}
+
+
+::: {.content-hidden unless-format="html"}
+
+$$
+
+\begin{aligned*}
 
 L^* &= 116 \times Y ^ {\frac{1}{3}} - 16\\
 
@@ -282,8 +288,11 @@ Y &= 0.2126 \times R^\gamma+0.7152 \times G^\gamma+0.0722 \times B^\gamma \\
 
 \gamma &= 2.2
 
-\end{aligned}
+\end{aligned*}
 
+$$
+
+:::
 
 
 ```{r}

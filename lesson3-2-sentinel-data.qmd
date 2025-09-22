@@ -140,10 +140,16 @@ cat(meta[str_detect(meta, "ADD_OFFSET")], sep = "\n")
   - One option is to simply clip the values to the desired range
 
 ```{r}
+#| column: page
 s2b <- (s2 - 1000)/10000
 
-hist(s2b)
+hist(s2b[[1:6]])
 ```
+
+```{r}
+hist(s2b[[7:10]])
+```
+
 
 
 ```{r}

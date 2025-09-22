@@ -1,5 +1,6 @@
 ---
 echo: true
+always_allow_html: yes
 ---
 
 # Supervised learning
@@ -92,8 +93,15 @@ labelled_data <- read_sf("data-large/ces/labelled-data.gpkg")
 # We will turn the class into a factor, 
 # which is useful for classification
 labelled_data$class <- factor(labelled_data$class)
+```
 
+:::: {.content-visible when-format="html"}
+```{r}
 tmap_mode("view")
+```
+::::
+
+```{r}
 tm_shape(ces1961) + 
   tm_raster(palette = "-Greys",legend.show = FALSE) +
   tm_shape(labelled_data) +
@@ -200,16 +208,22 @@ tm_shape(ces1961_predict) + tm_raster(style = "cont", midpoint = .5, palette = "
 - For this, we can use the `which.max` function:
 
 ```{r}
-
 ces1961_predict2 <- which.max(ces1961_predict)
 
 # the next three lines assign class labels to the raster (instead of numbers)
 classes <- levels(data_train2$class)
 classes_df <- data.frame(ID = seq_along(classes), class = classes)
 levels(ces1961_predict2) <- classes_df
+```
 
+:::: {.content-visible when-format="html"}
+```{r}
 # visualize the result
 tmap_mode("view")
+```
+::::
+
+```{r}
 tm_shape(ces1961_predict2) + tm_raster(palette = c("gold","gray","palegreen4","black")) +
   tm_layout(legend.outside = TRUE)
 ```
@@ -262,7 +276,7 @@ col_names <- colnames(confusion_matrix2)
 col_names[1] <- ""
 
 kable(confusion_matrix2,col.names = col_names) |> 
-  kable_styling(full_width = FALSE) |> 
+  kable_styling(full_width = FALSE) |>
   column_spec(1, bold = TRUE) |> 
   highlight_diagonal(2:5) |> 
   add_header_above(c(" " = 1, "Actual" = 4)) |>
@@ -303,7 +317,7 @@ $$\frac{\text{number of features correctly classified}}{\text{total number of fe
 
 
 
-$$\frac{`r correct_str`)}{`r tot_str`}= `r acc_str`$$
+$$\frac{`r correct_str`}{`r tot_str`}= `r acc_str`$$
 
 
 
@@ -317,7 +331,7 @@ $$\frac{`r correct_str`)}{`r tot_str`}= `r acc_str`$$
 ```{r}
 #| label: fig-zoom
 #| fig-cap: Zooming in on the raster image, it is difficult to determine the land cover types of individual pixels
-
+# 
 
 xmin <- 2706200
 xmax <- xmin+100
@@ -338,6 +352,6 @@ save.image(file = "data-out/workspace.Rdata")
 
 ## Tasks {#sec-tasks-supervised-learning}
 
-1. Download the datasets *labelled-points.gpkg* and *1961.tif* from moodle
+1. Download the datasets *labelled-data.gpkg* and *1961.tif* from moodle
 2. Follow the steps described above to train a model to classify the land cover types in the area surrounding the village Ces in Ticino
 3. Evaluate the model using the testing data

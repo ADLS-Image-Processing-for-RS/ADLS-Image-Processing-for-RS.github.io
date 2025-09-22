@@ -49,9 +49,9 @@ e <- ext(xmin, xmax, ymin, ymax)
 
 ```{r}
 n <- 5
-focal3by3 <- matrix(rep(1,n^2), ncol = n)
+focal_sd <- matrix(rep(1,n^2), ncol = n)
 
-r_foc3 <- focal(ces1961, focal3by3, fun = sd, fillNA = TRUE)
+r_foc3 <- focal(ces1961, focal_sd, fun = sd, fillNA = TRUE)
 
 r_foc3 <- r_foc3
 
@@ -99,7 +99,7 @@ r_foc3 <- minmax_normalization(r_foc3)
 
 ces <- c(ces1961, r_foc3)
 
-names(ces) <- c("luminosity", "focal3by3")
+names(ces) <- c("luminosity", "focal_sd")
 ```
 
 
