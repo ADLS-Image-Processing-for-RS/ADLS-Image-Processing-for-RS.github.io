@@ -12,19 +12,22 @@ book:
       chapters: 
         - lesson1-1-tidy.qmd        
         - lesson1-2-imagery.qmd
-    - part: Lesson 2
-      chapters: 
-        - lesson2-1-operations.qmd 
-    - part: Lesson 3
-      chapters: 
-        - lesson3-1-datatypes.qmd
-        # - lesson3-2-nodata.qmd # todo: This chapter is incomplete, finish it!
-        - lesson3-2-sentinel-data.qmd
-    - part: Lesson 4
-      chapters: 
-        # - lesson4-1-unsupervised-learning.qmd todo: This chapter is incomplete, finish it!
-        - lesson4-2-supervised-learning.qmd
-        - lesson4-2-feature-engineering.qmd
+    # - part: Lesson 2
+    #   chapters: 
+    #     - lesson2-1-operations.qmd 
+    # - part: Lesson 3
+    #   chapters: 
+    #     - lesson3-1-datatypes.qmd     # moved nodata to STDS
+    #     - lesson3-2-sentinel-data.qmd
+    # - part: Lesson 4
+    #   chapters: 
+    #     # - lesson4-1-unsupervised-learning.qmd todo: This chapter is incomplete, finish it!
+    #     - lesson4-2-supervised-learning.qmd
+    #     - lesson4-2-feature-engineering.qmd
+    # - part: Lesson 5
+    #   chapters: 
+    #     - lesson5-supervised_learning_focal.ipynb
+    #     - lesson5-supervised_learning.ipynb
     - part: references.qmd
 format: 
   html:
@@ -33,7 +36,12 @@ format:
     css: aux/style.css
     include-in-header:
       - aux/script.html
-    
+    theme:
+      light: [flatly]
+      dark: [flatly, "misc/presenter.scss"]    
+    highlight-style:
+      light: misc/arrow-light.theme
+      dark: misc/arrow-light.theme
     
     
 bibliography: aux/bibliography.bib
@@ -41,7 +49,6 @@ execute:
   warning: false
   message: false
   echo: false
-code-summary: ">"
 freeze: true
 
 
