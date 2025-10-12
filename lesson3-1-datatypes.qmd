@@ -41,7 +41,7 @@ library(gt)
 :::
 
 
-:::{.callout-note .notes collapse="true"}
+:::{.notes}
 
 
 - If you store categorical data, use integer datatype and store the corespondence in the metadata

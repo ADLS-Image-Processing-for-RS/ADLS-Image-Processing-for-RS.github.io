@@ -34,9 +34,11 @@ format:
     number-depth: -1
     number-sections: false
     css: misc/style.css
+    include-in-header:
+      - misc/script.html
     theme:
       light: [flatly]
-      dark: [flatly, "misc/presenter.scss"]    
+      dark: [flatly, "misc/presenter.scss"]
     highlight-style:
       light: misc/arrow-light.theme
       dark: misc/arrow-light.theme

@@ -1,7 +1,17 @@
-.note{
-    visibility: hidden;
+/* Hide notes by default */
+.notes{
+  display: none;
 }
 
+/* Show notes when URL parameter is set */
+.show-notes .notes {
+  display: block !important;
+  background: lightyellow;
+  border-left: 3px solid orange;
+  padding: 10px;
+  margin: 10px 0;
+  font-style: italic;
+}
 
 
 .smaller-font{

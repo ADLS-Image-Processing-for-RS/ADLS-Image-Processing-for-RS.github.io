@@ -1,0 +1,21 @@
+<script>
+// URL parameter approach for speaker notes
+document.addEventListener('DOMContentLoaded', function() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const showNotes = urlParams.get('notes') === 'true';
+
+  if (showNotes) {
+    document.body.classList.add('show-notes');
+  }
+});
+
+// Presenter mode toggle (Ctrl+Y)
+document.addEventListener('keydown', function(event) {
+  if (event.ctrlKey && event.keyCode === 89) {
+    const paragraphs = document.querySelectorAll("h2, h3");
+    paragraphs.forEach(function (paragraph) {
+      paragraph.classList.toggle("speaker");
+    });
+  }
+});
+</script>
