@@ -33,9 +33,7 @@ format:
   html:
     number-depth: -1
     number-sections: false
-    css: aux/style.css
-    include-in-header:
-      - aux/script.html
+    css: misc/style.css
     theme:
       light: [flatly]
       dark: [flatly, "misc/presenter.scss"]    
@@ -44,7 +42,7 @@ format:
       dark: misc/arrow-light.theme
     
     
-bibliography: aux/bibliography.bib
+bibliography: misc/bibliography.bib
 execute: 
   warning: false
   message: false

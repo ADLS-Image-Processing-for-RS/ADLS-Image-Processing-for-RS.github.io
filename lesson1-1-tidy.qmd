@@ -27,6 +27,13 @@ is a table.
 - *Observation* is a state in a particular year
 - *Variable* is a measured parameter (see below)
 
+:::{.notes}
+- Start with Wickham's fundamental definition - this is the foundation
+- Emphasize this is about data structure, not just organization
+- The Produc dataset is a classic econometric panel dataset - good for demonstrating concepts
+- Make sure students understand what constitutes an "observation" vs a "variable"
+:::
+
 
 
 :::{.callout-note collapse="true"}
@@ -80,17 +87,31 @@ length(Produc$year)
 n_distinct(Produc$year)
 
 
-n_values <- dim(Produc) |> 
+n_values <- dim(Produc) |>
   prod()
 
 n_values
 ```
+
+:::{.notes}
+- Walk through the calculation step by step
+- 816 total entries for state, but only 48 unique states
+- This repetition is characteristic of long/tidy format
+- Great for analysis but wasteful of memory
+- This leads naturally to why we might want wide format for raster data
+:::
 
 
 
 ## Wide tables have less repetitions.
 
 To demonstrate we convert a long to wide.
+
+:::{.notes}
+- This is the key transition - from statistical/analysis format to raster format
+- Wide format is more memory efficient but less flexible for analysis
+- This mirrors how raster data is naturally stored
+:::
 
 
 ```{r}
@@ -157,6 +178,13 @@ n_values
 
 This is a reduction of `r scales::percent(1-n_values_new/n_values)`
 
+:::{.notes}
+- Dramatic reduction in memory usage - this is why rasters use this format
+- The 8x multiplication accounts for all variables in the original dataset
+- This efficiency becomes critical with large spatial datasets
+- Connect this to why satellite imagery naturally fits wide format
+:::
+
 
 
 ```{r}
@@ -203,11 +231,25 @@ Less repetitions / smaller memory footprint is only part of the advantage:
   - This means, they can be stored in a matrix / array
   - This gives us a *big* speed advantage (e.g. calculating the mean over all values is `r speedup`x faster)
 
+:::{.notes}
+- Homogeneous data types enable matrix operations
+- Matrices are stored contiguously in memory - much faster access
+- This speed difference becomes enormous with large raster datasets
+- Matrix operations are highly optimized and often vectorized
+:::
+
 
 ## Limitations
 
 - Matrices are only advantageous if they are *densely* populated (little `NA`s)
 - Speed and memory footprint is only relevant if the data is large
+
+:::{.notes}
+- If data is mostly missing, wide format can be wasteful
+- For small datasets, the overhead isn't worth it
+- Remote sensing data is typically large and dense - perfect for this approach
+- This sets up why raster format is natural for imagery
+:::
 
 
 ## Tasks / Exercises
@@ -223,3 +265,10 @@ Less repetitions / smaller memory footprint is only part of the advantage:
 3. Convert the data to a matrix
 
 4. Calculate mean unemployment first using the original dataframe, then the new matrix. Compare the speed difference.
+
+:::{.notes}
+- Give students 10-15 minutes for hands-on practice
+- Walk around and help with pivot_wider syntax
+- The speed comparison should be dramatic - good "wow" moment
+- This reinforces why we'll use matrix-like structures for raster data
+:::
