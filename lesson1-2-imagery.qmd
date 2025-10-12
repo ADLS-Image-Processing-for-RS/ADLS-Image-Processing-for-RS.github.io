@@ -335,6 +335,10 @@ plotRGB(l7_full[[c(4,3,2)]], stretch = "histogram", smooth = FALSE)
 
 ## Tasks / Exercises
 
+:::{.callout-important}
+- **Try this without AI first** - struggle builds understanding. 
+- Ask if you are struggling. Tasking builds understanding as well!
+:::
 
 1. The following command returns the path to a tif file on your hard drive:
 

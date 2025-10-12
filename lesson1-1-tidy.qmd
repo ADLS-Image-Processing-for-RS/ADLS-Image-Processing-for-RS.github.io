@@ -254,6 +254,10 @@ Less repetitions / smaller memory footprint is only part of the advantage:
 
 ## Tasks / Exercises
 
+:::{.callout-important}
+- **Try this without AI first** - struggle builds understanding. 
+- Ask if you are struggling. Tasking builds understanding as well!
+:::
 
 1. Import the `Produc` dataset (from the package `plm`) using the following code:
   ```{.r}
