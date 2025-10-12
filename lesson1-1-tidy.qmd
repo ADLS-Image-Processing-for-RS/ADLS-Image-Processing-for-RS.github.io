@@ -204,44 +204,9 @@ Less repetitions / smaller memory footprint is only part of the advantage:
   - This gives us a *big* speed advantage (e.g. calculating the mean over all values is `r speedup`x faster)
 
 
-## Dataframe → Matrix
-
-- Missing values are now *explicit* 
-
-```{r}
-#| echo: true
-
-which(is.na(Produc_matrix))
-```
-
-- Before, missing values were *implicit*:
-
-```{r}
-#| echo: false
-
-Produc |> 
-    slice(15:20)
-```
-
-
-## Dataframe → Matrix
-
-To detect missing values, cases must be made complete first:
-
-```{r}
-#| echo: true
-
-Produc |> 
-    complete(state, year) |>                    # ← make cases complete 
-    filter(is.na(pcap)) # ← filter by NA
-
-```
-
-
-
 ## Limitations
 
-- Matrices are only advantages if they are *densely* populated (little `NA`s)
+- Matrices are only advantageous if they are *densely* populated (little `NA`s)
 - Speed and memory footprint is only relevant if the data is large
 
 
