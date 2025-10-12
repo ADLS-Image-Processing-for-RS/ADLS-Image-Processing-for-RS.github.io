@@ -31,6 +31,8 @@ library(gt)
 - Emphasize that raster data is inherently a grid/matrix structure
 - Each pixel has a fixed location - this is why wide format makes sense
 - Regular grids are the foundation of most remote sensing data
+- We will focus on the regular grids only. However, several other types of grids exist, including rotated, sheared, rectilinear, and curvilinear grids (see Chapter 1 of @edzer2023).
+
 :::
 
 
@@ -78,11 +80,6 @@ p0 +
 ```
 
 
-:::{.callout-note collapse="true"}
-
-We will focus on the regular grids only. However, several other types of grids exist, including rotated, sheared, rectilinear, and curvilinear grids (see Chapter 1 of @edzer2023).
-
-:::
 
 
 
@@ -90,6 +87,7 @@ We will focus on the regular grids only. However, several other types of grids e
 
 - Raster datasets usually represent continuous phenomena such as elevation, temperature, population density or spectral data.
 - Discrete features such as soil or land-cover classes can also be represented in the raster data model
+
 
 :::{.notes}
 - Distinguish between continuous (elevation, temperature) and discrete (land cover classes) data
