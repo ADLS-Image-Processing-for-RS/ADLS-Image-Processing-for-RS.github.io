@@ -339,6 +339,7 @@ df2 |>
 ```{r}
 #| label: fig-rgb-nirgb
 #| layout-ncol: 2
+#| column: page
 #| fig-cap:
 #|   - The R, G and B bands mapped to RGB
 #|   - NIR, G and B bands mapped to RGB
