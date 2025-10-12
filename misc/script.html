@@ -1,12 +1,27 @@
 <script>
-// URL parameter approach for speaker notes
+// Console approach for speaker notes
 document.addEventListener('DOMContentLoaded', function() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const showNotes = urlParams.get('notes') === 'true';
+  const clickableAreas = document.querySelectorAll(".level2, .level3");
 
-  if (showNotes) {
-    document.body.classList.add('show-notes');
-  }
+  clickableAreas.forEach(area => {
+    area.addEventListener('click', function() {
+      const notes = this.querySelector('.notes');
+      if (notes) {
+        console.clear();
+        console.log('📋 SPEAKER NOTES:');
+        console.log('================');
+
+        const noteText = notes.textContent.trim();
+        const noteLines = noteText.split('\n').filter(line => line.trim());
+
+        noteLines.forEach(line => {
+          console.log(line.trim());
+        });
+
+        console.log('================');
+      }
+    });
+  });
 });
 
 // Presenter mode toggle (Ctrl+Y)
