@@ -136,13 +136,10 @@ p0 +
 What is the mean altitude *per municipality*?
 
 ```{r}
-zones <- read_sf("data/Luxembourg_-_Municipalities-shp/Luxembourg_-_Municipalities.shp") |> 
-  transmute(zone = NAME_2) |> 
-  group_by(zone) |> 
-  summarise() |> 
-  st_transform(2169) |> 
-  vect() |> 
-  rasterize(r, field = "zone")
+f <- system.file("ex/lux.shp", package="terra")
+v <- vect(f)
+# r <- rast(system.file("ex/elev.tif", package="terra"))
+zones <- rasterize(v, r, "NAME_2")
 
 ```
 

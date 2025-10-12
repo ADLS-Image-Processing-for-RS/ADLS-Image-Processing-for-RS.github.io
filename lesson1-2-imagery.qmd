@@ -97,17 +97,38 @@ p0 +
 :::
 
 
-
-## A simple example: Elevation
-
 ```{r}
-
 library(terra)
 library(sf)
 library(tmap)
 library(dplyr)
 
 r <- rast(system.file("ex/elev.tif", package="terra"))
+
+f <- system.file("ex/lux.shp", package="terra")
+v <- vect(f)
+# r <- rast(system.file("ex/elev.tif", package="terra"))
+zones <- rasterize(v, r, "NAME_2")
+```
+
+```{r}
+#| layout-ncol: 2
+#| column: page
+#| fig-subcap: 
+#|  - A continuous raster with the elevation of Luxembourg
+#|  - A discrete raster with the municipalities of Luxembourg
+
+plot(r)
+
+plot(zones)
+```
+
+
+## A simple example: Elevation
+
+```{r}
+
+
 
 tm_shape(r) + 
   tm_raster(style = "cont",palette = "viridis") +
