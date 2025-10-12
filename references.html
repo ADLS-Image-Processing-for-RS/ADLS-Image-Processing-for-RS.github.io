@@ -92,34 +92,50 @@ div.csl-indent {
     "search-label": "Search"
   }
 }</script>
-<!-- loads fontawesome, so that I can create a fontawesome button (see below) -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer">
-    <script>
-    
-    // the following function adds padding to all h2 elements, so that I can 
-  // easily present the content of the page in a more readable way
-  function presenter(){
-    var paragraphs = document.querySelectorAll("h2, h3");
+<script>
+// Console approach for speaker notes
+document.addEventListener('DOMContentLoaded', function() {
+  const clickableAreas = document.querySelectorAll(".level2, .level3");
+
+  clickableAreas.forEach(area => {
+    area.addEventListener('click', function() {
+      const notes = this.querySelector('.notes');
+      if (notes) {
+        console.clear();
+
+        // Pretty header - detached from source
+        setTimeout(console.log.bind(console, '%c🎯 SPEAKER NOTES', 'color: #ff6b35; font-size: 18px; font-weight: bold; background: #fff3e0; padding: 8px; border-radius: 4px; margin: 10px 0;'));
+        setTimeout(console.log.bind(console, '%c═══════════════════════════════════════', 'color: #ff6b35; font-weight: bold;'));
+
+        const noteText = notes.textContent.trim();
+        const noteLines = noteText.split('\n').filter(line => line.trim());
+
+        noteLines.forEach(line => {
+          const trimmed = line.trim();
+          // Style all non-empty lines as bullet points - detached from source
+          setTimeout(console.log.bind(console, '%c▶ ' + trimmed, 'color: #2196f3; font-weight: 500;'));
+        });
+
+        setTimeout(console.log.bind(console, '%c═══════════════════════════════════════', 'color: #ff6b35; font-weight: bold;'));
+        setTimeout(console.log.bind(console, '%c💡 Click another section for more notes', 'color: #9e9e9e; font-style: italic; font-size: 12px;'));
+      }
+    });
+  });
+});
+
+// Presenter mode toggle (Ctrl+Y)
+document.addEventListener('keydown', function(event) {
+  if (event.ctrlKey && event.keyCode === 89) {
+    const paragraphs = document.querySelectorAll("h2, h3");
     paragraphs.forEach(function (paragraph) {
       paragraph.classList.toggle("speaker");
     });
   }
-  
-    
-    document.addEventListener('keydown', (event) => {
-      if (event.ctrlKey) {
-         if (event.keyCode == 89) {
-             console.log("Bingo!");
-             presenter()
-         }
-      }
-    }, false);
-
-  
-  </script>
+});
+</script>
 
 
-<link rel="stylesheet" href="aux/style.css">
+<link rel="stylesheet" href="misc/style.css">
 </head>
 
 <body class="nav-sidebar floating quarto-light"><script id="quarto-html-before-body" type="application/javascript">

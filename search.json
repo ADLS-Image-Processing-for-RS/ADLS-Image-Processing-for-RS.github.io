@@ -10,6 +10,16 @@
     ]
   },
   {
+    "objectID": "index.html#welcome",
+    "href": "index.html#welcome",
+    "title": "Image Processing for Remote Sensing",
+    "section": "",
+    "text": "Visit https://www.zhaw.ch/de/lsfm/institute-zentren/iunr/geooekologie/geoinformatik#c121022 to introduce yourself\nThese materials will be used as “slides” in class, but are designed to be used to read up on the topics later on\nWe will use R to introduce the basics of image processing, since R lends itself to illustrate many basic consepts nicely.\nOnce the concepts are understood, they can be applied to many other programming languages",
+    "crumbs": [
+      "Welcome!"
+    ]
+  },
+  {
     "objectID": "lesson1-1-tidy.html",
     "href": "lesson1-1-tidy.html",
     "title": "From tabular data to raster",
@@ -25,7 +35,7 @@
     "href": "lesson1-1-tidy.html#tabular-data",
     "title": "From tabular data to raster",
     "section": "",
-    "text": "Wickham (2014): Tidy tabular data: Each variable is a column, each observation is a row, and each type of observational unit is a table.\nBelow is a dataset from Baltagi and Baltagi (2008)\nObservation is a state in a perticular year\nVariable is a measured parameter (see below)\n\n\n\n\n\n\n\nNoteParameter\n\n\n\n\n\n\npcap: public capital stock\nhwy: highway and streets\nwater: water and sewer facilities\nutil: other public buildings and structures\npc: private capital stock\ngsp: gross state product\nemp: labor input measured by the employment in non–agricultural payrolls\nunemp: state unemployment rate\n\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\n\n\n\nThis is considered a long table and is great for modelling and visualization.\nIts bad for memory (a lot of repetitions)",
+    "text": "Wickham (2014): Tidy tabular data: Each variable is a column, each observation is a row, and each type of observational unit is a table.\nBelow is a dataset from Baltagi and Baltagi (2008)\nObservation is a state in a particular year\nVariable is a measured parameter (see below)\n\n\n\nStart with Wickham’s fundamental definition - this is the foundation\nEmphasize this is about data structure, not just organization\nThe Produc dataset is a classic econometric panel dataset - good for demonstrating concepts\nMake sure students understand what constitutes an “observation” vs a “variable”\n\n\n\n\n\n\n\n\nNoteParameter\n\n\n\n\n\n\npcap: public capital stock\nhwy: highway and streets\nwater: water and sewer facilities\nutil: other public buildings and structures\npc: private capital stock\ngsp: gross state product\nemp: labor input measured by the employment in non–agricultural payrolls\nunemp: state unemployment rate\n\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\n\n\n\nThis is considered a long table and is great for modelling and visualization.\nIt’s bad for memory (a lot of repetitions)",
     "crumbs": [
       "Lesson 1",
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>From tabular data to raster</span>"
@@ -36,7 +46,7 @@
     "href": "lesson1-1-tidy.html#long-tables-have-a-lot-of-repetitions",
     "title": "From tabular data to raster",
     "section": "Long tables have a lot of repetitions:",
-    "text": "Long tables have a lot of repetitions:\n\nlength(Produc$state)\n## [1] 815\nn_distinct(Produc$state)\n## [1] 48\n\nlength(Produc$year)\n## [1] 815\nn_distinct(Produc$year)\n## [1] 17\n\n\nn_values &lt;- dim(Produc) |&gt; \n  prod()\n\nn_values\n## [1] 8150",
+    "text": "Long tables have a lot of repetitions:\n\nlength(Produc$state)\n## [1] 815\nn_distinct(Produc$state)\n## [1] 48\n\nlength(Produc$year)\n## [1] 815\nn_distinct(Produc$year)\n## [1] 17\n\n\nn_values &lt;- dim(Produc) |&gt;\n  prod()\n\nn_values\n## [1] 8150\n\n\n\nWalk through the calculation step by step\n816 total entries for state, but only 48 unique states\nThis repetition is characteristic of long/tidy format\nGreat for analysis but wasteful of memory\nThis leads naturally to why we might want wide format for raster data",
     "crumbs": [
       "Lesson 1",
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>From tabular data to raster</span>"
@@ -47,7 +57,7 @@
     "href": "lesson1-1-tidy.html#wide-tables-have-less-repetitions.",
     "title": "From tabular data to raster",
     "section": "Wide tables have less repetitions.",
-    "text": "Wide tables have less repetitions.\nTo demonstrate we convert a long to wide.\n\n# Pivoting must be done per variable\nProduc_wide &lt;- Produc |&gt; \n    select(state, year, unemp) |&gt; \n    pivot_wider(names_from = state, values_from = unemp) |&gt; \n    column_to_rownames(\"year\")\n\n\n\n\n\n\n\nNote\n\n\n\n\n\nWe can either omit the column “year”, (since this is implicit knowledge, \\(row_i + 1970\\)), or use it as a rowname.",
+    "text": "Wide tables have less repetitions.\nTo demonstrate we convert a long to wide.\n\n\nThis is the key transition - from statistical/analysis format to raster format\nWide format is more memory efficient but less flexible for analysis\nThis mirrors how raster data is naturally stored\n\n\n\n# Pivoting must be done per variable\nProduc_wide &lt;- Produc |&gt; \n    select(state, year, unemp) |&gt; \n    pivot_wider(names_from = state, values_from = unemp) |&gt; \n    column_to_rownames(\"year\")\n\n\n\n\n\n\n\nNote\n\n\n\n\n\nWe can either omit the column “year”, (since this is implicit knowledge, \\(row_i + 1970\\)), or use it as a rowname.",
     "crumbs": [
       "Lesson 1",
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>From tabular data to raster</span>"
@@ -69,7 +79,7 @@
     "href": "lesson1-1-tidy.html#long-vs.-wide-number-of-cells",
     "title": "From tabular data to raster",
     "section": "Long vs. Wide: Number of cells",
-    "text": "Long vs. Wide: Number of cells\nHow many cells / values do we have after this transformation?\n\nn_values_new &lt;- Produc_wide |&gt; \n    dim() |&gt; \n    prod()\n\n# since we have 8 variables, we multiply by 8:\nn_values_new &lt;- n_values_new*8 \n\nn_values_new\n\n[1] 6528\n\n# before we had:\nn_values\n\n[1] 8150\n\n\n→ This is a reduction of 20%",
+    "text": "Long vs. Wide: Number of cells\nHow many cells / values do we have after this transformation?\n\nn_values_new &lt;- Produc_wide |&gt; \n    dim() |&gt; \n    prod()\n\n# since we have 8 variables, we multiply by 8:\nn_values_new &lt;- n_values_new*8 \n\nn_values_new\n\n[1] 6528\n\n# before we had:\nn_values\n\n[1] 8150\n\n\nThis is a reduction of 20%\n\n\nDramatic reduction in memory usage - this is why rasters use this format\nThe 8x multiplication accounts for all variables in the original dataset\nThis efficiency becomes critical with large spatial datasets\nConnect this to why satellite imagery naturally fits wide format",
     "crumbs": [
       "Lesson 1",
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>From tabular data to raster</span>"
@@ -80,29 +90,7 @@
     "href": "lesson1-1-tidy.html#dataframe-matrix",
     "title": "From tabular data to raster",
     "section": "Dataframe → Matrix",
-    "text": "Dataframe → Matrix\nLess repetitions / smaller memory footprint is only part of the advantage:\n\nAll columns now have the same datatype (dbl)\n\nThis means, they can be stored in a matrix / array\nThis gives us a big speed advantage (e.g. calculating the mean over all values is 12x faster)",
-    "crumbs": [
-      "Lesson 1",
-      "<span class='chapter-number'>1</span>  <span class='chapter-title'>From tabular data to raster</span>"
-    ]
-  },
-  {
-    "objectID": "lesson1-1-tidy.html#dataframe-matrix-1",
-    "href": "lesson1-1-tidy.html#dataframe-matrix-1",
-    "title": "From tabular data to raster",
-    "section": "Dataframe → Matrix",
-    "text": "Dataframe → Matrix\n\nMissing values are now explicit\n\n\nwhich(is.na(Produc_matrix))\n\n[1] 19\n\n\n\nBefore, missing values were implicit:\n\n\n\n# A tibble: 6 × 10\n  state    year   pcap   hwy water  util     pc   gsp   emp unemp\n  &lt;chr&gt;   &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;\n1 ALABAMA  1984 19257. 8656. 2235. 8366. 59447. 45118 1388.  11  \n2 ALABAMA  1985 19433. 8726. 2253. 8454. 60688. 46849 1427.   8.9\n3 ALABAMA  1986 19723. 8813. 2309. 8601. 61629. 48409 1463.   9.8\n4 ARIZONA  1970 10148. 4557. 1628. 3964. 23586. 19288  547.   4.4\n5 ARIZONA  1972 10978. 4848. 1615. 4515. 26059. 23289  646.   4.2\n6 ARIZONA  1973 11598. 4963. 1648. 4987. 27305. 25244  714.   4.1",
-    "crumbs": [
-      "Lesson 1",
-      "<span class='chapter-number'>1</span>  <span class='chapter-title'>From tabular data to raster</span>"
-    ]
-  },
-  {
-    "objectID": "lesson1-1-tidy.html#dataframe-matrix-2",
-    "href": "lesson1-1-tidy.html#dataframe-matrix-2",
-    "title": "From tabular data to raster",
-    "section": "Dataframe → Matrix",
-    "text": "Dataframe → Matrix\nTo detect missing values, cases must be made complete first:\n\nProduc |&gt; \n    complete(state, year) |&gt;                    # ← make cases complete \n    filter(is.na(pcap)) # ← filter by NA\n\n# A tibble: 1 × 10\n  state    year  pcap   hwy water  util    pc   gsp   emp unemp\n  &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;\n1 ARIZONA  1971    NA    NA    NA    NA    NA    NA    NA    NA",
+    "text": "Dataframe → Matrix\nLess repetitions / smaller memory footprint is only part of the advantage:\n\nAll columns now have the same datatype (dbl)\n\nThis means, they can be stored in a matrix / array\nThis gives us a big speed advantage (e.g. calculating the mean over all values is 11x faster)\n\n\n\n\nHomogeneous data types enable matrix operations\nMatrices are stored contiguously in memory - much faster access\nThis speed difference becomes enormous with large raster datasets\nMatrix operations are highly optimized and often vectorized",
     "crumbs": [
       "Lesson 1",
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>From tabular data to raster</span>"
@@ -113,7 +101,7 @@
     "href": "lesson1-1-tidy.html#limitations",
     "title": "From tabular data to raster",
     "section": "Limitations",
-    "text": "Limitations\n\nMatrices are only advantages if they are densely populated (little NAs)\nSpeed and memory footprint is only relevant if the data is large",
+    "text": "Limitations\n\nMatrices are only advantageous if they are densely populated (little NAs)\nSpeed and memory footprint is only relevant if the data is large\n\n\n\nIf data is mostly missing, wide format can be wasteful\nFor small datasets, the overhead isn’t worth it\nRemote sensing data is typically large and dense - perfect for this approach\nThis sets up why raster format is natural for imagery",
     "crumbs": [
       "Lesson 1",
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>From tabular data to raster</span>"
@@ -124,7 +112,7 @@
     "href": "lesson1-1-tidy.html#tasks-exercises",
     "title": "From tabular data to raster",
     "section": "Tasks / Exercises",
-    "text": "Tasks / Exercises\n\nImport the Produc dataset (from the package plm) using the following code:\n\ndata(Produc, package = \"plm\")\n\nConvert the data from long to wide\nConvert the data to a matrix\nCalculate mean unemployment first using the original dataframe, then the new matrix. Compare the speed difference.\n\n\n\n\n\nBaltagi, Badi Hani, and Badi H Baltagi. 2008. Econometric Analysis of Panel Data. Vol. 4. Springer. https://bcs.wiley.com/he-bcs/Books?action=resource&bcsId=4338&itemId=1118672321&resourceId=13452.\n\n\nWickham, Hadley. 2014. “Tidy Data.” Journal of Statistical Software 59 (10): 1–23. https://doi.org/10.18637/jss.v059.i10.",
+    "text": "Tasks / Exercises\n\n\n\n\n\n\nImportant\n\n\n\n\nTry this without AI first - struggle builds understanding.\nAsk if you are struggling. Tasking builds understanding as well!\n\n\n\n\nImport the Produc dataset (from the package plm) using the following code:\n\ndata(Produc, package = \"plm\")\n\nConvert the data from long to wide\nConvert the data to a matrix\nCalculate mean unemployment first using the original dataframe, then the new matrix. Compare the speed difference.\n\n\n\nGive students 10-15 minutes for hands-on practice\nWalk around and help with pivot_wider syntax\nThe speed comparison should be dramatic - good “wow” moment\nThis reinforces why we’ll use matrix-like structures for raster data\n\n\n\n\n\n\nBaltagi, Badi Hani, and Badi H Baltagi. 2008. Econometric Analysis of Panel Data. Vol. 4. Springer. https://bcs.wiley.com/he-bcs/Books?action=resource&bcsId=4338&itemId=1118672321&resourceId=13452.\n\n\nWickham, Hadley. 2014. “Tidy Data.” Journal of Statistical Software 59 (10): 1–23. https://doi.org/10.18637/jss.v059.i10.",
     "crumbs": [
       "Lesson 1",
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>From tabular data to raster</span>"
@@ -146,7 +134,7 @@
     "href": "lesson1-2-imagery.html#images-are-rasters",
     "title": "Imagery Data",
     "section": "",
-    "text": "The spatial raster data model represents the world with the continuous grid of cells (a.k.a. pixels)\nThis data model often refers to so-called regular grids, in which each cell has the same, constant size\nThrough its inherent model this data is naturally fits into the wide data structure\n\n\n\n\n\n\n\n\nNote\n\n\n\n\n\nWe will focus on the regular grids only. However, several other types of grids exist, including rotated, sheared, rectilinear, and curvilinear grids (see Chapter 1 of Pebesma and Bivand (2023)).",
+    "text": "The spatial raster data model represents the world with the continuous grid of cells (a.k.a. pixels)\nThis data model often refers to so-called regular grids, in which each cell has the same, constant size\nThrough its inherent model, this data naturally fits into the wide data structure\n\n\n\nThis connects directly to the previous lesson on wide vs long data\nEmphasize that raster data is inherently a grid/matrix structure\nEach pixel has a fixed location - this is why wide format makes sense\nRegular grids are the foundation of most remote sensing data\nWe will focus on the regular grids only. However, several other types of grids exist, including rotated, sheared, rectilinear, and curvilinear grids (see Chapter 1 of Pebesma and Bivand (2023)).",
     "crumbs": [
       "Lesson 1",
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>Imagery Data</span>"
@@ -157,7 +145,7 @@
     "href": "lesson1-2-imagery.html#types-of-raster-data",
     "title": "Imagery Data",
     "section": "Types of raster data",
-    "text": "Types of raster data\n\nRaster datasets usually represent continuous phenomena such as elevation, temperature, population density or spectral data.\nDiscrete features such as soil or land-cover classes can also be represented in the raster data model",
+    "text": "Types of raster data\n\nRaster datasets usually represent continuous phenomena such as elevation, temperature, population density or spectral data.\nDiscrete features such as soil or land-cover classes can also be represented in the raster data model\n\n\n\nDistinguish between continuous (elevation, temperature) and discrete (land cover classes) data\nBoth can be stored in raster format, but analysis approaches differ\nMost remote sensing applications deal with continuous spectral values\nDiscrete classifications often result from processing continuous data\n\n\n\n\n\n\n\n\nA continuous raster with the elevation of Luxembourg\n\n\n\n\n\n\n\nA discrete raster with the municipalities of Luxembourg",
     "crumbs": [
       "Lesson 1",
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>Imagery Data</span>"
@@ -179,7 +167,7 @@
     "href": "lesson1-2-imagery.html#a-more-complex-example-spectral-data",
     "title": "Imagery Data",
     "section": "A more complex example: Spectral data",
-    "text": "A more complex example: Spectral data\n\nTypically, RS imagery consists of more than 1 band\nIn this case, the data is stored in a 3 dimensional array (where band is the 3rd-dimesion)\nA RS image can contain any number of bands.\nThe most well known type of RS imagery consists of 3 Bands from the red, blue and green spectrum\n\n\n\n\n\n\n\n\n\n\nFigure 2.4: The bands stored internally\n\n\n\n\n\n\n\n\n\n\n\nFigure 2.5: The RGB Composite",
+    "text": "A more complex example: Spectral data\n\nTypically, RS imagery consists of more than 1 band\nIn this case, the data is stored in a 3 dimensional array (where band is the 3rd-dimension)\nA RS image can contain any number of bands.\nThe most well known type of RS imagery consists of 3 Bands from the red, blue and green spectrum\n\n\n\nMove from 2D (single band) to 3D (multi-band) concept\nEach band captures different wavelengths of electromagnetic spectrum\nRGB is familiar to students - good starting point\nModern satellites can have hundreds of bands (hyperspectral)\n\n\n\n\n\n\n\n\n\n\n\nFigure 2.4: The bands stored internally\n\n\n\n\n\n\n\n\n\n\n\nFigure 2.5: The RGB Composite",
     "crumbs": [
       "Lesson 1",
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>Imagery Data</span>"
@@ -201,7 +189,7 @@
     "href": "lesson1-2-imagery.html#multispectral-datasets",
     "title": "Imagery Data",
     "section": "Multispectral Datasets",
-    "text": "Multispectral Datasets\n\nMultiband datasets usually capture different parts of the EM spectrum\nE.g. the Landsat image from the previous example has 6 bands capturing the following wavelengths:\n\nBand 1: Blue (0.45 - 0.52 µm)\nBand 2: Green (0.52 - 0.60 µm)\nBand 3: Red (0.63 - 0.69 µm)\nBand 4: Near-Infrared (0.77 - 0.90 µm)\nBand 5: Short-wave Infrared (1.55 - 1.75 µm)\nBand 7: Mid-Infrared (2.08 - 2.35 µm)",
+    "text": "Multispectral Datasets\n\nMultiband datasets usually capture different parts of the EM spectrum\nE.g. the Landsat image from the previous example has 6 bands capturing the following wavelengths:\n\nBand 1: Blue (0.45 - 0.52 µm)\nBand 2: Green (0.52 - 0.60 µm)\nBand 3: Red (0.63 - 0.69 µm)\nBand 4: Near-Infrared (0.77 - 0.90 µm)\nBand 5: Short-wave Infrared (1.55 - 1.75 µm)\nBand 7: Mid-Infrared (2.08 - 2.35 µm)\n\n\n\n\nPoint out that Band 6 (thermal) is missing from this list - was not included in this dataset\nEach band serves different purposes: visible for true color, NIR for vegetation health, SWIR for moisture\nThese wavelength ranges are carefully chosen based on atmospheric windows and target phenomena\nStudents will learn to use different band combinations for different applications",
     "crumbs": [
       "Lesson 1",
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>Imagery Data</span>"
@@ -223,7 +211,7 @@
     "href": "lesson1-2-imagery.html#representations-of-multispectral-data",
     "title": "Imagery Data",
     "section": "Representations of multispectral data",
-    "text": "Representations of multispectral data\n\nA true color image is created by using the Red (3), Green (2) and Blue (1) Band and mapping these to RGB\nA false color image is created by mapping other bands to RGB\n\n\n\n\n\n\n\n\n\n\nFigure 2.10: The R, G and B bands mapped to RGB\n\n\n\n\n\n\n\n\n\n\n\nFigure 2.11: NIR, G and B bands mapped to RGB",
+    "text": "Representations of multispectral data\n\nA true color image is created by using the Red (3), Green (2) and Blue (1) Band and mapping these to RGB\nA false color image is created by mapping other bands to RGB\n\n\n\nTrue color: what our eyes would see if we were there\nFalse color: reveals information not visible to human eye\nNIR false color is very common - vegetation appears red because it reflects strongly in NIR\nDifferent false color combinations highlight different features (water, urban areas, etc.)\n\n\n\n\n\n\n\n\n\n\n\nFigure 2.10: The R, G and B bands mapped to RGB\n\n\n\n\n\n\n\n\n\n\n\nFigure 2.11: NIR, G and B bands mapped to RGB",
     "crumbs": [
       "Lesson 1",
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>Imagery Data</span>"
@@ -234,7 +222,7 @@
     "href": "lesson1-2-imagery.html#tasks-exercises",
     "title": "Imagery Data",
     "section": "Tasks / Exercises",
-    "text": "Tasks / Exercises\n\nThe following command returns the path to a tif file on your hard drive:\n\nsystem.file(\"ex/elev.tif\", package=\"terra\")\n\nUse this path to import the tif file using rast(), store it as r.\nExplore this object:\n\nDetermine the minimum and maximum eleveation values\nMake a static map using base plot and tmap\nMake an interactive map using tmap (tmap_mode(\"view\"))\nUsing tmap, explore different styles and palettes.\n\nThe following command returns the path to a tif file on your hard drive:\n\nsystem.file(\"tif/L7_ETMs.tif\",package = \"stars\")\n\nUse this path to import the tif file using rast(), store it as l7.\nExplore this object:\n\nSpot the differences to the object r\nPlot the available layers individually\nRename the layers to: c(\"B\", \"G\", \"R\", \"NIR\", \"SWIR\", \"MIR\") (see here)\n\nSelect the Red Green and Blue bands to create a true color map (plotRGB and tm_rgb)\n\n\nSelect the NIR, Green and Blue bands to create a false color composite\n\n\n\n\n\nPebesma, Edzer, and Roger Bivand. 2023. Spatial Data Science: With Applications in R. Boca Raton: Chapman; Hall/CRC. https://doi.org/10.1201/9780429459016.",
+    "text": "Tasks / Exercises\n\n\n\n\n\n\nImportant\n\n\n\n\nTry this without AI first - struggle builds understanding.\nAsk if you are struggling. Tasking builds understanding as well!\n\n\n\n\nThe following command returns the path to a tif file on your hard drive:\n\nsystem.file(\"ex/elev.tif\", package=\"terra\")\n\nUse this path to import the tif file using rast(), store it as r.\nExplore this object:\n\nDetermine the minimum and maximum elevation values\nMake a static map using base plot and tmap\nMake an interactive map using tmap (tmap_mode(\"view\"))\nUsing tmap, explore different styles and palettes.\n\nThe following command returns the path to a tif file on your hard drive:\n\nsystem.file(\"tif/L7_ETMs.tif\",package = \"stars\")\n\nUse this path to import the tif file using rast(), store it as l7.\nExplore this object:\n\nSpot the differences to the object r\nPlot the available layers individually\nRename the layers to: c(\"B\", \"G\", \"R\", \"NIR\", \"SWIR\", \"MIR\") (see here)\n\nSelect the Red Green and Blue bands to create a true color map (plotRGB and tm_rgb)\n\n\nSelect the NIR, Green and Blue bands to create a false color composite\n\n\n\nAllow 15-20 minutes for these exercises\nHelp students with band selection syntax - this is often confusing initially\nEncourage experimentation with different band combinations\nPoint out how vegetation appears differently in true vs false color\nThis hands-on experience reinforces the theoretical concepts\n\n\n\n\n\n\nPebesma, Edzer, and Roger Bivand. 2023. Spatial Data Science: With Applications in R. Boca Raton: Chapman; Hall/CRC. https://doi.org/10.1201/9780429459016.",
     "crumbs": [
       "Lesson 1",
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>Imagery Data</span>"

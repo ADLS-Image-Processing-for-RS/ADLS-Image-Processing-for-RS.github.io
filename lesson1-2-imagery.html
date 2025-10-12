@@ -129,34 +129,50 @@ div.csl-indent {
     "search-label": "Search"
   }
 }</script>
-<!-- loads fontawesome, so that I can create a fontawesome button (see below) -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer">
-    <script>
-    
-    // the following function adds padding to all h2 elements, so that I can 
-  // easily present the content of the page in a more readable way
-  function presenter(){
-    var paragraphs = document.querySelectorAll("h2, h3");
+<script>
+// Console approach for speaker notes
+document.addEventListener('DOMContentLoaded', function() {
+  const clickableAreas = document.querySelectorAll(".level2, .level3");
+
+  clickableAreas.forEach(area => {
+    area.addEventListener('click', function() {
+      const notes = this.querySelector('.notes');
+      if (notes) {
+        console.clear();
+
+        // Pretty header - detached from source
+        setTimeout(console.log.bind(console, '%c🎯 SPEAKER NOTES', 'color: #ff6b35; font-size: 18px; font-weight: bold; background: #fff3e0; padding: 8px; border-radius: 4px; margin: 10px 0;'));
+        setTimeout(console.log.bind(console, '%c═══════════════════════════════════════', 'color: #ff6b35; font-weight: bold;'));
+
+        const noteText = notes.textContent.trim();
+        const noteLines = noteText.split('\n').filter(line => line.trim());
+
+        noteLines.forEach(line => {
+          const trimmed = line.trim();
+          // Style all non-empty lines as bullet points - detached from source
+          setTimeout(console.log.bind(console, '%c▶ ' + trimmed, 'color: #2196f3; font-weight: 500;'));
+        });
+
+        setTimeout(console.log.bind(console, '%c═══════════════════════════════════════', 'color: #ff6b35; font-weight: bold;'));
+        setTimeout(console.log.bind(console, '%c💡 Click another section for more notes', 'color: #9e9e9e; font-style: italic; font-size: 12px;'));
+      }
+    });
+  });
+});
+
+// Presenter mode toggle (Ctrl+Y)
+document.addEventListener('keydown', function(event) {
+  if (event.ctrlKey && event.keyCode === 89) {
+    const paragraphs = document.querySelectorAll("h2, h3");
     paragraphs.forEach(function (paragraph) {
       paragraph.classList.toggle("speaker");
     });
   }
-  
-    
-    document.addEventListener('keydown', (event) => {
-      if (event.ctrlKey) {
-         if (event.keyCode == 89) {
-             console.log("Bingo!");
-             presenter()
-         }
-      }
-    }, false);
-
-  
-  </script>
+});
+</script>
 
 
-<link rel="stylesheet" href="aux/style.css">
+<link rel="stylesheet" href="misc/style.css">
 </head>
 
 <body class="nav-sidebar floating quarto-light"><script id="quarto-html-before-body" type="application/javascript">
@@ -449,8 +465,17 @@ div.csl-indent {
 <ul>
 <li>The spatial raster data model represents the world with the continuous grid of cells (a.k.a. pixels)</li>
 <li>This data model often refers to so-called regular grids, in which each cell has the same, constant size</li>
-<li>Through its inherent model this data is naturally fits into the <em>wide</em> data structure</li>
+<li>Through its inherent model, this data naturally fits into the <em>wide</em> data structure</li>
 </ul>
+<div class="notes">
+<ul>
+<li>This connects directly to the previous lesson on wide vs long data</li>
+<li>Emphasize that raster data is inherently a grid/matrix structure</li>
+<li>Each pixel has a fixed location - this is why wide format makes sense</li>
+<li>Regular grids are the foundation of most remote sensing data</li>
+<li>We will focus on the regular grids only. However, several other types of grids exist, including rotated, sheared, rectilinear, and curvilinear grids (see Chapter 1 of <span class="citation" data-cites="edzer2023">Pebesma and Bivand (<a href="references.html#ref-edzer2023" role="doc-biblioref">2023</a>)</span>).</li>
+</ul>
+</div>
 <div class="cell column-page quarto-layout-panel" data-layout-nrow="1">
 <div class="quarto-layout-row">
 <div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: flex-start;">
@@ -491,29 +516,41 @@ Figure&nbsp;2.3: Color representation of cell value
 </div>
 </div>
 </div>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Note
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-1" class="callout-1-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>We will focus on the regular grids only. However, several other types of grids exist, including rotated, sheared, rectilinear, and curvilinear grids (see Chapter 1 of <span class="citation" data-cites="edzer2023">Pebesma and Bivand (<a href="references.html#ref-edzer2023" role="doc-biblioref">2023</a>)</span>).</p>
-</div>
-</div>
-</div>
 </section>
-<section id="types-of-raster-data" class="level2">
+<section id="types-of-raster-data" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="types-of-raster-data">Types of raster data</h2>
 <ul>
 <li>Raster datasets usually represent continuous phenomena such as elevation, temperature, population density or spectral data.</li>
 <li>Discrete features such as soil or land-cover classes can also be represented in the raster data model</li>
 </ul>
+<div class="notes">
+<ul>
+<li>Distinguish between continuous (elevation, temperature) and discrete (land cover classes) data</li>
+<li>Both can be stored in raster format, but analysis approaches differ</li>
+<li>Most remote sensing applications deal with continuous spectral values</li>
+<li>Discrete classifications often result from processing continuous data</li>
+</ul>
+</div>
+<div class="cell column-page quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="lesson1-2-imagery_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption>A continuous raster with the elevation of Luxembourg</figcaption>
+</figure>
+</div>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="lesson1-2-imagery_files/figure-html/unnamed-chunk-3-2.png" class="img-fluid figure-img" width="672"></p>
+<figcaption>A discrete raster with the municipalities of Luxembourg</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
 </section>
 <section id="a-simple-example-elevation" class="level2">
 <h2 class="anchored" data-anchor-id="a-simple-example-elevation">A simple example: Elevation</h2>
@@ -521,7 +558,7 @@ Note
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="lesson1-2-imagery_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="lesson1-2-imagery_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -547,10 +584,18 @@ Note
 <h2 class="anchored" data-anchor-id="a-more-complex-example-spectral-data">A more complex example: Spectral data</h2>
 <ul>
 <li>Typically, RS imagery consists of more than 1 band</li>
-<li>In this case, the data is stored in a 3 dimensional <em>array</em> (where <em>band</em> is the 3rd-dimesion)</li>
+<li>In this case, the data is stored in a 3 dimensional <em>array</em> (where <em>band</em> is the 3rd-dimension)</li>
 <li>A RS image can contain any number of bands.</li>
 <li>The most well known type of RS imagery consists of 3 Bands from the red, blue and green spectrum</li>
 </ul>
+<div class="notes">
+<ul>
+<li>Move from 2D (single band) to 3D (multi-band) concept</li>
+<li>Each band captures different wavelengths of electromagnetic spectrum</li>
+<li>RGB is familiar to students - good starting point</li>
+<li>Modern satellites can have hundreds of bands (hyperspectral)</li>
+</ul>
+</div>
 <div class="cell column-page quarto-layout-panel" data-layout-ncol="2">
 <div class="quarto-layout-row">
 <div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
@@ -625,6 +670,14 @@ Figure&nbsp;2.7: RGB True Color Image
 <li><strong>Band 7</strong>: Mid-Infrared (2.08 - 2.35 µm)</li>
 </ul></li>
 </ul>
+<div class="notes">
+<ul>
+<li>Point out that Band 6 (thermal) is missing from this list - was not included in this dataset</li>
+<li>Each band serves different purposes: visible for true color, NIR for vegetation health, SWIR for moisture</li>
+<li>These wavelength ranges are carefully chosen based on atmospheric windows and target phenomena</li>
+<li>Students will learn to use different band combinations for different applications</li>
+</ul>
+</div>
 </section>
 <section id="nirgb-image" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="nirgb-image">NirGB Image</h2>
@@ -657,13 +710,21 @@ Figure&nbsp;2.9: NIR-GB False Color Image
 </div>
 </div>
 </section>
-<section id="representations-of-multispectral-data" class="level2">
+<section id="representations-of-multispectral-data" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="representations-of-multispectral-data">Representations of multispectral data</h2>
 <ul>
 <li>A <em>true color</em> image is created by using the Red (3), Green (2) and Blue (1) Band and mapping these to RGB</li>
 <li>A <em>false color</em> image is created by mapping other bands to RGB</li>
 </ul>
-<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="notes">
+<ul>
+<li>True color: what our eyes would see if we were there</li>
+<li>False color: reveals information not visible to human eye</li>
+<li>NIR false color is very common - vegetation appears red because it reflects strongly in NIR</li>
+<li>Different false color combinations highlight different features (water, urban areas, etc.)</li>
+</ul>
+</div>
+<div class="cell column-page quarto-layout-panel" data-layout-ncol="2">
 <div class="quarto-layout-row">
 <div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
 <div id="fig-rgb-nirgb-1" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -694,6 +755,22 @@ Figure&nbsp;2.11: NIR, G and B bands mapped to RGB
 </section>
 <section id="tasks-exercises" class="level2">
 <h2 class="anchored" data-anchor-id="tasks-exercises">Tasks / Exercises</h2>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><strong>Try this without AI first</strong> - struggle builds understanding.</li>
+<li>Ask if you are struggling. Tasking builds understanding as well!</li>
+</ul>
+</div>
+</div>
 <ol type="1">
 <li><p>The following command returns the path to a tif file on your hard drive:</p>
 <div class="cell">
@@ -702,7 +779,7 @@ Figure&nbsp;2.11: NIR, G and B bands mapped to RGB
 <p>Use this path to import the tif file using <code>rast()</code>, store it as <code>r</code>.</p></li>
 <li><p>Explore this object:</p>
 <ul>
-<li>Determine the minimum and maximum eleveation values</li>
+<li>Determine the minimum and maximum elevation values</li>
 <li>Make a static map using base plot and <code>tmap</code></li>
 <li>Make an interactive map using tmap (<code>tmap_mode("view")</code>)</li>
 <li>Using tmap, explore different <a href="https://r-tmap.github.io/tmap/reference/tm_raster.html#arg-style">styles</a> and <a href="https://r-tmap.github.io/tmap/reference/tm_raster.html#arg-palette">palettes</a>.</li>
@@ -723,6 +800,15 @@ Figure&nbsp;2.11: NIR, G and B bands mapped to RGB
 <ol start="6" type="1">
 <li>Select the NIR, Green and Blue bands to create a false color composite</li>
 </ol>
+<div class="notes">
+<ul>
+<li>Allow 15-20 minutes for these exercises</li>
+<li>Help students with band selection syntax - this is often confusing initially</li>
+<li>Encourage experimentation with different band combinations</li>
+<li>Point out how vegetation appears differently in true vs false color</li>
+<li>This hands-on experience reinforces the theoretical concepts</li>
+</ul>
+</div>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">

@@ -129,31 +129,47 @@ div.csl-indent {
     "search-label": "Search"
   }
 }</script>
-<!-- loads fontawesome, so that I can create a fontawesome button (see below) -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer">
-    <script>
-    
-    // the following function adds padding to all h2 elements, so that I can 
-  // easily present the content of the page in a more readable way
-  function presenter(){
-    var paragraphs = document.querySelectorAll("h2, h3");
+<script>
+// Console approach for speaker notes
+document.addEventListener('DOMContentLoaded', function() {
+  const clickableAreas = document.querySelectorAll(".level2, .level3");
+
+  clickableAreas.forEach(area => {
+    area.addEventListener('click', function() {
+      const notes = this.querySelector('.notes');
+      if (notes) {
+        console.clear();
+
+        // Pretty header - detached from source
+        setTimeout(console.log.bind(console, '%c🎯 SPEAKER NOTES', 'color: #ff6b35; font-size: 18px; font-weight: bold; background: #fff3e0; padding: 8px; border-radius: 4px; margin: 10px 0;'));
+        setTimeout(console.log.bind(console, '%c═══════════════════════════════════════', 'color: #ff6b35; font-weight: bold;'));
+
+        const noteText = notes.textContent.trim();
+        const noteLines = noteText.split('\n').filter(line => line.trim());
+
+        noteLines.forEach(line => {
+          const trimmed = line.trim();
+          // Style all non-empty lines as bullet points - detached from source
+          setTimeout(console.log.bind(console, '%c▶ ' + trimmed, 'color: #2196f3; font-weight: 500;'));
+        });
+
+        setTimeout(console.log.bind(console, '%c═══════════════════════════════════════', 'color: #ff6b35; font-weight: bold;'));
+        setTimeout(console.log.bind(console, '%c💡 Click another section for more notes', 'color: #9e9e9e; font-style: italic; font-size: 12px;'));
+      }
+    });
+  });
+});
+
+// Presenter mode toggle (Ctrl+Y)
+document.addEventListener('keydown', function(event) {
+  if (event.ctrlKey && event.keyCode === 89) {
+    const paragraphs = document.querySelectorAll("h2, h3");
     paragraphs.forEach(function (paragraph) {
       paragraph.classList.toggle("speaker");
     });
   }
-  
-    
-    document.addEventListener('keydown', (event) => {
-      if (event.ctrlKey) {
-         if (event.keyCode == 89) {
-             console.log("Bingo!");
-             presenter()
-         }
-      }
-    }, false);
-
-  
-  </script>
+});
+</script>
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
@@ -185,7 +201,7 @@ window.Quarto = {
 };
 </script>
 
-<link rel="stylesheet" href="aux/style.css">
+<link rel="stylesheet" href="misc/style.css">
 </head>
 
 <body class="nav-sidebar floating quarto-light"><script id="quarto-html-before-body" type="application/javascript">
@@ -441,8 +457,6 @@ window.Quarto = {
   <li><a href="#long-vs-wide" id="toc-long-vs-wide" class="nav-link" data-scroll-target="#long-vs-wide">Long vs Wide</a></li>
   <li><a href="#long-vs.-wide-number-of-cells" id="toc-long-vs.-wide-number-of-cells" class="nav-link" data-scroll-target="#long-vs.-wide-number-of-cells">Long vs.&nbsp;Wide: Number of cells</a></li>
   <li><a href="#dataframe-matrix" id="toc-dataframe-matrix" class="nav-link" data-scroll-target="#dataframe-matrix">Dataframe → Matrix</a></li>
-  <li><a href="#dataframe-matrix-1" id="toc-dataframe-matrix-1" class="nav-link" data-scroll-target="#dataframe-matrix-1">Dataframe → Matrix</a></li>
-  <li><a href="#dataframe-matrix-2" id="toc-dataframe-matrix-2" class="nav-link" data-scroll-target="#dataframe-matrix-2">Dataframe → Matrix</a></li>
   <li><a href="#limitations" id="toc-limitations" class="nav-link" data-scroll-target="#limitations">Limitations</a></li>
   <li><a href="#tasks-exercises" id="toc-tasks-exercises" class="nav-link" data-scroll-target="#tasks-exercises">Tasks / Exercises</a></li>
   </ul>
@@ -477,9 +491,17 @@ window.Quarto = {
 <ul>
 <li><span class="citation" data-cites="wickham2014">Wickham (<a href="references.html#ref-wickham2014" role="doc-biblioref">2014</a>)</span>: Tidy tabular data: Each variable is a column, each observation is a row, and each type of observational unit is a table.</li>
 <li>Below is a dataset from <span class="citation" data-cites="baltagi2008">Baltagi and Baltagi (<a href="references.html#ref-baltagi2008" role="doc-biblioref">2008</a>)</span></li>
-<li><em>Observation</em> is a state in a perticular year</li>
+<li><em>Observation</em> is a state in a particular year</li>
 <li><em>Variable</em> is a measured parameter (see below)</li>
 </ul>
+<div class="notes">
+<ul>
+<li>Start with Wickham’s fundamental definition - this is the foundation</li>
+<li>Emphasize this is about data structure, not just organization</li>
+<li>The Produc dataset is a classic econometric panel dataset - good for demonstrating concepts</li>
+<li>Make sure students understand what constitutes an “observation” vs a “variable”</li>
+</ul>
+</div>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -625,7 +647,7 @@ Note
 <div class="callout-body-container callout-body">
 <ul>
 <li>This is considered a <em>long</em> table and is great for modelling and visualization.</li>
-<li>Its bad for memory (a lot of repetitions)</li>
+<li>It’s bad for memory (a lot of repetitions)</li>
 </ul>
 </div>
 </div>
@@ -645,16 +667,32 @@ Note
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 17</span></span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>n_values <span class="ot">&lt;-</span> <span class="fu">dim</span>(Produc) <span class="sc">|&gt;</span> </span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>n_values <span class="ot">&lt;-</span> <span class="fu">dim</span>(Produc) <span class="sc">|&gt;</span></span>
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">prod</span>()</span>
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>n_values</span>
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 8150</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
+<div class="notes">
+<ul>
+<li>Walk through the calculation step by step</li>
+<li>816 total entries for state, but only 48 unique states</li>
+<li>This repetition is characteristic of long/tidy format</li>
+<li>Great for analysis but wasteful of memory</li>
+<li>This leads naturally to why we might want wide format for raster data</li>
+</ul>
+</div>
 </section>
 <section id="wide-tables-have-less-repetitions." class="level2">
 <h2 class="anchored" data-anchor-id="wide-tables-have-less-repetitions.">Wide tables have less repetitions.</h2>
 <p>To demonstrate we convert a long to wide.</p>
+<div class="notes">
+<ul>
+<li>This is the key transition - from statistical/analysis format to raster format</li>
+<li>Wide format is more memory efficient but less flexible for analysis</li>
+<li>This mirrors how raster data is naturally stored</li>
+</ul>
+</div>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Pivoting must be done per variable</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>Produc_wide <span class="ot">&lt;-</span> Produc <span class="sc">|&gt;</span> </span>
@@ -1167,7 +1205,15 @@ Note
 <pre><code>[1] 8150</code></pre>
 </div>
 </div>
-<p>→ This is a reduction of 20%</p>
+<p>This is a reduction of 20%</p>
+<div class="notes">
+<ul>
+<li>Dramatic reduction in memory usage - this is why rasters use this format</li>
+<li>The 8x multiplication accounts for all variables in the original dataset</li>
+<li>This efficiency becomes critical with large spatial datasets</li>
+<li>Connect this to why satellite imagery naturally fits wide format</li>
+</ul>
+</div>
 </section>
 <section id="dataframe-matrix" class="level2">
 <h2 class="anchored" data-anchor-id="dataframe-matrix">Dataframe → Matrix</h2>
@@ -1176,71 +1222,68 @@ Note
 <li>All columns now have the same datatype (<code>dbl</code>)
 <ul>
 <li>This means, they can be stored in a matrix / array</li>
-<li>This gives us a <em>big</em> speed advantage (e.g.&nbsp;calculating the mean over all values is 12x faster)</li>
+<li>This gives us a <em>big</em> speed advantage (e.g.&nbsp;calculating the mean over all values is 11x faster)</li>
 </ul></li>
 </ul>
-</section>
-<section id="dataframe-matrix-1" class="level2">
-<h2 class="anchored" data-anchor-id="dataframe-matrix-1">Dataframe → Matrix</h2>
+<div class="notes">
 <ul>
-<li>Missing values are now <em>explicit</em></li>
+<li>Homogeneous data types enable matrix operations</li>
+<li>Matrices are stored contiguously in memory - much faster access</li>
+<li>This speed difference becomes enormous with large raster datasets</li>
+<li>Matrix operations are highly optimized and often vectorized</li>
 </ul>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">which</span>(<span class="fu">is.na</span>(Produc_matrix))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 19</code></pre>
-</div>
-</div>
-<ul>
-<li>Before, missing values were <em>implicit</em>:</li>
-</ul>
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 6 × 10
-  state    year   pcap   hwy water  util     pc   gsp   emp unemp
-  &lt;chr&gt;   &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-1 ALABAMA  1984 19257. 8656. 2235. 8366. 59447. 45118 1388.  11  
-2 ALABAMA  1985 19433. 8726. 2253. 8454. 60688. 46849 1427.   8.9
-3 ALABAMA  1986 19723. 8813. 2309. 8601. 61629. 48409 1463.   9.8
-4 ARIZONA  1970 10148. 4557. 1628. 3964. 23586. 19288  547.   4.4
-5 ARIZONA  1972 10978. 4848. 1615. 4515. 26059. 23289  646.   4.2
-6 ARIZONA  1973 11598. 4963. 1648. 4987. 27305. 25244  714.   4.1</code></pre>
-</div>
-</div>
-</section>
-<section id="dataframe-matrix-2" class="level2">
-<h2 class="anchored" data-anchor-id="dataframe-matrix-2">Dataframe → Matrix</h2>
-<p>To detect missing values, cases must be made complete first:</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>Produc <span class="sc">|&gt;</span> </span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">complete</span>(state, year) <span class="sc">|&gt;</span>                    <span class="co"># ← make cases complete </span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="fu">is.na</span>(pcap)) <span class="co"># ← filter by NA</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 1 × 10
-  state    year  pcap   hwy water  util    pc   gsp   emp unemp
-  &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-1 ARIZONA  1971    NA    NA    NA    NA    NA    NA    NA    NA</code></pre>
-</div>
 </div>
 </section>
 <section id="limitations" class="level2">
 <h2 class="anchored" data-anchor-id="limitations">Limitations</h2>
 <ul>
-<li>Matrices are only advantages if they are <em>densely</em> populated (little <code>NA</code>s)</li>
+<li>Matrices are only advantageous if they are <em>densely</em> populated (little <code>NA</code>s)</li>
 <li>Speed and memory footprint is only relevant if the data is large</li>
 </ul>
+<div class="notes">
+<ul>
+<li>If data is mostly missing, wide format can be wasteful</li>
+<li>For small datasets, the overhead isn’t worth it</li>
+<li>Remote sensing data is typically large and dense - perfect for this approach</li>
+<li>This sets up why raster format is natural for imagery</li>
+</ul>
+</div>
 </section>
 <section id="tasks-exercises" class="level2">
 <h2 class="anchored" data-anchor-id="tasks-exercises">Tasks / Exercises</h2>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><strong>Try this without AI first</strong> - struggle builds understanding.</li>
+<li>Ask if you are struggling. Tasking builds understanding as well!</li>
+</ul>
+</div>
+</div>
 <ol type="1">
 <li>Import the <code>Produc</code> dataset (from the package <code>plm</code>) using the following code:</li>
 </ol>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(Produc, <span class="at">package =</span> <span class="st">"plm"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(Produc, <span class="at">package =</span> <span class="st">"plm"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <ol start="2" type="1">
 <li><p>Convert the data from long to wide</p></li>
 <li><p>Convert the data to a matrix</p></li>
 <li><p>Calculate mean unemployment first using the original dataframe, then the new matrix. Compare the speed difference.</p></li>
 </ol>
+<div class="notes">
+<ul>
+<li>Give students 10-15 minutes for hands-on practice</li>
+<li>Walk around and help with pivot_wider syntax</li>
+<li>The speed comparison should be dramatic - good “wow” moment</li>
+<li>This reinforces why we’ll use matrix-like structures for raster data</li>
+</ul>
+</div>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
