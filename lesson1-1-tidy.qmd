@@ -24,7 +24,7 @@ library(abind)
 - @wickham2014: Tidy tabular data: Each variable is a column, each observation is a row, and each type of observational unit
 is a table.
 - Below is a dataset from @baltagi2008
-- *Observation* is a state in a perticular year
+- *Observation* is a state in a particular year
 - *Variable* is a measured parameter (see below)
 
 
@@ -62,7 +62,7 @@ Produc |>
 
 :::{.callout-note .notes collapse="true"}
 - This is considered a *long* table and is great for modelling and visualization.
-- Its bad for memory (a lot of repetitions)
+- It's bad for memory (a lot of repetitions)
 :::
 
 
@@ -155,7 +155,7 @@ n_values
 ```
 
 
-→ This is a reduction of `r scales::percent(1-n_values_new/n_values)`
+This is a reduction of `r scales::percent(1-n_values_new/n_values)`
 
 
 

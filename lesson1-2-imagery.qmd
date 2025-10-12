@@ -24,7 +24,7 @@ library(gt)
 
 - The spatial raster data model represents the world with the continuous grid of cells (a.k.a. pixels)
 - This data model often refers to so-called regular grids, in which each cell has the same, constant size 
-- Through its inherent model this data is naturally fits into the *wide* data structure
+- Through its inherent model, this data naturally fits into the *wide* data structure
 
 
 
@@ -112,7 +112,7 @@ matrix(r, nrow = terra::nrow(r))[50:60,50:60]
 ## A more complex example: Spectral data
 
 - Typically, RS imagery consists of more than 1 band
-- In this case, the data is stored in a 3 dimensional *array* (where *band* is the 3rd-dimesion)
+- In this case, the data is stored in a 3 dimensional *array* (where *band* is the 3rd-dimension)
 - A RS image can contain any number of bands.
 - The most well known type of RS imagery consists of 3 Bands from the red, blue and green spectrum
 
@@ -142,7 +142,7 @@ l7_full_rgb <- l7_full[[c(3,2,1)]]
 
 plot(l7_full_rgb, main = paste(c("Red", "Green", "Blue"),"Band"))
 
-plotRGB(l7_full_rgb, stretch = "histogramm", smooth = FALSE)
+plotRGB(l7_full_rgb, stretch = "histogram", smooth = FALSE)
 
 
 ```
@@ -289,10 +289,10 @@ df2 |>
 #|   - The R, G and B bands mapped to RGB
 #|   - NIR, G and B bands mapped to RGB
 
-plotRGB(l7_full[[c(3,2,1)]], stretch = "histogramm", smooth = FALSE)
+plotRGB(l7_full[[c(3,2,1)]], stretch = "histogram", smooth = FALSE)
 
 
-plotRGB(l7_full[[c(4,3,2)]], stretch = "histogramm", smooth = FALSE)
+plotRGB(l7_full[[c(4,3,2)]], stretch = "histogram", smooth = FALSE)
 
 ```
 
@@ -312,7 +312,7 @@ plotRGB(l7_full[[c(4,3,2)]], stretch = "histogramm", smooth = FALSE)
    Use this path to import the tif file using `rast()`, store it as `r`.
    
 2. Explore this object:
-   - Determine the minimum and maximum eleveation values
+   - Determine the minimum and maximum elevation values
    - Make a static map using base plot and `tmap`
    - Make an interactive map using tmap (`tmap_mode("view")`)
    - Using tmap, explore different [styles](https://r-tmap.github.io/tmap/reference/tm_raster.html#arg-style) and [palettes](https://r-tmap.github.io/tmap/reference/tm_raster.html#arg-palette). 
