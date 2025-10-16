@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>References – Image Processing for Remote Sensing</title>
+<title>Imagery Data – Image Processing for Remote Sensing</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -24,6 +24,7 @@ ul.task-list li input[type="checkbox"] {
 div.csl-bib-body { }
 div.csl-entry {
   clear: both;
+  margin-bottom: 0em;
 }
 .hanging-indent div.csl-entry {
   margin-left:2em;
@@ -49,7 +50,8 @@ div.csl-indent {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./lesson2-2-tasks.html" rel="prev">
+<link href="./lesson1-4-tasks.html" rel="next">
+<link href="./lesson1-2-tasks.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
@@ -309,7 +311,7 @@ document.addEventListener('keydown', function(event) {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./references.html">References</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./lesson1-1-tidy.html">Lesson 1</a></li><li class="breadcrumb-item"><a href="./lesson1-3-imagery.html"><span class="chapter-title">Imagery Data</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -371,7 +373,7 @@ document.addEventListener('keydown', function(event) {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./lesson1-3-imagery.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Imagery Data</span></a>
+  <a href="./lesson1-3-imagery.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Imagery Data</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -411,16 +413,29 @@ document.addEventListener('keydown', function(event) {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#images-are-rasters" id="toc-images-are-rasters" class="nav-link active" data-scroll-target="#images-are-rasters">Images are Rasters</a></li>
+  <li><a href="#types-of-raster-data" id="toc-types-of-raster-data" class="nav-link" data-scroll-target="#types-of-raster-data">Types of raster data</a></li>
+  <li><a href="#a-simple-example-elevation" id="toc-a-simple-example-elevation" class="nav-link" data-scroll-target="#a-simple-example-elevation">A simple example: Elevation</a></li>
+  <li><a href="#a-more-complex-example-spectral-data" id="toc-a-more-complex-example-spectral-data" class="nav-link" data-scroll-target="#a-more-complex-example-spectral-data">A more complex example: Spectral data</a></li>
+  <li><a href="#each-band-is-a-2d-matrix" id="toc-each-band-is-a-2d-matrix" class="nav-link" data-scroll-target="#each-band-is-a-2d-matrix">Each band is a 2D matrix</a></li>
+  <li><a href="#multispectral-datasets" id="toc-multispectral-datasets" class="nav-link" data-scroll-target="#multispectral-datasets">Multispectral Datasets</a></li>
+  <li><a href="#nirgb-image" id="toc-nirgb-image" class="nav-link" data-scroll-target="#nirgb-image">NirGB Image</a></li>
+  <li><a href="#representations-of-multispectral-data" id="toc-representations-of-multispectral-data" class="nav-link" data-scroll-target="#representations-of-multispectral-data">Representations of multispectral data</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content page-columns page-full" id="quarto-document-content">
 
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./lesson1-1-tidy.html">Lesson 1</a></li><li class="breadcrumb-item"><a href="./lesson1-3-imagery.html"><span class="chapter-title">Imagery Data</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">References</h1>
+<h1 class="title"><span id="sec-imagery-data" class="quarto-section-identifier"><span class="chapter-title">Imagery Data</span></span></h1>
 </div>
 
 
@@ -437,30 +452,311 @@ document.addEventListener('keydown', function(event) {
 </header>
 
 
-<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
-<div id="ref-baltagi2008" class="csl-entry" role="listitem">
-Baltagi, Badi Hani, and Badi H Baltagi. 2008. <em>Econometric Analysis
-of Panel Data</em>. Vol. 4. Springer. <a href="https://bcs.wiley.com/he-bcs/Books?action=resource&amp;bcsId=4338&amp;itemId=1118672321&amp;resourceId=13452">https://bcs.wiley.com/he-bcs/Books?action=resource&amp;bcsId=4338&amp;itemId=1118672321&amp;resourceId=13452</a>.
+<section id="images-are-rasters" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="images-are-rasters">Images are Rasters</h2>
+<ul>
+<li>The spatial raster data model represents the world with the continuous grid of cells (a.k.a. pixels)</li>
+<li>This data model often refers to so-called regular grids, in which each cell has the same, constant size</li>
+<li>Through its inherent model, this data naturally fits into the <em>wide</em> data structure</li>
+</ul>
+<div class="notes">
+<ul>
+<li>This connects directly to the previous lesson on wide vs long data</li>
+<li>Emphasize that raster data is inherently a grid/matrix structure</li>
+<li>Each pixel has a fixed location - this is why wide format makes sense</li>
+<li>Regular grids are the foundation of most remote sensing data</li>
+<li>We will focus on the regular grids only. However, several other types of grids exist, including rotated, sheared, rectilinear, and curvilinear grids (see Chapter 1 of <span class="citation" data-cites="edzer2023">Pebesma and Bivand (<a href="references.html#ref-edzer2023" role="doc-biblioref">2023</a>)</span>).</li>
+</ul>
 </div>
-<div id="ref-horn1981" class="csl-entry" role="listitem">
-Horn, Berthold KP. 1981. <span>“Hill Shading and the Reflectance
-Map.”</span> <em>Proceedings of the IEEE</em> 69 (1): 14–47.
+<div class="cell column-page quarto-layout-panel" data-layout-nrow="1">
+<div class="quarto-layout-row">
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: flex-start;">
+<div id="fig-raster-example-1" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-raster-example-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="lesson1-3-imagery_files/figure-html/fig-raster-example-1.png" class="img-fluid figure-img" width="672">
 </div>
-<div id="ref-lovelace2019" class="csl-entry" role="listitem">
-Lovelace, Robin, Jakub Nowosad, and Jannes Muenchow. 2019.
-<em>Geocomputation with r</em>. Chapman; Hall/CRC.
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-raster-example-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.1: Cell offset from origin (lower left)
+</figcaption>
+</figure>
 </div>
+</div>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: flex-start;">
+<div id="fig-raster-example-2" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-raster-example-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="lesson1-3-imagery_files/figure-html/fig-raster-example-2.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-raster-example-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.2: Cell values (for example elevation)
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: flex-start;">
+<div id="fig-raster-example-3" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-raster-example-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="lesson1-3-imagery_files/figure-html/fig-raster-example-3.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-raster-example-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.3: Color representation of cell value
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="types-of-raster-data" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="types-of-raster-data">Types of raster data</h2>
+<ul>
+<li>Raster datasets usually represent continuous phenomena such as elevation, temperature, population density or spectral data.</li>
+<li>Discrete features such as soil or land-cover classes can also be represented in the raster data model</li>
+</ul>
+<div class="notes">
+<ul>
+<li>Distinguish between continuous (elevation, temperature) and discrete (land cover classes) data</li>
+<li>Both can be stored in raster format, but analysis approaches differ</li>
+<li>Most remote sensing applications deal with continuous spectral values</li>
+<li>Discrete classifications often result from processing continuous data</li>
+</ul>
+</div>
+<div class="cell column-page quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="lesson1-3-imagery_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption>A continuous raster with the elevation of Luxembourg</figcaption>
+</figure>
+</div>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="lesson1-3-imagery_files/figure-html/unnamed-chunk-3-2.png" class="img-fluid figure-img" width="672"></p>
+<figcaption>A discrete raster with the municipalities of Luxembourg</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="a-simple-example-elevation" class="level2">
+<h2 class="anchored" data-anchor-id="a-simple-example-elevation">A simple example: Elevation</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lesson1-3-imagery_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>      [,1] [,2] [,3] [,4] [,5] [,6]
+ [1,]  275  282  373  342  357  326
+ [2,]  230  318  316  351  345  346
+ [3,]  164  337  258  342  363  350
+ [4,]  168  337  261  354  358  364
+ [5,]  202  322  250  380  362  373
+ [6,]   NA  310  270  361  370  363
+ [7,]   NA  277  310  291  375  365
+ [8,]   NA  181  325  264  381  373
+ [9,]   NA   NA  313  264  370  384
+[10,]   NA   NA  298  285  370  380
+[11,]  402   NA  333  293  356  382</code></pre>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="a-more-complex-example-spectral-data" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="a-more-complex-example-spectral-data">A more complex example: Spectral data</h2>
+<ul>
+<li>Typically, RS imagery consists of more than 1 band</li>
+<li>In this case, the data is stored in a 3 dimensional <em>array</em> (where <em>band</em> is the 3rd-dimension)</li>
+<li>A RS image can contain any number of bands.</li>
+<li>The most well known type of RS imagery consists of 3 Bands from the red, blue and green spectrum</li>
+</ul>
+<div class="notes">
+<ul>
+<li>Move from 2D (single band) to 3D (multi-band) concept</li>
+<li>Each band captures different wavelengths of electromagnetic spectrum</li>
+<li>RGB is familiar to students - good starting point</li>
+<li>Modern satellites can have hundreds of bands (hyperspectral)</li>
+</ul>
+</div>
+<div class="cell column-page quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-multi-1" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-multi-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="lesson1-3-imagery_files/figure-html/fig-multi-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-multi-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.4: The bands stored internally
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-multi-2" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-multi-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="lesson1-3-imagery_files/figure-html/fig-multi-2.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-multi-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.5: The RGB Composite
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="each-band-is-a-2d-matrix" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="each-band-is-a-2d-matrix">Each band is a 2D matrix</h2>
+<div class="cell column-page quarto-layout-panel" data-layout-nrow="1">
+<div class="quarto-layout-row">
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-raster-composite-1" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-raster-composite-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="lesson1-3-imagery_files/figure-html/fig-raster-composite-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-raster-composite-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.6: Band values
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-raster-composite-2" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-raster-composite-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="lesson1-3-imagery_files/figure-html/fig-raster-composite-2.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-raster-composite-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.7: RGB True Color Image
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="multispectral-datasets" class="level2">
+<h2 class="anchored" data-anchor-id="multispectral-datasets">Multispectral Datasets</h2>
+<ul>
+<li>Multiband datasets usually capture different parts of the EM spectrum</li>
+<li>E.g. the Landsat image from the previous example has 6 bands capturing the following wavelengths:
+<ul>
+<li><strong>Band 1</strong>: Blue (0.45 - 0.52 µm)</li>
+<li><strong>Band 2</strong>: Green (0.52 - 0.60 µm)</li>
+<li><strong>Band 3</strong>: Red (0.63 - 0.69 µm)</li>
+<li><strong>Band 4</strong>: Near-Infrared (0.77 - 0.90 µm)</li>
+<li><strong>Band 5</strong>: Short-wave Infrared (1.55 - 1.75 µm)</li>
+<li><strong>Band 7</strong>: Mid-Infrared (2.08 - 2.35 µm)</li>
+</ul></li>
+</ul>
+<div class="notes">
+<ul>
+<li>Point out that Band 6 (thermal) is missing from this list - was not included in this dataset</li>
+<li>Each band serves different purposes: visible for true color, NIR for vegetation health, SWIR for moisture</li>
+<li>These wavelength ranges are carefully chosen based on atmospheric windows and target phenomena</li>
+<li>Students will learn to use different band combinations for different applications</li>
+</ul>
+</div>
+</section>
+<section id="nirgb-image" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="nirgb-image">NirGB Image</h2>
+<div class="cell column-page quarto-layout-panel" data-layout-nrow="1">
+<div class="quarto-layout-row">
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-nirgb-1" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-nirgb-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="lesson1-3-imagery_files/figure-html/fig-nirgb-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-nirgb-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.8: Band values
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-nirgb-2" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-nirgb-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="lesson1-3-imagery_files/figure-html/fig-nirgb-2.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-nirgb-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.9: NIR-GB False Color Image
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="representations-of-multispectral-data" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="representations-of-multispectral-data">Representations of multispectral data</h2>
+<ul>
+<li>A <em>true color</em> image is created by using the Red (3), Green (2) and Blue (1) Band and mapping these to RGB</li>
+<li>A <em>false color</em> image is created by mapping other bands to RGB</li>
+</ul>
+<div class="notes">
+<ul>
+<li>True color: what our eyes would see if we were there</li>
+<li>False color: reveals information not visible to human eye</li>
+<li>NIR false color is very common - vegetation appears red because it reflects strongly in NIR</li>
+<li>Different false color combinations highlight different features (water, urban areas, etc.)</li>
+</ul>
+</div>
+<div class="cell column-page quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-rgb-nirgb-1" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-rgb-nirgb-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="lesson1-3-imagery_files/figure-html/fig-rgb-nirgb-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-rgb-nirgb-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.10: The R, G and B bands mapped to RGB
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-rgb-nirgb-2" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-rgb-nirgb-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="lesson1-3-imagery_files/figure-html/fig-rgb-nirgb-2.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-rgb-nirgb-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.11: NIR, G and B bands mapped to RGB
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
 <div id="ref-edzer2023" class="csl-entry" role="listitem">
-Pebesma, Edzer, and Roger Bivand. 2023. <em>Spatial Data Science: With
-Applications in <span>R</span></em>. Boca Raton: Chapman; Hall/CRC. <a href="https://doi.org/10.1201/9780429459016">https://doi.org/10.1201/9780429459016</a>.
-</div>
-<div id="ref-wickham2014" class="csl-entry" role="listitem">
-Wickham, Hadley. 2014. <span>“Tidy Data.”</span> <em>Journal of
-Statistical Software</em> 59 (10): 1–23. <a href="https://doi.org/10.18637/jss.v059.i10">https://doi.org/10.18637/jss.v059.i10</a>.
+Pebesma, Edzer, and Roger Bivand. 2023. <em>Spatial Data Science: With Applications in <span>R</span></em>. Boca Raton: Chapman; Hall/CRC. <a href="https://doi.org/10.1201/9780429459016">https://doi.org/10.1201/9780429459016</a>.
 </div>
 </div>
-
-
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -877,11 +1173,14 @@ Statistical Software</em> 59 (10): 1–23. <a href="https://doi.org/10.18637/jss
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./lesson2-2-tasks.html" class="pagination-link" aria-label="Tasks / Exercises">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Tasks / Exercises</span></span>
+      <a href="./lesson1-2-tasks.html" class="pagination-link" aria-label="Tasks">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Tasks</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
+      <a href="./lesson1-4-tasks.html" class="pagination-link" aria-label="Tasks">
+        <span class="nav-page-text"><span class="chapter-title">Tasks</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
   </div>
 </nav>
 </div> <!-- /content -->

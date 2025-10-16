@@ -85,7 +85,7 @@ div.csl-indent {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./lesson1-2-imagery.html" rel="next">
+<link href="./lesson1-2-tasks.html" rel="next">
 <link href="./index.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -432,7 +432,38 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./lesson1-2-imagery.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Imagery Data</span></a>
+  <a href="./lesson1-2-tasks.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Tasks</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lesson1-3-imagery.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Imagery Data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lesson1-4-tasks.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Tasks</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Lesson 2</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lesson2-1-operations.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Raster Operations / Map algebra</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lesson2-2-tasks.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Tasks / Exercises</span></a>
   </div>
 </li>
       </ul>
@@ -455,10 +486,8 @@ window.Quarto = {
   <li><a href="#long-tables-have-a-lot-of-repetitions" id="toc-long-tables-have-a-lot-of-repetitions" class="nav-link" data-scroll-target="#long-tables-have-a-lot-of-repetitions">Long tables have a lot of repetitions:</a></li>
   <li><a href="#wide-tables-have-less-repetitions." id="toc-wide-tables-have-less-repetitions." class="nav-link" data-scroll-target="#wide-tables-have-less-repetitions.">Wide tables have less repetitions.</a></li>
   <li><a href="#long-vs-wide" id="toc-long-vs-wide" class="nav-link" data-scroll-target="#long-vs-wide">Long vs Wide</a></li>
-  <li><a href="#long-vs.-wide-number-of-cells" id="toc-long-vs.-wide-number-of-cells" class="nav-link" data-scroll-target="#long-vs.-wide-number-of-cells">Long vs.&nbsp;Wide: Number of cells</a></li>
   <li><a href="#dataframe-matrix" id="toc-dataframe-matrix" class="nav-link" data-scroll-target="#dataframe-matrix">Dataframe → Matrix</a></li>
   <li><a href="#limitations" id="toc-limitations" class="nav-link" data-scroll-target="#limitations">Limitations</a></li>
-  <li><a href="#tasks-exercises" id="toc-tasks-exercises" class="nav-link" data-scroll-target="#tasks-exercises">Tasks / Exercises</a></li>
   </ul>
 </nav>
     </div>
@@ -528,6 +557,15 @@ window.Quarto = {
 </div>
 </div>
 <div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>Produc <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/Produc.csv"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(<span class="sc">-</span>region) <span class="sc">|&gt;</span> </span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="sc">!</span>(state <span class="sc">==</span> <span class="st">"ARIZONA"</span> <span class="sc">&amp;</span> year <span class="sc">==</span> <span class="dv">1971</span>))</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Produc[Produc$state == "ARIZONA" &amp; Produc$year == 1971,c("unemp")] &lt;- NA</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>Produc <span class="sc">|&gt;</span> </span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">head</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">kable</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
 <colgroup>
@@ -656,22 +694,22 @@ Note
 <section id="long-tables-have-a-lot-of-repetitions" class="level2">
 <h2 class="anchored" data-anchor-id="long-tables-have-a-lot-of-repetitions">Long tables have a lot of repetitions:</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(Produc<span class="sc">$</span>state)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 815</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">n_distinct</span>(Produc<span class="sc">$</span>state)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 48</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(Produc<span class="sc">$</span>year)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 815</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">n_distinct</span>(Produc<span class="sc">$</span>year)</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 17</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>n_values <span class="ot">&lt;-</span> <span class="fu">dim</span>(Produc) <span class="sc">|&gt;</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">prod</span>()</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>n_values</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 8150</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(Produc<span class="sc">$</span>state)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 815</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">n_distinct</span>(Produc<span class="sc">$</span>state)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 48</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(Produc<span class="sc">$</span>year)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 815</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="fu">n_distinct</span>(Produc<span class="sc">$</span>year)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 17</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>n_values <span class="ot">&lt;-</span> <span class="fu">dim</span>(Produc) <span class="sc">|&gt;</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">prod</span>()</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>n_values</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 8150</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="notes">
 <ul>
@@ -694,11 +732,11 @@ Note
 </ul>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Pivoting must be done per variable</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>Produc_wide <span class="ot">&lt;-</span> Produc <span class="sc">|&gt;</span> </span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(state, year, unemp) <span class="sc">|&gt;</span> </span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> state, <span class="at">values_from =</span> unemp) <span class="sc">|&gt;</span> </span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">column_to_rownames</span>(<span class="st">"year"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Pivoting must be done per variable</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>Produc_wide <span class="ot">&lt;-</span> Produc <span class="sc">|&gt;</span> </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(state, year, unemp) <span class="sc">|&gt;</span> </span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> state, <span class="at">values_from =</span> unemp) <span class="sc">|&gt;</span> </span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">column_to_rownames</span>(<span class="st">"year"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="notes callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
@@ -721,6 +759,9 @@ Note
 <h2 class="anchored" data-anchor-id="long-vs-wide">Long vs Wide</h2>
 <p>Long / tidy:</p>
 <div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>Produc <span class="sc">|&gt;</span> </span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">head</span>(<span class="dv">5</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">kable</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
 <colgroup>
@@ -817,6 +858,9 @@ Note
 <hr>
 <p>Wide / untidy:</p>
 <div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>Produc_wide <span class="sc">|&gt;</span> </span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">head</span>(<span class="dv">5</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">kable</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
 <colgroup>
@@ -1184,37 +1228,6 @@ Note
 </div>
 </div>
 </section>
-<section id="long-vs.-wide-number-of-cells" class="level2">
-<h2 class="anchored" data-anchor-id="long-vs.-wide-number-of-cells">Long vs.&nbsp;Wide: Number of cells</h2>
-<p>How many cells / values do we have after this transformation?</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>n_values_new <span class="ot">&lt;-</span> Produc_wide <span class="sc">|&gt;</span> </span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">dim</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">prod</span>()</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># since we have 8 variables, we multiply by 8:</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>n_values_new <span class="ot">&lt;-</span> n_values_new<span class="sc">*</span><span class="dv">8</span> </span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>n_values_new</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 6528</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># before we had:</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>n_values</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 8150</code></pre>
-</div>
-</div>
-<p>This is a reduction of 20%</p>
-<div class="notes">
-<ul>
-<li>Dramatic reduction in memory usage - this is why rasters use this format</li>
-<li>The 8x multiplication accounts for all variables in the original dataset</li>
-<li>This efficiency becomes critical with large spatial datasets</li>
-<li>Connect this to why satellite imagery naturally fits wide format</li>
-</ul>
-</div>
-</section>
 <section id="dataframe-matrix" class="level2">
 <h2 class="anchored" data-anchor-id="dataframe-matrix">Dataframe → Matrix</h2>
 <p>Less repetitions / smaller memory footprint is only part of the advantage:</p>
@@ -1222,9 +1235,23 @@ Note
 <li>All columns now have the same datatype (<code>dbl</code>)
 <ul>
 <li>This means, they can be stored in a matrix / array</li>
-<li>This gives us a <em>big</em> speed advantage (e.g.&nbsp;calculating the mean over all values is 11x faster)</li>
+<li>This gives us a <em>big</em> speed advantage (see <a href="#fig-benchmark" class="quarto-xref">Figure&nbsp;<span>1.1</span></a>)</li>
 </ul></li>
 </ul>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-benchmark" class="quarto-float quarto-figure quarto-figure-center anchored" width="672">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-benchmark-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="lesson1-1-tidy_files/figure-html/fig-benchmark-1.png" id="fig-benchmark" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-benchmark-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1.1
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
 <div class="notes">
 <ul>
 <li>Homogeneous data types enable matrix operations</li>
@@ -1246,42 +1273,6 @@ Note
 <li>For small datasets, the overhead isn’t worth it</li>
 <li>Remote sensing data is typically large and dense - perfect for this approach</li>
 <li>This sets up why raster format is natural for imagery</li>
-</ul>
-</div>
-</section>
-<section id="tasks-exercises" class="level2">
-<h2 class="anchored" data-anchor-id="tasks-exercises">Tasks / Exercises</h2>
-<div class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Important
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<ul>
-<li><strong>Try this without AI first</strong> - struggle builds understanding.</li>
-<li>Ask if you are struggling. Tasking builds understanding as well!</li>
-</ul>
-</div>
-</div>
-<ol type="1">
-<li>Import the <code>Produc</code> dataset (from the package <code>plm</code>) using the following code:</li>
-</ol>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(Produc, <span class="at">package =</span> <span class="st">"plm"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ol start="2" type="1">
-<li><p>Convert the data from long to wide</p></li>
-<li><p>Convert the data to a matrix</p></li>
-<li><p>Calculate mean unemployment first using the original dataframe, then the new matrix. Compare the speed difference.</p></li>
-</ol>
-<div class="notes">
-<ul>
-<li>Give students 10-15 minutes for hands-on practice</li>
-<li>Walk around and help with pivot_wider syntax</li>
-<li>The speed comparison should be dramatic - good “wow” moment</li>
-<li>This reinforces why we’ll use matrix-like structures for raster data</li>
 </ul>
 </div>
 
@@ -1716,8 +1707,8 @@ Wickham, Hadley. 2014. <span>“Tidy Data.”</span> <em>Journal of Statistical 
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./lesson1-2-imagery.html" class="pagination-link" aria-label="Imagery Data">
-        <span class="nav-page-text"><span class="chapter-title">Imagery Data</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./lesson1-2-tasks.html" class="pagination-link" aria-label="Tasks">
+        <span class="nav-page-text"><span class="chapter-title">Tasks</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
