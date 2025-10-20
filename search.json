@@ -519,7 +519,7 @@
     "href": "lesson2-2-tasks.html#task-4",
     "title": "Tasks / Exercises",
     "section": "Task 4",
-    "text": "Task 4\nDetermine suitable locations of solar panels using the following conditions: - Elevation: above 300 MASL - Slope: Between 1 and 3° - Aspect: Southfacing (between 135 and 235°)",
+    "text": "Task 4\nDetermine suitable locations of solar panels using the following conditions:\n\nElevation: above 300 MASL\nSlope: Between 1 and 3°\nAspect: Southfacing (between 135 and 235°)",
     "crumbs": [
       "Lesson 2",
       "<span class='chapter-number'>6</span>  <span class='chapter-title'>Tasks / Exercises</span>"
@@ -552,7 +552,7 @@
     "href": "lesson2-2-tasks.html#task-7",
     "title": "Tasks / Exercises",
     "section": "Task 7",
-    "text": "Task 7\nImport the multispectral Landsat 7 as a raster using the following path\n::: {.cell}\nsystem.file(\"tif/L7_ETMs.tif\",package = \"stars\")\n:::",
+    "text": "Task 7\nImport the multispectral Landsat 7 as a raster using the following path\n\nsystem.file(\"tif/L7_ETMs.tif\",package = \"stars\")",
     "crumbs": [
       "Lesson 2",
       "<span class='chapter-number'>6</span>  <span class='chapter-title'>Tasks / Exercises</span>"
