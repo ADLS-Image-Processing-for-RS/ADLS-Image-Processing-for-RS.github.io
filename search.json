@@ -486,7 +486,7 @@
     "href": "lesson2-2-tasks.html",
     "title": "Tasks / Exercises",
     "section": "",
-    "text": "Task 1\nDownload and import the elevation of Luxembourg from Moodle (CW43 → Datasets)",
+    "text": "Task 1\nThe following command returns the path to a tif file on your hard drive:\nsystem.file(\"ex/elev.tif\", package=\"terra\")\nUse this path to import the tif file using rast(), store it as r. It contains the elevation of Luxembourg.",
     "crumbs": [
       "Lesson 2",
       "<span class='chapter-number'>6</span>  <span class='chapter-title'>Tasks / Exercises</span>"
@@ -530,7 +530,7 @@
     "href": "lesson2-2-tasks.html#task-5",
     "title": "Tasks / Exercises",
     "section": "Task 5",
-    "text": "Task 5\nDownload the Municipalities of Luxembourg from Moodle and calculate the minimum, maximum and mean elevation values per municipality.",
+    "text": "Task 5\nImport the municipalities of Luxembourg (see below) and calculate the minimum, maximum and mean elevation values per municipality.\n\nlux &lt;- system.file(\"ex/lux.shp\", package=\"terra\") |&gt; \n  vect()\n\nzones &lt;- rasterize(lux, r, \"NAME_2\")",
     "crumbs": [
       "Lesson 2",
       "<span class='chapter-number'>6</span>  <span class='chapter-title'>Tasks / Exercises</span>"
