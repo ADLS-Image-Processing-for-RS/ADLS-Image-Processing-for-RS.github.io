@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Tasks / Exercises – Image Processing for Remote Sensing</title>
+<title>Tasks – Image Processing for Remote Sensing</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -65,7 +65,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./references.html" rel="next">
+<link href="./lesson3-1-datatypes.html" rel="next">
 <link href="./lesson2-1-operations.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -355,7 +355,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./lesson2-1-operations.html">Lesson 2</a></li><li class="breadcrumb-item"><a href="./lesson2-2-tasks.html"><span class="chapter-title">Tasks / Exercises</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./lesson2-1-operations.html">Lesson 2</a></li><li class="breadcrumb-item"><a href="./lesson2-2-tasks.html"><span class="chapter-title">Tasks</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -443,7 +443,33 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./lesson2-2-tasks.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Tasks / Exercises</span></a>
+  <a href="./lesson2-2-tasks.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Tasks</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Lesson 3</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lesson3-1-datatypes.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Data Types, scale and offset</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lesson3-2-sentinel-data.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Showcase: Importing Sentinel data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lesson3-3-tasks.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Tasks</span></a>
   </div>
 </li>
       </ul>
@@ -470,9 +496,6 @@ window.Quarto = {
   <li><a href="#task-6" id="toc-task-6" class="nav-link" data-scroll-target="#task-6">Task 6</a></li>
   <li><a href="#task-7" id="toc-task-7" class="nav-link" data-scroll-target="#task-7">Task 7</a></li>
   <li><a href="#task-8" id="toc-task-8" class="nav-link" data-scroll-target="#task-8">Task 8</a></li>
-  <li><a href="#task-9" id="toc-task-9" class="nav-link" data-scroll-target="#task-9">Task 9</a></li>
-  <li><a href="#task-10" id="toc-task-10" class="nav-link" data-scroll-target="#task-10">Task 10</a></li>
-  <li><a href="#task-11" id="toc-task-11" class="nav-link" data-scroll-target="#task-11">Task 11</a></li>
   </ul>
 </nav>
     </div>
@@ -480,9 +503,9 @@ window.Quarto = {
 <main class="content" id="quarto-document-content">
 
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./lesson2-1-operations.html">Lesson 2</a></li><li class="breadcrumb-item"><a href="./lesson2-2-tasks.html"><span class="chapter-title">Tasks / Exercises</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./lesson2-1-operations.html">Lesson 2</a></li><li class="breadcrumb-item"><a href="./lesson2-2-tasks.html"><span class="chapter-title">Tasks</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-title">Tasks / Exercises</span></h1>
+<h1 class="title"><span class="chapter-title">Tasks</span></h1>
 </div>
 
 
@@ -506,14 +529,39 @@ window.Quarto = {
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">system.file</span>(<span class="st">"ex/elev.tif"</span>, <span class="at">package=</span><span class="st">"terra"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Use this path to import the tif file using <code>rast()</code>, store it as <code>r</code>. It contains the elevation of Luxembourg.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Sample Solution</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"terra"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>r <span class="ot">&lt;-</span> <span class="fu">system.file</span>(<span class="st">"ex/elev.tif"</span>, <span class="at">package=</span><span class="st">"terra"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>   <span class="fu">rast</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
 </section>
 <section id="task-2" class="level2">
 <h2 class="anchored" data-anchor-id="task-2">Task 2</h2>
-<p>Calculate the mean, maximum and minimum elevation values</p>
+<p>Calculate the (global) mean, maximum and minimum elevation values.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Sample Solution</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">global</span>(r, <span class="fu">c</span>(<span class="st">"mean"</span>,<span class="st">"max"</span>,<span class="st">"min"</span>), <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>              mean max min
+elevation 348.3366 547 141</code></pre>
+</div>
+</div>
 </section>
 <section id="task-3" class="level2">
 <h2 class="anchored" data-anchor-id="task-3">Task 3</h2>
 <p>Calculate slope and aspect (see <a href="https://rspatial.github.io/terra/reference/terrain.html">terrain functions</a>)</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Sample Solution</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>r_slope <span class="ot">&lt;-</span> <span class="fu">terrain</span>(r, <span class="st">"slope"</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>r_aspect <span class="ot">&lt;-</span> <span class="fu">terrain</span>(r, <span class="st">"aspect"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
 </section>
 <section id="task-4" class="level2">
 <h2 class="anchored" data-anchor-id="task-4">Task 4</h2>
@@ -523,15 +571,37 @@ window.Quarto = {
 <li>Slope: Between 1 and 3°</li>
 <li>Aspect: Southfacing (between 135 and 235°)</li>
 </ul>
+<div class="cell">
+<details class="code-fold">
+<summary>Sample Solution</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>good_elev <span class="ot">&lt;-</span> r <span class="sc">&gt;</span> <span class="dv">300</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>good_slope <span class="ot">&lt;-</span> r_slope <span class="sc">&gt;</span> <span class="dv">1</span> <span class="sc">&amp;</span> r_slope <span class="sc">&lt;=</span> <span class="dv">3</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>good_aspect <span class="ot">&lt;-</span> r_aspect <span class="sc">&gt;</span> <span class="dv">135</span> <span class="sc">&amp;</span> r_aspect <span class="sc">&lt;=</span> <span class="dv">235</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>good <span class="ot">&lt;-</span> good_elev <span class="sc">&amp;</span> good_slope <span class="sc">&amp;</span> good_aspect</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(good, <span class="at">main =</span> <span class="st">"Solar panel suitability"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lesson2-2-tasks_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 </section>
 <section id="task-5" class="level2">
 <h2 class="anchored" data-anchor-id="task-5">Task 5</h2>
 <p>Import the municipalities of Luxembourg (see below) and calculate the minimum, maximum and mean elevation values per municipality.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>lux <span class="ot">&lt;-</span> <span class="fu">system.file</span>(<span class="st">"ex/lux.shp"</span>, <span class="at">package=</span><span class="st">"terra"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">vect</span>()</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>zones <span class="ot">&lt;-</span> <span class="fu">rasterize</span>(lux, r, <span class="st">"NAME_2"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<details class="code-fold">
+<summary>Sample Solution</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>lux <span class="ot">&lt;-</span> <span class="fu">system.file</span>(<span class="st">"ex/lux.shp"</span>, <span class="at">package=</span><span class="st">"terra"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">vect</span>()</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>zones <span class="ot">&lt;-</span> <span class="fu">rasterize</span>(lux, r, <span class="st">"NAME_2"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
 </div>
 </section>
 <section id="task-6" class="level2">
@@ -542,25 +612,45 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="task-7">Task 7</h2>
 <p>Import the multispectral Landsat 7 as a raster using the following path</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">system.file</span>(<span class="st">"tif/L7_ETMs.tif"</span>,<span class="at">package =</span> <span class="st">"stars"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<details class="code-fold">
+<summary>Sample Solution</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">system.file</span>(<span class="st">"tif/L7_ETMs.tif"</span>,<span class="at">package =</span> <span class="st">"stars"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Sample Solution</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>l7 <span class="ot">&lt;-</span> <span class="fu">system.file</span>(<span class="st">"tif/L7_ETMs.tif"</span>,<span class="at">package =</span> <span class="st">"stars"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>   <span class="fu">rast</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
 </div>
 </section>
 <section id="task-8" class="level2">
 <h2 class="anchored" data-anchor-id="task-8">Task 8</h2>
 <p>Calculate the <a href="https://en.wikipedia.org/wiki/Normalized_difference_vegetation_index">NDVI</a> using the following formula:</p>
 <p><span class="math display">\[\text{NDVI} = \frac{\text{NIR}-\text{red}}{\text{NIR}+\text{red}}\]</span></p>
-</section>
-<section id="task-9" class="level2">
-<h2 class="anchored" data-anchor-id="task-9">Task 9</h2>
-<p>Download a Sentinel 2 Image from <a href="https://browser.dataspace.copernicus.eu/">browser.dataspace.copernicus.eu</a> for a location of your choosing. Import it as a raster image in R. Note that you have to import the individual bands and then recombine the image to a multiband raster.</p>
-</section>
-<section id="task-10" class="level2">
-<h2 class="anchored" data-anchor-id="task-10">Task 10</h2>
-<p>Create a True-Color RGB Image and a False-Color NirGB Image using the appropriate bands (see <a href="https://en.wikipedia.org/wiki/Sentinel-2#Spectral_bands">Spectral Bands (Wikipedia)</a>)</p>
-</section>
-<section id="task-11" class="level2">
-<h2 class="anchored" data-anchor-id="task-11">Task 11</h2>
-<p>Calculate NDVI of the Sentinel 2 Image using the appropriate bands</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Sample Solution</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(l7) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"B"</span>, <span class="st">"G"</span>, <span class="st">"R"</span>, <span class="st">"NIR"</span>, <span class="st">"SWIR"</span>, <span class="st">"MIR"</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>NDVI <span class="ot">&lt;-</span> (l7[[<span class="st">"NIR"</span>]]<span class="sc">-</span>l7[[<span class="st">"R"</span>]])<span class="sc">/</span>(l7[[<span class="st">"NIR"</span>]]<span class="sc">+</span>l7[[<span class="st">"R"</span>]])</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tmap)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(NDVI) <span class="sc">+</span> <span class="fu">tm_raster</span>(<span class="at">style =</span> <span class="st">"cont"</span>, <span class="at">title =</span> <span class="st">"NDVI"</span>, <span class="at">midpoint =</span> <span class="dv">0</span>, <span class="at">breaks =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">1</span>)) <span class="sc">+</span> </span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_layout</span>(<span class="at">legend.outside =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lesson2-2-tasks_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 
 
 </section>
@@ -985,8 +1075,8 @@ window.Quarto = {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./references.html" class="pagination-link" aria-label="References">
-        <span class="nav-page-text">References</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./lesson3-1-datatypes.html" class="pagination-link" aria-label="Data Types, scale and offset">
+        <span class="nav-page-text"><span class="chapter-title">Data Types, scale and offset</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

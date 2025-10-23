@@ -20,41 +20,6 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for syntax highlighting */
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
 </style>
 
 
@@ -65,8 +30,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./lesson2-1-operations.html" rel="next">
-<link href="./lesson1-3-imagery.html" rel="prev">
+<link href="./references.html" rel="next">
+<link href="./lesson3-2-sentinel-data.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
@@ -326,7 +291,7 @@ document.addEventListener('keydown', function(event) {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./lesson1-1-tidy.html">Lesson 1</a></li><li class="breadcrumb-item"><a href="./lesson1-4-tasks.html"><span class="chapter-title">Tasks</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./lesson3-1-datatypes.html">Lesson 3</a></li><li class="breadcrumb-item"><a href="./lesson3-3-tasks.html"><span class="chapter-title">Tasks</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -393,7 +358,7 @@ document.addEventListener('keydown', function(event) {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./lesson1-4-tasks.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Tasks</span></a>
+  <a href="./lesson1-4-tasks.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Tasks</span></a>
   </div>
 </li>
       </ul>
@@ -440,7 +405,7 @@ document.addEventListener('keydown', function(event) {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./lesson3-3-tasks.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Tasks</span></a>
+  <a href="./lesson3-3-tasks.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Tasks</span></a>
   </div>
 </li>
       </ul>
@@ -462,9 +427,6 @@ document.addEventListener('keydown', function(event) {
   <li><a href="#task-1" id="toc-task-1" class="nav-link active" data-scroll-target="#task-1">Task 1</a></li>
   <li><a href="#task-2" id="toc-task-2" class="nav-link" data-scroll-target="#task-2">Task 2</a></li>
   <li><a href="#task-3" id="toc-task-3" class="nav-link" data-scroll-target="#task-3">Task 3</a></li>
-  <li><a href="#task-4" id="toc-task-4" class="nav-link" data-scroll-target="#task-4">Task 4</a></li>
-  <li><a href="#task-5" id="toc-task-5" class="nav-link" data-scroll-target="#task-5">Task 5</a></li>
-  <li><a href="#task-6" id="toc-task-6" class="nav-link" data-scroll-target="#task-6">Task 6</a></li>
   </ul>
 </nav>
     </div>
@@ -472,7 +434,7 @@ document.addEventListener('keydown', function(event) {
 <main class="content" id="quarto-document-content">
 
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./lesson1-1-tidy.html">Lesson 1</a></li><li class="breadcrumb-item"><a href="./lesson1-4-tasks.html"><span class="chapter-title">Tasks</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./lesson3-1-datatypes.html">Lesson 3</a></li><li class="breadcrumb-item"><a href="./lesson3-3-tasks.html"><span class="chapter-title">Tasks</span></a></li></ol></nav>
 <div class="quarto-title">
 <h1 class="title"><span class="chapter-title">Tasks</span></h1>
 </div>
@@ -491,132 +453,17 @@ document.addEventListener('keydown', function(event) {
 </header>
 
 
-<div class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Important
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<ul>
-<li><strong>Try this without AI first</strong> - struggle builds understanding.</li>
-<li>Ask if you are struggling. Asking builds understanding as well!</li>
-</ul>
-</div>
-</div>
 <section id="task-1" class="level2">
 <h2 class="anchored" data-anchor-id="task-1">Task 1</h2>
-<p>The following command returns the path to a tif file on your hard drive:</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">system.file</span>(<span class="st">"ex/elev.tif"</span>, <span class="at">package=</span><span class="st">"terra"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<p>Use this path to import the tif file using <code>rast()</code>, store it as <code>r</code>.</p>
-<div class="cell">
-<details class="code-fold">
-<summary>Sample Solution</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>r <span class="ot">&lt;-</span> <span class="fu">system.file</span>(<span class="st">"ex/elev.tif"</span>, <span class="at">package=</span><span class="st">"terra"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rast</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-</div>
+<p>Download the Sentinel 2 Image from <a href="https://moodle.zhaw.ch/">moodle</a> (<em>CW40 - Image Classification of Remote Sensing Data</em>). Import the bands R, B, G and NIR as a raster image in R (see <a href="https://en.wikipedia.org/wiki/Sentinel-2#Spectral_bands">Spectral Bands (Wikipedia)</a>).</p>
 </section>
 <section id="task-2" class="level2">
 <h2 class="anchored" data-anchor-id="task-2">Task 2</h2>
-<p>Explore this object:</p>
-<ul>
-<li>Determine the minimum and maximum elevation values</li>
-<li>Make a static map using base plot and <code>tmap</code></li>
-<li>Make an interactive map using tmap (<code>tmap_mode("view")</code>)</li>
-<li>Using tmap, explore different <a href="https://r-tmap.github.io/tmap/reference/tm_raster.html#arg-style">styles</a> and <a href="https://r-tmap.github.io/tmap/reference/tm_raster.html#arg-palette">palettes</a>.</li>
-</ul>
-<div class="cell">
-<details class="code-fold">
-<summary>Sample Solution</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Simply looking at the metadata will show min/max values</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>r</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>class       : SpatRaster 
-size        : 90, 95, 1  (nrow, ncol, nlyr)
-resolution  : 0.008333333, 0.008333333  (x, y)
-extent      : 5.741667, 6.533333, 49.44167, 50.19167  (xmin, xmax, ymin, ymax)
-coord. ref. : lon/lat WGS 84 (EPSG:4326) 
-source      : elev.tif 
-name        : elevation 
-min value   :       141 
-max value   :       547 </code></pre>
-</div>
-<details class="code-fold">
-<summary>Sample Solution</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tmap)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(r) <span class="sc">+</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_raster</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="lesson1-4-tasks_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
+<p>Create a True-Color RGB Image and a False-Color NirGB Image using the appropriate bands.</p>
 </section>
 <section id="task-3" class="level2">
 <h2 class="anchored" data-anchor-id="task-3">Task 3</h2>
-<p>The following command returns the path to a tif file on your hard drive:</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">system.file</span>(<span class="st">"tif/L7_ETMs.tif"</span>,<span class="at">package =</span> <span class="st">"stars"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<p>Use this path to import the tif file using <code>rast()</code>, store it as <code>l7</code>.</p>
-<div class="cell">
-<details class="code-fold">
-<summary>Sample Solution</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>l7 <span class="ot">&lt;-</span> <span class="fu">system.file</span>(<span class="st">"tif/L7_ETMs.tif"</span>,<span class="at">package =</span> <span class="st">"stars"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rast</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-</div>
-</section>
-<section id="task-4" class="level2">
-<h2 class="anchored" data-anchor-id="task-4">Task 4</h2>
-<p>Explore this object:</p>
-<ul>
-<li>Spot the differences to the object <code>r</code></li>
-<li>Plot the available layers individually</li>
-<li>Rename the layers to: <code>c("B", "G", "R", "NIR", "SWIR", "MIR")</code> (see <a href="https://r-spatial.github.io/stars/reference/L7_ETMs.html">here</a>)</li>
-</ul>
-</section>
-<section id="task-5" class="level2">
-<h2 class="anchored" data-anchor-id="task-5">Task 5</h2>
-<p>Select the Red Green and Blue bands to create a true color map (<code>plotRGB</code> and <code>tm_rgb</code>)</p>
-<div class="cell">
-<details class="code-fold">
-<summary>Sample Solution</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(l7) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"B"</span>, <span class="st">"G"</span>, <span class="st">"R"</span>, <span class="st">"NIR"</span>, <span class="st">"SWIR"</span>, <span class="st">"MIR"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-</div>
-</section>
-<section id="task-6" class="level2">
-<h2 class="anchored" data-anchor-id="task-6">Task 6</h2>
-<p>Select the NIR, Green and Blue bands to create a false color composite</p>
-<div class="notes">
-<ul>
-<li>Allow 15-20 minutes for these exercises</li>
-<li>Help students with band selection syntax - this is often confusing initially</li>
-<li>Encourage experimentation with different band combinations</li>
-<li>Point out how vegetation appears differently in true vs false color</li>
-<li>This hands-on experience reinforces the theoretical concepts</li>
-</ul>
-</div>
-<div class="cell">
-<details class="code-fold">
-<summary>Sample Solution</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(l7[[<span class="fu">c</span>(<span class="st">"NIR"</span>,<span class="st">"G"</span>,<span class="st">"B"</span>)]]) <span class="sc">+</span> <span class="fu">tm_rgb</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-</div>
+<p>Calculate NDVI of the Sentinel 2 Image using the appropriate bands</p>
 
 
 </section>
@@ -1036,13 +883,13 @@ max value   :       547 </code></pre>
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./lesson1-3-imagery.html" class="pagination-link" aria-label="Imagery Data">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Imagery Data</span></span>
+      <a href="./lesson3-2-sentinel-data.html" class="pagination-link" aria-label="Showcase: Importing Sentinel data">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Showcase: Importing Sentinel data</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./lesson2-1-operations.html" class="pagination-link" aria-label="Raster Operations / Map algebra">
-        <span class="nav-page-text"><span class="chapter-title">Raster Operations / Map algebra</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./references.html" class="pagination-link" aria-label="References">
+        <span class="nav-page-text">References</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

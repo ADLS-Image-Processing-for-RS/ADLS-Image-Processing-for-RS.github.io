@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>From tabular data to raster – Image Processing for Remote Sensing</title>
+<title>Data Types, scale and offset – Image Processing for Remote Sensing</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -85,8 +85,8 @@ div.csl-indent {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./lesson1-2-tasks.html" rel="next">
-<link href="./index.html" rel="prev">
+<link href="./lesson3-2-sentinel-data.html" rel="next">
+<link href="./lesson2-2-tasks.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
@@ -375,7 +375,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./lesson1-1-tidy.html">Lesson 1</a></li><li class="breadcrumb-item"><a href="./lesson1-1-tidy.html"><span class="chapter-title">From tabular data to raster</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./lesson3-1-datatypes.html">Lesson 3</a></li><li class="breadcrumb-item"><a href="./lesson3-1-datatypes.html"><span class="chapter-title">Data Types, scale and offset</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -427,7 +427,7 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./lesson1-1-tidy.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">From tabular data to raster</span></a>
+  <a href="./lesson1-1-tidy.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">From tabular data to raster</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -479,7 +479,7 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./lesson3-1-datatypes.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Data Types, scale and offset</span></a>
+  <a href="./lesson3-1-datatypes.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Data Types, scale and offset</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -508,12 +508,17 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#tabular-data" id="toc-tabular-data" class="nav-link active" data-scroll-target="#tabular-data">Tabular data</a></li>
-  <li><a href="#long-tables-have-a-lot-of-repetitions" id="toc-long-tables-have-a-lot-of-repetitions" class="nav-link" data-scroll-target="#long-tables-have-a-lot-of-repetitions">Long tables have a lot of repetitions:</a></li>
-  <li><a href="#wide-tables-have-less-repetitions." id="toc-wide-tables-have-less-repetitions." class="nav-link" data-scroll-target="#wide-tables-have-less-repetitions.">Wide tables have less repetitions.</a></li>
-  <li><a href="#long-vs-wide" id="toc-long-vs-wide" class="nav-link" data-scroll-target="#long-vs-wide">Long vs Wide</a></li>
-  <li><a href="#dataframe-matrix" id="toc-dataframe-matrix" class="nav-link" data-scroll-target="#dataframe-matrix">Dataframe → Matrix</a></li>
-  <li><a href="#limitations" id="toc-limitations" class="nav-link" data-scroll-target="#limitations">Limitations</a></li>
+  <li><a href="#raster-data-types" id="toc-raster-data-types" class="nav-link active" data-scroll-target="#raster-data-types">Raster data types</a></li>
+  <li><a href="#choosing-a-data-type" id="toc-choosing-a-data-type" class="nav-link" data-scroll-target="#choosing-a-data-type">Choosing a data type</a></li>
+  <li><a href="#rescaling-transforming-values-to-0---255" id="toc-rescaling-transforming-values-to-0---255" class="nav-link" data-scroll-target="#rescaling-transforming-values-to-0---255">Rescaling / Transforming values to 0 - 255</a></li>
+  <li><a href="#rescaling-ndvi-values" id="toc-rescaling-ndvi-values" class="nav-link" data-scroll-target="#rescaling-ndvi-values">Rescaling NDVI values</a></li>
+  <li><a href="#precision" id="toc-precision" class="nav-link" data-scroll-target="#precision">Precision</a></li>
+  <li><a href="#r-implementation-for-vectors" id="toc-r-implementation-for-vectors" class="nav-link" data-scroll-target="#r-implementation-for-vectors">R Implementation for vectors</a></li>
+  <li><a href="#restoring-the-original-values" id="toc-restoring-the-original-values" class="nav-link" data-scroll-target="#restoring-the-original-values">Restoring the original values</a></li>
+  <li><a href="#r-implementation-for-rasters-i" id="toc-r-implementation-for-rasters-i" class="nav-link" data-scroll-target="#r-implementation-for-rasters-i">R implementation for rasters I</a></li>
+  <li><a href="#r-implementation-for-rasters-ii" id="toc-r-implementation-for-rasters-ii" class="nav-link" data-scroll-target="#r-implementation-for-rasters-ii">R implementation for rasters II</a></li>
+  <li><a href="#r-implementation-for-rasters-example" id="toc-r-implementation-for-rasters-example" class="nav-link" data-scroll-target="#r-implementation-for-rasters-example">R implementation for rasters: example</a></li>
+  <li><a href="#r-implementation-for-rasters-example-1" id="toc-r-implementation-for-rasters-example-1" class="nav-link" data-scroll-target="#r-implementation-for-rasters-example-1">R implementation for rasters: example</a></li>
   </ul>
 </nav>
     </div>
@@ -521,9 +526,9 @@ window.Quarto = {
 <main class="content" id="quarto-document-content">
 
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./lesson1-1-tidy.html">Lesson 1</a></li><li class="breadcrumb-item"><a href="./lesson1-1-tidy.html"><span class="chapter-title">From tabular data to raster</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./lesson3-1-datatypes.html">Lesson 3</a></li><li class="breadcrumb-item"><a href="./lesson3-1-datatypes.html"><span class="chapter-title">Data Types, scale and offset</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span id="sec-tidy-to-raster" class="quarto-section-identifier"><span class="chapter-title">From tabular data to raster</span></span></h1>
+<h1 class="title"><span id="sec-data-types" class="quarto-section-identifier"><span class="chapter-title">Data Types, scale and offset</span></span></h1>
 </div>
 
 
@@ -540,777 +545,380 @@ window.Quarto = {
 </header>
 
 
-<!-- Todo: This is too long and takes up too much time -->
-<section id="tabular-data" class="level2">
-<h2 class="anchored" data-anchor-id="tabular-data">Tabular data</h2>
+<section id="raster-data-types" class="level2">
+<h2 class="anchored" data-anchor-id="raster-data-types">Raster data types</h2>
 <ul>
-<li><span class="citation" data-cites="wickham2014">Wickham (<a href="references.html#ref-wickham2014" role="doc-biblioref">2014</a>)</span>: Tidy tabular data: Each variable is a column, each observation is a row, and each type of observational unit is a table.</li>
-<li>Below is a dataset from <span class="citation" data-cites="baltagi2008">Baltagi and Baltagi (<a href="references.html#ref-baltagi2008" role="doc-biblioref">2008</a>)</span></li>
-<li><em>Observation</em> is a state in a particular year</li>
-<li><em>Variable</em> is a measured parameter (see below)</li>
+<li>While R and Python have a variety of data types including character strings, raster data is always stored as numeric</li>
+<li>However, there are quite a number of numeric data types that can be used to store raster data, depending on the range of values and the precision required</li>
+<li>The choice of data type can have a significant impact on the size of the file and the precision of the data stored</li>
+<li>Since raster data is powered by GDAL, most raster based software (including R and Python) use the same data types</li>
+<li>The numeric data types are supported by <code>gdal</code> are summarized in <a href="#tbl-datatypes" class="quarto-xref">Table&nbsp;<span>7.1</span></a></li>
 </ul>
-<div class="notes">
-<ul>
-<li>Start with Wickham’s fundamental definition - this is the foundation</li>
-<li>Emphasize this is about data structure, not just organization</li>
-<li>The Produc dataset is a classic econometric panel dataset - good for demonstrating concepts</li>
-<li>Make sure students understand what constitutes an “observation” vs a “variable”</li>
-</ul>
+<div id="tbl-datatypes" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-datatypes-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;7.1: The possible ranges of different datatypes in <code>gdal</code> (source: <span class="citation" data-cites="amatulli2024">Amatulli</span>)
+</figcaption>
+<div aria-describedby="tbl-datatypes-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 28%">
+<col style="width: 23%">
+<col style="width: 22%">
+<col style="width: 13%">
+<col style="width: 11%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Data type</th>
+<th style="text-align: right;">Minimum</th>
+<th style="text-align: right;">Maximum</th>
+<th style="text-align: right;">Size<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></th>
+<th style="text-align: right;">Factor</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Byte</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">255</td>
+<td style="text-align: right;">39M</td>
+<td style="text-align: right;">1x</td>
+</tr>
+<tr class="even">
+<td>UInt16</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">65,535</td>
+<td style="text-align: right;">78M</td>
+<td style="text-align: right;">2x</td>
+</tr>
+<tr class="odd">
+<td>Int16, CInt16</td>
+<td style="text-align: right;">-32,768</td>
+<td style="text-align: right;">32,767</td>
+<td style="text-align: right;">78M</td>
+<td style="text-align: right;">2x</td>
+</tr>
+<tr class="even">
+<td>UInt32</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">4,294,967,295</td>
+<td style="text-align: right;">155M</td>
+<td style="text-align: right;">~4x</td>
+</tr>
+<tr class="odd">
+<td>Int32, CInt32</td>
+<td style="text-align: right;">-2,147,483,648</td>
+<td style="text-align: right;">2,147,483,647</td>
+<td style="text-align: right;">155M</td>
+<td style="text-align: right;">~4x</td>
+</tr>
+<tr class="even">
+<td>Float32, CFloat32</td>
+<td style="text-align: right;">-3.4E38</td>
+<td style="text-align: right;">3.4E38</td>
+<td style="text-align: right;">155M</td>
+<td style="text-align: right;">~4x</td>
+</tr>
+<tr class="odd">
+<td>Float64, CFloat64</td>
+<td style="text-align: right;">-1.79E308</td>
+<td style="text-align: right;">1.79E308</td>
+<td style="text-align: right;">309M</td>
+<td style="text-align: right;">~8x</td>
+</tr>
+</tbody>
+</table>
 </div>
-<div class="callout callout-style-default callout-note callout-titled">
+</figure>
+</div>
+<div class="notes callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Parameter
+Note
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
 <div id="callout-1" class="callout-1-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <ul>
-<li>pcap: public capital stock</li>
-<li>hwy: highway and streets</li>
-<li>water: water and sewer facilities</li>
-<li>util: other public buildings and structures</li>
-<li>pc: private capital stock</li>
-<li>gsp: gross state product</li>
-<li>emp: labor input measured by the employment in non–agricultural payrolls</li>
-<li>unemp: state unemployment rate</li>
-</ul>
-</div>
-</div>
-</div>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>Produc <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/Produc.csv"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(<span class="sc">-</span>region) <span class="sc">|&gt;</span> </span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="sc">!</span>(state <span class="sc">==</span> <span class="st">"ARIZONA"</span> <span class="sc">&amp;</span> year <span class="sc">==</span> <span class="dv">1971</span>))</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Produc[Produc$state == "ARIZONA" &amp; Produc$year == 1971,c("unemp")] &lt;- NA</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>Produc <span class="sc">|&gt;</span> </span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">head</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">kable</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display">
-<table class="caption-top table table-sm table-striped small">
-<colgroup>
-<col style="width: 10%">
-<col style="width: 6%">
-<col style="width: 12%">
-<col style="width: 10%">
-<col style="width: 10%">
-<col style="width: 10%">
-<col style="width: 12%">
-<col style="width: 8%">
-<col style="width: 9%">
-<col style="width: 8%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">state</th>
-<th style="text-align: right;">year</th>
-<th style="text-align: right;">pcap</th>
-<th style="text-align: right;">hwy</th>
-<th style="text-align: right;">water</th>
-<th style="text-align: right;">util</th>
-<th style="text-align: right;">pc</th>
-<th style="text-align: right;">gsp</th>
-<th style="text-align: right;">emp</th>
-<th style="text-align: right;">unemp</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">ALABAMA</td>
-<td style="text-align: right;">1970</td>
-<td style="text-align: right;">15032.67</td>
-<td style="text-align: right;">7325.80</td>
-<td style="text-align: right;">1655.68</td>
-<td style="text-align: right;">6051.20</td>
-<td style="text-align: right;">35793.80</td>
-<td style="text-align: right;">28418</td>
-<td style="text-align: right;">1010.5</td>
-<td style="text-align: right;">4.7</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALABAMA</td>
-<td style="text-align: right;">1971</td>
-<td style="text-align: right;">15501.94</td>
-<td style="text-align: right;">7525.94</td>
-<td style="text-align: right;">1721.02</td>
-<td style="text-align: right;">6254.98</td>
-<td style="text-align: right;">37299.91</td>
-<td style="text-align: right;">29375</td>
-<td style="text-align: right;">1021.9</td>
-<td style="text-align: right;">5.2</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALABAMA</td>
-<td style="text-align: right;">1972</td>
-<td style="text-align: right;">15972.41</td>
-<td style="text-align: right;">7765.42</td>
-<td style="text-align: right;">1764.75</td>
-<td style="text-align: right;">6442.23</td>
-<td style="text-align: right;">38670.30</td>
-<td style="text-align: right;">31303</td>
-<td style="text-align: right;">1072.3</td>
-<td style="text-align: right;">4.7</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALABAMA</td>
-<td style="text-align: right;">1973</td>
-<td style="text-align: right;">16406.26</td>
-<td style="text-align: right;">7907.66</td>
-<td style="text-align: right;">1742.41</td>
-<td style="text-align: right;">6756.19</td>
-<td style="text-align: right;">40084.01</td>
-<td style="text-align: right;">33430</td>
-<td style="text-align: right;">1135.5</td>
-<td style="text-align: right;">3.9</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALABAMA</td>
-<td style="text-align: right;">1974</td>
-<td style="text-align: right;">16762.67</td>
-<td style="text-align: right;">8025.52</td>
-<td style="text-align: right;">1734.85</td>
-<td style="text-align: right;">7002.29</td>
-<td style="text-align: right;">42057.31</td>
-<td style="text-align: right;">33749</td>
-<td style="text-align: right;">1169.8</td>
-<td style="text-align: right;">5.5</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALABAMA</td>
-<td style="text-align: right;">1975</td>
-<td style="text-align: right;">17316.26</td>
-<td style="text-align: right;">8158.23</td>
-<td style="text-align: right;">1752.27</td>
-<td style="text-align: right;">7405.76</td>
-<td style="text-align: right;">43971.71</td>
-<td style="text-align: right;">33604</td>
-<td style="text-align: right;">1155.4</td>
-<td style="text-align: right;">7.7</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<div class="notes callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Note
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-2" class="callout-2-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
+<li>If you store categorical data, use integer datatype and store the corespondence in the metadata</li>
+<li>Always be minimalistic about which datatype you need.</li>
+<li>Question if you have a continuous value from 0 to 1, which datatype do you use?
 <ul>
-<li>This is considered a <em>long</em> table and is great for modelling and visualization.</li>
-<li>It’s bad for memory (a lot of repetitions)</li>
-</ul>
-</div>
-</div>
-</div>
-</section>
-<section id="long-tables-have-a-lot-of-repetitions" class="level2">
-<h2 class="anchored" data-anchor-id="long-tables-have-a-lot-of-repetitions">Long tables have a lot of repetitions:</h2>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(Produc<span class="sc">$</span>state)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 815</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">n_distinct</span>(Produc<span class="sc">$</span>state)</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 48</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(Produc<span class="sc">$</span>year)</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 815</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="fu">n_distinct</span>(Produc<span class="sc">$</span>year)</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 17</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>n_values <span class="ot">&lt;-</span> <span class="fu">dim</span>(Produc) <span class="sc">|&gt;</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">prod</span>()</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>n_values</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 8150</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<div class="notes">
+<li>Not <code>Float32</code>! But Multiply by 100 and use <code>Byte</code> or by 1000 (if you need more precision) and use <code>UInt16</code></li>
+</ul></li>
+<li>Question: if you are measuring temperature, and your values are floating point ranging is -20 to +40 degrees, what datatype are you going to use?
 <ul>
-<li>Walk through the calculation step by step</li>
-<li>816 total entries for state, but only 48 unique states</li>
-<li>This repetition is characteristic of long/tidy format</li>
-<li>Great for analysis but wasteful of memory</li>
-<li>This leads naturally to why we might want wide format for raster data</li>
-</ul>
-</div>
-</section>
-<section id="wide-tables-have-less-repetitions." class="level2">
-<h2 class="anchored" data-anchor-id="wide-tables-have-less-repetitions.">Wide tables have less repetitions.</h2>
-<p>To demonstrate we convert a long to wide.</p>
-<div class="notes">
+<li>Not CFloat32!</li>
+<li>Multiply by 100 and use <code>CInt16</code></li>
+</ul></li>
+<li>Question: if you compute NDVI and have values in the range 0 - 1, what datatype do you use?
 <ul>
-<li>This is the key transition - from statistical/analysis format to raster format</li>
-<li>Wide format is more memory efficient but less flexible for analysis</li>
-<li>This mirrors how raster data is naturally stored</li>
-</ul>
-</div>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Pivoting must be done per variable</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>Produc_wide <span class="ot">&lt;-</span> Produc <span class="sc">|&gt;</span> </span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(state, year, unemp) <span class="sc">|&gt;</span> </span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> state, <span class="at">values_from =</span> unemp) <span class="sc">|&gt;</span> </span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">column_to_rownames</span>(<span class="st">"year"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<div class="notes callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Note
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-3" class="callout-3-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>We can either omit the column “year”, (since this is implicit knowledge, <span class="math inline">\(row_i + 1970\)</span>), or use it as a <code>rowname</code>.</p>
-</div>
-</div>
-</div>
-</section>
-<section id="long-vs-wide" class="level2">
-<h2 class="anchored" data-anchor-id="long-vs-wide">Long vs Wide</h2>
-<p>Long / tidy:</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>Produc <span class="sc">|&gt;</span> </span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">head</span>(<span class="dv">5</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">kable</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display">
-<table class="caption-top table table-sm table-striped small">
-<colgroup>
-<col style="width: 10%">
-<col style="width: 6%">
-<col style="width: 12%">
-<col style="width: 10%">
-<col style="width: 10%">
-<col style="width: 10%">
-<col style="width: 12%">
-<col style="width: 8%">
-<col style="width: 9%">
-<col style="width: 8%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">state</th>
-<th style="text-align: right;">year</th>
-<th style="text-align: right;">pcap</th>
-<th style="text-align: right;">hwy</th>
-<th style="text-align: right;">water</th>
-<th style="text-align: right;">util</th>
-<th style="text-align: right;">pc</th>
-<th style="text-align: right;">gsp</th>
-<th style="text-align: right;">emp</th>
-<th style="text-align: right;">unemp</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">ALABAMA</td>
-<td style="text-align: right;">1970</td>
-<td style="text-align: right;">15032.67</td>
-<td style="text-align: right;">7325.80</td>
-<td style="text-align: right;">1655.68</td>
-<td style="text-align: right;">6051.20</td>
-<td style="text-align: right;">35793.80</td>
-<td style="text-align: right;">28418</td>
-<td style="text-align: right;">1010.5</td>
-<td style="text-align: right;">4.7</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALABAMA</td>
-<td style="text-align: right;">1971</td>
-<td style="text-align: right;">15501.94</td>
-<td style="text-align: right;">7525.94</td>
-<td style="text-align: right;">1721.02</td>
-<td style="text-align: right;">6254.98</td>
-<td style="text-align: right;">37299.91</td>
-<td style="text-align: right;">29375</td>
-<td style="text-align: right;">1021.9</td>
-<td style="text-align: right;">5.2</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALABAMA</td>
-<td style="text-align: right;">1972</td>
-<td style="text-align: right;">15972.41</td>
-<td style="text-align: right;">7765.42</td>
-<td style="text-align: right;">1764.75</td>
-<td style="text-align: right;">6442.23</td>
-<td style="text-align: right;">38670.30</td>
-<td style="text-align: right;">31303</td>
-<td style="text-align: right;">1072.3</td>
-<td style="text-align: right;">4.7</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALABAMA</td>
-<td style="text-align: right;">1973</td>
-<td style="text-align: right;">16406.26</td>
-<td style="text-align: right;">7907.66</td>
-<td style="text-align: right;">1742.41</td>
-<td style="text-align: right;">6756.19</td>
-<td style="text-align: right;">40084.01</td>
-<td style="text-align: right;">33430</td>
-<td style="text-align: right;">1135.5</td>
-<td style="text-align: right;">3.9</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALABAMA</td>
-<td style="text-align: right;">1974</td>
-<td style="text-align: right;">16762.67</td>
-<td style="text-align: right;">8025.52</td>
-<td style="text-align: right;">1734.85</td>
-<td style="text-align: right;">7002.29</td>
-<td style="text-align: right;">42057.31</td>
-<td style="text-align: right;">33749</td>
-<td style="text-align: right;">1169.8</td>
-<td style="text-align: right;">5.5</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<hr>
-<p>Wide / untidy:</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>Produc_wide <span class="sc">|&gt;</span> </span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">head</span>(<span class="dv">5</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">kable</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display">
-<table class="caption-top table table-sm table-striped small">
-<colgroup>
-<col style="width: 1%">
-<col style="width: 1%">
-<col style="width: 1%">
-<col style="width: 1%">
-<col style="width: 2%">
-<col style="width: 1%">
-<col style="width: 2%">
-<col style="width: 1%">
-<col style="width: 1%">
-<col style="width: 1%">
-<col style="width: 1%">
-<col style="width: 1%">
-<col style="width: 1%">
-<col style="width: 1%">
-<col style="width: 1%">
-<col style="width: 1%">
-<col style="width: 2%">
-<col style="width: 1%">
-<col style="width: 1%">
-<col style="width: 3%">
-<col style="width: 1%">
-<col style="width: 2%">
-<col style="width: 2%">
-<col style="width: 1%">
-<col style="width: 1%">
-<col style="width: 1%">
-<col style="width: 1%">
-<col style="width: 3%">
-<col style="width: 2%">
-<col style="width: 2%">
-<col style="width: 1%">
-<col style="width: 3%">
-<col style="width: 2%">
-<col style="width: 1%">
-<col style="width: 1%">
-<col style="width: 1%">
-<col style="width: 2%">
-<col style="width: 2%">
-<col style="width: 3%">
-<col style="width: 2%">
-<col style="width: 1%">
-<col style="width: 1%">
-<col style="width: 1%">
-<col style="width: 1%">
-<col style="width: 1%">
-<col style="width: 2%">
-<col style="width: 3%">
-<col style="width: 2%">
-<col style="width: 1%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;"></th>
-<th style="text-align: right;">ALABAMA</th>
-<th style="text-align: right;">ARIZONA</th>
-<th style="text-align: right;">ARKANSAS</th>
-<th style="text-align: right;">CALIFORNIA</th>
-<th style="text-align: right;">COLORADO</th>
-<th style="text-align: right;">CONNECTICUT</th>
-<th style="text-align: right;">DELAWARE</th>
-<th style="text-align: right;">FLORIDA</th>
-<th style="text-align: right;">GEORGIA</th>
-<th style="text-align: right;">IDAHO</th>
-<th style="text-align: right;">ILLINOIS</th>
-<th style="text-align: right;">INDIANA</th>
-<th style="text-align: right;">IOWA</th>
-<th style="text-align: right;">KANSAS</th>
-<th style="text-align: right;">KENTUCKY</th>
-<th style="text-align: right;">LOUISIANA</th>
-<th style="text-align: right;">MAINE</th>
-<th style="text-align: right;">MARYLAND</th>
-<th style="text-align: right;">MASSACHUSETTS</th>
-<th style="text-align: right;">MICHIGAN</th>
-<th style="text-align: right;">MINNESOTA</th>
-<th style="text-align: right;">MISSISSIPPI</th>
-<th style="text-align: right;">MISSOURI</th>
-<th style="text-align: right;">MONTANA</th>
-<th style="text-align: right;">NEBRASKA</th>
-<th style="text-align: right;">NEVADA</th>
-<th style="text-align: right;">NEW_HAMPSHIRE</th>
-<th style="text-align: right;">NEW_JERSEY</th>
-<th style="text-align: right;">NEW_MEXICO</th>
-<th style="text-align: right;">NEW_YORK</th>
-<th style="text-align: right;">NORTH_CAROLINA</th>
-<th style="text-align: right;">NORTH_DAKOTA</th>
-<th style="text-align: right;">OHIO</th>
-<th style="text-align: right;">OKLAHOMA</th>
-<th style="text-align: right;">OREGON</th>
-<th style="text-align: right;">PENNSYLVANIA</th>
-<th style="text-align: right;">RHODE_ISLAND</th>
-<th style="text-align: right;">SOUTH_CAROLINA</th>
-<th style="text-align: right;">SOUTH_DAKOTA</th>
-<th style="text-align: right;">TENNESSE</th>
-<th style="text-align: right;">TEXAS</th>
-<th style="text-align: right;">UTAH</th>
-<th style="text-align: right;">VERMONT</th>
-<th style="text-align: right;">VIRGINIA</th>
-<th style="text-align: right;">WASHINGTON</th>
-<th style="text-align: right;">WEST_VIRGINIA</th>
-<th style="text-align: right;">WISCONSIN</th>
-<th style="text-align: right;">WYOMING</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">1970</td>
-<td style="text-align: right;">4.7</td>
-<td style="text-align: right;">4.4</td>
-<td style="text-align: right;">5.0</td>
-<td style="text-align: right;">7.2</td>
-<td style="text-align: right;">4.4</td>
-<td style="text-align: right;">5.6</td>
-<td style="text-align: right;">4.8</td>
-<td style="text-align: right;">4.4</td>
-<td style="text-align: right;">4.1</td>
-<td style="text-align: right;">5.8</td>
-<td style="text-align: right;">4.1</td>
-<td style="text-align: right;">5.0</td>
-<td style="text-align: right;">3.7</td>
-<td style="text-align: right;">4.8</td>
-<td style="text-align: right;">5.0</td>
-<td style="text-align: right;">6.6</td>
-<td style="text-align: right;">5.7</td>
-<td style="text-align: right;">3.3</td>
-<td style="text-align: right;">4.6</td>
-<td style="text-align: right;">6.7</td>
-<td style="text-align: right;">4.2</td>
-<td style="text-align: right;">4.8</td>
-<td style="text-align: right;">3.3</td>
-<td style="text-align: right;">5.5</td>
-<td style="text-align: right;">3.1</td>
-<td style="text-align: right;">5.9</td>
-<td style="text-align: right;">3.3</td>
-<td style="text-align: right;">4.6</td>
-<td style="text-align: right;">5.9</td>
-<td style="text-align: right;">4.5</td>
-<td style="text-align: right;">4.3</td>
-<td style="text-align: right;">4.6</td>
-<td style="text-align: right;">5.4</td>
-<td style="text-align: right;">4.4</td>
-<td style="text-align: right;">6.2</td>
-<td style="text-align: right;">4.5</td>
-<td style="text-align: right;">5.2</td>
-<td style="text-align: right;">5.0</td>
-<td style="text-align: right;">3.3</td>
-<td style="text-align: right;">4.8</td>
-<td style="text-align: right;">4.4</td>
-<td style="text-align: right;">6.1</td>
-<td style="text-align: right;">4.9</td>
-<td style="text-align: right;">3.4</td>
-<td style="text-align: right;">9.1</td>
-<td style="text-align: right;">6.1</td>
-<td style="text-align: right;">3.9</td>
-<td style="text-align: right;">4.5</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">1971</td>
-<td style="text-align: right;">5.2</td>
-<td style="text-align: right;">NA</td>
-<td style="text-align: right;">5.4</td>
-<td style="text-align: right;">8.8</td>
-<td style="text-align: right;">4.0</td>
-<td style="text-align: right;">8.9</td>
-<td style="text-align: right;">5.7</td>
-<td style="text-align: right;">4.9</td>
-<td style="text-align: right;">3.9</td>
-<td style="text-align: right;">6.3</td>
-<td style="text-align: right;">5.1</td>
-<td style="text-align: right;">5.7</td>
-<td style="text-align: right;">4.2</td>
-<td style="text-align: right;">5.5</td>
-<td style="text-align: right;">5.5</td>
-<td style="text-align: right;">7.0</td>
-<td style="text-align: right;">7.6</td>
-<td style="text-align: right;">4.2</td>
-<td style="text-align: right;">6.6</td>
-<td style="text-align: right;">7.6</td>
-<td style="text-align: right;">4.4</td>
-<td style="text-align: right;">4.8</td>
-<td style="text-align: right;">4.9</td>
-<td style="text-align: right;">6.3</td>
-<td style="text-align: right;">3.6</td>
-<td style="text-align: right;">7.0</td>
-<td style="text-align: right;">4.7</td>
-<td style="text-align: right;">5.7</td>
-<td style="text-align: right;">6.2</td>
-<td style="text-align: right;">6.6</td>
-<td style="text-align: right;">4.8</td>
-<td style="text-align: right;">5.3</td>
-<td style="text-align: right;">6.5</td>
-<td style="text-align: right;">4.9</td>
-<td style="text-align: right;">6.6</td>
-<td style="text-align: right;">5.4</td>
-<td style="text-align: right;">6.8</td>
-<td style="text-align: right;">5.3</td>
-<td style="text-align: right;">3.7</td>
-<td style="text-align: right;">5.0</td>
-<td style="text-align: right;">4.9</td>
-<td style="text-align: right;">6.4</td>
-<td style="text-align: right;">6.8</td>
-<td style="text-align: right;">3.6</td>
-<td style="text-align: right;">10.0</td>
-<td style="text-align: right;">6.5</td>
-<td style="text-align: right;">4.5</td>
-<td style="text-align: right;">4.5</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">1972</td>
-<td style="text-align: right;">4.7</td>
-<td style="text-align: right;">4.2</td>
-<td style="text-align: right;">4.6</td>
-<td style="text-align: right;">7.6</td>
-<td style="text-align: right;">3.6</td>
-<td style="text-align: right;">8.2</td>
-<td style="text-align: right;">4.7</td>
-<td style="text-align: right;">4.5</td>
-<td style="text-align: right;">4.1</td>
-<td style="text-align: right;">6.2</td>
-<td style="text-align: right;">5.1</td>
-<td style="text-align: right;">4.5</td>
-<td style="text-align: right;">3.6</td>
-<td style="text-align: right;">4.0</td>
-<td style="text-align: right;">4.8</td>
-<td style="text-align: right;">6.1</td>
-<td style="text-align: right;">7.0</td>
-<td style="text-align: right;">4.7</td>
-<td style="text-align: right;">6.4</td>
-<td style="text-align: right;">7.0</td>
-<td style="text-align: right;">4.3</td>
-<td style="text-align: right;">3.9</td>
-<td style="text-align: right;">4.2</td>
-<td style="text-align: right;">6.2</td>
-<td style="text-align: right;">3.4</td>
-<td style="text-align: right;">7.0</td>
-<td style="text-align: right;">4.5</td>
-<td style="text-align: right;">5.8</td>
-<td style="text-align: right;">5.8</td>
-<td style="text-align: right;">6.7</td>
-<td style="text-align: right;">4.0</td>
-<td style="text-align: right;">4.9</td>
-<td style="text-align: right;">5.5</td>
-<td style="text-align: right;">4.5</td>
-<td style="text-align: right;">5.7</td>
-<td style="text-align: right;">5.4</td>
-<td style="text-align: right;">6.5</td>
-<td style="text-align: right;">4.2</td>
-<td style="text-align: right;">3.7</td>
-<td style="text-align: right;">3.6</td>
-<td style="text-align: right;">4.5</td>
-<td style="text-align: right;">6.1</td>
-<td style="text-align: right;">6.5</td>
-<td style="text-align: right;">3.6</td>
-<td style="text-align: right;">9.5</td>
-<td style="text-align: right;">6.5</td>
-<td style="text-align: right;">4.2</td>
-<td style="text-align: right;">4.0</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">1973</td>
-<td style="text-align: right;">3.9</td>
-<td style="text-align: right;">4.1</td>
-<td style="text-align: right;">4.1</td>
-<td style="text-align: right;">7.0</td>
-<td style="text-align: right;">3.4</td>
-<td style="text-align: right;">5.7</td>
-<td style="text-align: right;">4.6</td>
-<td style="text-align: right;">4.3</td>
-<td style="text-align: right;">3.9</td>
-<td style="text-align: right;">5.6</td>
-<td style="text-align: right;">4.1</td>
-<td style="text-align: right;">4.2</td>
-<td style="text-align: right;">2.9</td>
-<td style="text-align: right;">3.1</td>
-<td style="text-align: right;">4.4</td>
-<td style="text-align: right;">6.0</td>
-<td style="text-align: right;">5.9</td>
-<td style="text-align: right;">3.5</td>
-<td style="text-align: right;">6.7</td>
-<td style="text-align: right;">5.8</td>
-<td style="text-align: right;">4.4</td>
-<td style="text-align: right;">3.6</td>
-<td style="text-align: right;">3.7</td>
-<td style="text-align: right;">6.3</td>
-<td style="text-align: right;">3.3</td>
-<td style="text-align: right;">6.2</td>
-<td style="text-align: right;">3.9</td>
-<td style="text-align: right;">5.6</td>
-<td style="text-align: right;">5.7</td>
-<td style="text-align: right;">5.4</td>
-<td style="text-align: right;">3.5</td>
-<td style="text-align: right;">5.1</td>
-<td style="text-align: right;">4.3</td>
-<td style="text-align: right;">4.2</td>
-<td style="text-align: right;">5.3</td>
-<td style="text-align: right;">4.8</td>
-<td style="text-align: right;">6.2</td>
-<td style="text-align: right;">3.7</td>
-<td style="text-align: right;">3.3</td>
-<td style="text-align: right;">3.0</td>
-<td style="text-align: right;">3.9</td>
-<td style="text-align: right;">5.7</td>
-<td style="text-align: right;">5.6</td>
-<td style="text-align: right;">3.6</td>
-<td style="text-align: right;">7.7</td>
-<td style="text-align: right;">5.7</td>
-<td style="text-align: right;">4.1</td>
-<td style="text-align: right;">3.5</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">1974</td>
-<td style="text-align: right;">5.5</td>
-<td style="text-align: right;">5.6</td>
-<td style="text-align: right;">4.8</td>
-<td style="text-align: right;">7.7</td>
-<td style="text-align: right;">3.8</td>
-<td style="text-align: right;">6.2</td>
-<td style="text-align: right;">6.0</td>
-<td style="text-align: right;">6.2</td>
-<td style="text-align: right;">5.0</td>
-<td style="text-align: right;">6.0</td>
-<td style="text-align: right;">4.5</td>
-<td style="text-align: right;">5.9</td>
-<td style="text-align: right;">3.0</td>
-<td style="text-align: right;">3.5</td>
-<td style="text-align: right;">4.5</td>
-<td style="text-align: right;">6.7</td>
-<td style="text-align: right;">6.7</td>
-<td style="text-align: right;">3.7</td>
-<td style="text-align: right;">7.2</td>
-<td style="text-align: right;">8.7</td>
-<td style="text-align: right;">4.3</td>
-<td style="text-align: right;">4.1</td>
-<td style="text-align: right;">4.5</td>
-<td style="text-align: right;">6.7</td>
-<td style="text-align: right;">3.8</td>
-<td style="text-align: right;">7.5</td>
-<td style="text-align: right;">3.6</td>
-<td style="text-align: right;">6.9</td>
-<td style="text-align: right;">6.3</td>
-<td style="text-align: right;">6.3</td>
-<td style="text-align: right;">4.5</td>
-<td style="text-align: right;">3.0</td>
-<td style="text-align: right;">5.0</td>
-<td style="text-align: right;">4.4</td>
-<td style="text-align: right;">7.5</td>
-<td style="text-align: right;">5.1</td>
-<td style="text-align: right;">7.3</td>
-<td style="text-align: right;">4.5</td>
-<td style="text-align: right;">3.5</td>
-<td style="text-align: right;">3.9</td>
-<td style="text-align: right;">4.3</td>
-<td style="text-align: right;">5.9</td>
-<td style="text-align: right;">6.9</td>
-<td style="text-align: right;">4.0</td>
-<td style="text-align: right;">7.2</td>
-<td style="text-align: right;">5.9</td>
-<td style="text-align: right;">4.6</td>
-<td style="text-align: right;">3.6</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</section>
-<section id="dataframe-matrix" class="level2">
-<h2 class="anchored" data-anchor-id="dataframe-matrix">Dataframe → Matrix</h2>
-<p>Less repetitions / smaller memory footprint is only part of the advantage:</p>
-<ul>
-<li>All columns now have the same datatype (<code>dbl</code>)
-<ul>
-<li>This means, they can be stored in a matrix / array</li>
-<li>This gives us a <em>big</em> speed advantage (see <a href="#fig-benchmark" class="quarto-xref">Figure&nbsp;<span>1.1</span></a>)</li>
+<li>Not <code>Float32</code>, but not <code>CInt16</code> either:</li>
+<li>Transform the values to 0 - 255</li>
 </ul></li>
 </ul>
-<div class="cell">
-<div class="cell-output-display">
-<div id="fig-benchmark" class="quarto-float quarto-figure quarto-figure-center anchored" width="672">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-benchmark-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="lesson1-1-tidy_files/figure-html/fig-benchmark-1.png" id="fig-benchmark" class="img-fluid figure-img" width="672">
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-benchmark-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1.1
-</figcaption>
+</div>
+</div>
+</section>
+<section id="choosing-a-data-type" class="level2">
+<h2 class="anchored" data-anchor-id="choosing-a-data-type">Choosing a data type</h2>
+<ul>
+<li>To minimize file size, it’s important to choose the data type that best fits the range of values in the raster</li>
+<li>At a first glance, it might seem that the numeric values we measured / calculated <em>determine</em> the datatype we use</li>
+<li>However, we can transform the values to a different range to fit a different datatype</li>
+<li>For example, if we have NDVI values ranging from -1 to 1, it might seem that we need to use <code>CFloat32</code> to store these values. However, we can <em>transform</em> (rescale) these values to the range 0 - 255 and store them as <code>Byte</code> datatype.</li>
+</ul>
+</section>
+<section id="rescaling-transforming-values-to-0---255" class="level2">
+<h2 class="anchored" data-anchor-id="rescaling-transforming-values-to-0---255">Rescaling / Transforming values to 0 - 255</h2>
+<p>From <a href="https://en.wikipedia.org/wiki/Feature_scaling#Rescaling_(min-max_normalization)">Wikipedia</a>:</p>
+<blockquote class="blockquote">
+<p>To rescale a range between an arbitrary set of values [a, b], the formula becomes: <span class="math display">\[x' = a + \frac{(x-min(x))\times(b - a)}{max(x)-min(x)}\]</span></p>
+</blockquote>
+<p>For our usecase, we can consider:</p>
+<ul>
+<li><span class="math inline">\(x'\)</span> to be the <em>stored</em> value</li>
+<li><span class="math inline">\(x\)</span> to be the measured value</li>
+<li><span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span> to be the maximum, minimum value of <code>Byte</code> (0 and 255 respectively)</li>
+<li><span class="math inline">\(min(x)\)</span> and <span class="math inline">\(max(x)\)</span> the maximum and minimum measured values (<code>-1</code> and <code>1</code> respectively)</li>
+</ul>
+<p>We can use these values and simplify the formula as follows:</p>
+<p><span class="math display">\[\begin{align}
+
+x' &amp;= 0 + \frac{(x+1)\times 255}{2} \\
+
+x' &amp;= \frac{255x+255}{2} \\
+
+x' &amp;= 127.5x+127.5 \\
+
+\end{align}\]</span></p>
+</section>
+<section id="rescaling-ndvi-values" class="level2">
+<h2 class="anchored" data-anchor-id="rescaling-ndvi-values">Rescaling NDVI values</h2>
+<ul>
+<li>We can now use this formula <span class="math inline">\(x' = 127.5x+127.5\)</span> to rescale NDVI values to the range 0 - 255</li>
+<li>So, rather than storing the NDVI value 0.2, for example, we store the value 153</li>
+<li>This rescaling is determined by two values: <code>scale</code> and <code>offset</code> (127.5 for both values in our case)</li>
+</ul>
+</section>
+<section id="precision" class="level2">
+<h2 class="anchored" data-anchor-id="precision">Precision</h2>
+<p>Note that this transformation to 255 values limits our precision:</p>
+<ul>
+<li>Our values are now limited to in their precision, since we only have 255 possible values</li>
+<li>We can calculate the available precision like so: <span class="math inline">\(\frac{max(x)-min(x)}{b-a}\)</span></li>
+<li>In our case this is <span class="math inline">\(\frac{1 - (-1)}{255-0} = 0.0078\)</span>.</li>
+<li>Any measured / calculated NDVI value will be rounded to a multiple of 0.0078.</li>
+</ul>
+</section>
+<section id="r-implementation-for-vectors" class="level2">
+<h2 class="anchored" data-anchor-id="r-implementation-for-vectors">R Implementation for vectors</h2>
+<ul>
+<li>A generic way to implement this in R is as follows:</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>scale_minmax <span class="ot">&lt;-</span> <span class="cf">function</span>(</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    x, </span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">a =</span> <span class="dv">0</span>,          <span class="co"># the minimum value of the new range (default 0)</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">b =</span> <span class="dv">255</span>         <span class="co"># the maximum value of the new range (default 255)</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    ){</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  min_x <span class="ot">=</span> <span class="fu">min</span>(x) </span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  max_x <span class="ot">=</span> <span class="fu">max</span>(x) </span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  a <span class="sc">+</span> (x <span class="sc">-</span> min_x) <span class="sc">*</span> (b <span class="sc">-</span> a) <span class="sc">/</span> (max_x <span class="sc">-</span> min_x)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Take the following example:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># this creates 100 random NDVI values between -1 and 1</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>ndvi_measured <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="dv">100</span>, <span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>ndvi_stored <span class="ot">&lt;-</span> <span class="fu">scale_minmax</span>(ndvi_measured)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(ndvi_measured, ndvi_stored) <span class="sc">|&gt;</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(ndvi_measured, ndvi_stored)) <span class="sc">+</span> </span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">col =</span> <span class="st">"grey"</span>) <span class="sc">+</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Measured NDVI (-1 to +1)"</span>, <span class="at">y =</span> <span class="st">"Stored value (0 to 255)"</span>) <span class="sc">+</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lesson3-1-datatypes_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
-<div class="notes">
+</section>
+<section id="restoring-the-original-values" class="level2">
+<h2 class="anchored" data-anchor-id="restoring-the-original-values">Restoring the original values</h2>
 <ul>
-<li>Homogeneous data types enable matrix operations</li>
-<li>Matrices are stored contiguously in memory - much faster access</li>
-<li>This speed difference becomes enormous with large raster datasets</li>
-<li>Matrix operations are highly optimized and often vectorized</li>
+<li>Imagine you stored the NDVI values in the range 0 - 255, stored these values in a Geotiff and sent it to a colleague.</li>
+<li>To restore the original NDVI values the transformation (<span class="math inline">\(x' = 127x+127.5\)</span>) needs to be known</li>
+<li>More precisely, the <code>scale</code> and <code>offset</code> values need to be known</li>
+<li>We can simply invert the transformation to get the original values back: <span class="math inline">\(x = \frac{x'-127.5}{127.5}\)</span></li>
 </ul>
+</section>
+<section id="r-implementation-for-rasters-i" class="level2">
+<h2 class="anchored" data-anchor-id="r-implementation-for-rasters-i">R implementation for rasters I</h2>
+<ul>
+<li>Since rescaling values is a common operation, it is supported by GDAL and therefore most raster libraries</li>
+<li>Rather than transforming our values in memory, we can transform them when writing the raster to disk.</li>
+<li>For this, we can use the arguments <code>scale =</code> and <code>offset =</code> in the <code>writeRaster</code> function</li>
+<li>To use these arguments we need to calculate the <code>scale</code> and <code>offset</code> values first</li>
+<li>Rewriting the formula above, we can calculate <code>scale</code> and <code>offset</code>:</li>
+</ul>
+<p><span class="math display">\[\begin{align}
+\text{scale} &amp;= \frac{b - a}{max(x)-min(x)} \\
+\text{offset} &amp;= \frac{a \times max(x) - b \times min(x)}{max(x)-min(x)}
+\end{align}\]</span></p>
+<ul>
+<li>To implement this in R, I use two functions: <code>get_scale</code> and <code>get_offset</code>:</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>get_scale <span class="ot">&lt;-</span> <span class="cf">function</span>(</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    x, </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">a =</span> <span class="dv">0</span>,          <span class="co"># the minimum value of the new range (default 0)</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">b =</span> <span class="dv">255</span>         <span class="co"># the maximum value of the new range (default 255)</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    ){</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  min_x <span class="ot">=</span> <span class="fu">min</span>(x)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  max_x <span class="ot">=</span> <span class="fu">max</span>(x)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  scale <span class="ot">&lt;-</span> (b <span class="sc">-</span> a) <span class="sc">/</span> (max_x <span class="sc">-</span> min_x)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  scale</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>get_offset <span class="ot">&lt;-</span> <span class="cf">function</span>(</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    x, </span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">a =</span> <span class="dv">0</span>,          </span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">b =</span> <span class="dv">255</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    ){</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  min_x <span class="ot">=</span> <span class="fu">min</span>(x)</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>  max_x <span class="ot">=</span> <span class="fu">max</span>(x)</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>  offset <span class="ot">&lt;-</span> (a <span class="sc">*</span> max_x <span class="sc">-</span> b <span class="sc">*</span> min_x) <span class="sc">/</span> (max_x <span class="sc">-</span> min_x)</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>  offset</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="fu">get_scale</span>(ndvi_measured)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 130.0526</code></pre>
+</div>
 </div>
 </section>
-<section id="limitations" class="level2">
-<h2 class="anchored" data-anchor-id="limitations">Limitations</h2>
+<section id="r-implementation-for-rasters-ii" class="level2">
+<h2 class="anchored" data-anchor-id="r-implementation-for-rasters-ii">R implementation for rasters II</h2>
 <ul>
-<li>Matrices are only advantageous if they are <em>densely</em> populated (little <code>NA</code>s)</li>
-<li>Speed and memory footprint is only relevant if the data is large</li>
-</ul>
-<div class="notes">
+<li>The new function <code>get_scale_offset</code> works nicely with vectors, but not with rasters</li>
+<li>The reason it does not work for raster is that <code>min(x)</code> (and <code>max(x)</code>) are <em>local</em> and not <em>global</em> functions
 <ul>
-<li>If data is mostly missing, wide format can be wasteful</li>
-<li>For small datasets, the overhead isn’t worth it</li>
-<li>Remote sensing data is typically large and dense - perfect for this approach</li>
-<li>This sets up why raster format is natural for imagery</li>
+<li>They return the minimum / maximum value <em>per cell over all bands</em>, not the global minimum / maximum value</li>
+<li>To calculate the global minimum and maximum value, we can either use <code>global</code>, or the slightly faster <code>minmax</code> function</li>
+</ul></li>
+<li>Additionally, the <code>writeRaster</code> function will <em>divide</em> by <code>scale</code> and <em>subtract</em> <code>offset</code> from the values (see <code>writeRaster</code>), so we need to invert the two values</li>
+<li>This is how this is implemented in R:</li>
 </ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>get_scale2 <span class="ot">&lt;-</span> <span class="cf">function</span>(</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    x, </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">a =</span> <span class="dv">0</span>,          </span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">b =</span> <span class="dv">255</span>         </span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    ){</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">library</span>(terra)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  min_max <span class="ot">=</span> <span class="fu">minmax</span>(x) </span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  min_x <span class="ot">&lt;-</span> min_max[<span class="dv">1</span>,<span class="dv">1</span>]</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  max_x <span class="ot">&lt;-</span> min_max[<span class="dv">2</span>,<span class="dv">1</span>]</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  scale <span class="ot">&lt;-</span> (b <span class="sc">-</span> a) <span class="sc">/</span> (max_x <span class="sc">-</span> min_x)</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="dv">1</span><span class="sc">/</span>scale           <span class="co"># invert the scale, sincd writeRaster divides by scale</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>get_offset2 <span class="ot">&lt;-</span> <span class="cf">function</span>(</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    x, </span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">a =</span> <span class="dv">0</span>,          </span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">b =</span> <span class="dv">255</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>    ){</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">library</span>(terra)</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>  min_max <span class="ot">=</span> <span class="fu">minmax</span>(x) </span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>  min_x <span class="ot">&lt;-</span> min_max[<span class="dv">1</span>,<span class="dv">1</span>]   </span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>  max_x <span class="ot">&lt;-</span> min_max[<span class="dv">2</span>,<span class="dv">1</span>]</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>  offset <span class="ot">&lt;-</span> (a <span class="sc">*</span> max_x <span class="sc">-</span> b <span class="sc">*</span> min_x) <span class="sc">/</span> (max_x <span class="sc">-</span> min_x)</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>  offset <span class="sc">*</span> <span class="sc">-</span><span class="dv">1</span>       <span class="co"># invert the offset, since writeRaster subtracts the offset</span></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="r-implementation-for-rasters-example" class="level2">
+<h2 class="anchored" data-anchor-id="r-implementation-for-rasters-example">R implementation for rasters: example</h2>
+<ul>
+<li>Let’s import a raster, calculate the <code>scale</code> and <code>offset</code> values and use these values to write to disk</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>elev <span class="ot">&lt;-</span> <span class="fu">rast</span>(<span class="fu">system.file</span>(<span class="st">"ex/elev.tif"</span>, <span class="at">package=</span><span class="st">"terra"</span>))</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(elev, <span class="at">main =</span> <span class="fu">paste</span>(<span class="fu">minmax</span>(elev),<span class="at">collapse =</span> <span class="st">"-"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lesson3-1-datatypes_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># write to disk with the minimum data type that fits the range </span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># without transformation </span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>scale <span class="ot">&lt;-</span> <span class="fu">get_scale2</span>(elev)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>offset <span class="ot">&lt;-</span> <span class="fu">get_offset2</span>(elev)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="fu">writeRaster</span>(</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  elev, </span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">"data-out/datatypes/INT1U.tif"</span>,</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># datatype = "INT1U", </span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">overwrite =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">scale =</span> scale, </span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">offset =</span> offset</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="r-implementation-for-rasters-example-1" class="level2">
+<h2 class="anchored" data-anchor-id="r-implementation-for-rasters-example-1">R implementation for rasters: example</h2>
+<ul>
+<li>Since GDAL stores the <code>scale</code> and <code>offset</code> values in the metadata, any software powered by GDAL will restore the original values on import</li>
+<li>In other words, if you run <code>rast("data-out/datatypes/INT1U.tif")</code> you will not notice the values were internally stored using 0 - 255. Instead, you will retrieve the original values.</li>
+<li>To finish off, let’s compare the file sizes of the raster stored as <code>INT1U</code> (Byte) and <code>FLT8S</code> (Float32)</li>
+</ul>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.6199451</code></pre>
+</div>
 </div>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
-<div id="ref-baltagi2008" class="csl-entry" role="listitem">
-Baltagi, Badi Hani, and Badi H Baltagi. 2008. <em>Econometric Analysis of Panel Data</em>. Vol. 4. Springer. <a href="https://bcs.wiley.com/he-bcs/Books?action=resource&amp;bcsId=4338&amp;itemId=1118672321&amp;resourceId=13452">https://bcs.wiley.com/he-bcs/Books?action=resource&amp;bcsId=4338&amp;itemId=1118672321&amp;resourceId=13452</a>.
-</div>
-<div id="ref-wickham2014" class="csl-entry" role="listitem">
-Wickham, Hadley. 2014. <span>“Tidy Data.”</span> <em>Journal of Statistical Software</em> 59 (10): 1–23. <a href="https://doi.org/10.18637/jss.v059.i10">https://doi.org/10.18637/jss.v059.i10</a>.
+<div id="ref-amatulli2024" class="csl-entry" role="listitem">
+Amatulli, Giuseppe. <span>“Geocomputation and Machine Learning for Environmental Applications.”</span> <a href="http://spatial-ecology.net/docs/build/html/GDAL/gdal_osgeo.html" class="uri">http://spatial-ecology.net/docs/build/html/GDAL/gdal_osgeo.html</a>.
 </div>
 </div>
+</section>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1"><p>Difference in file size using constant dataset (same values and resolution) and varying the datatype<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
 </section>
 
 </main> <!-- /main -->
@@ -1728,13 +1336,13 @@ Wickham, Hadley. 2014. <span>“Tidy Data.”</span> <em>Journal of Statistical 
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./index.html" class="pagination-link" aria-label="Welcome!">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Welcome!</span>
+      <a href="./lesson2-2-tasks.html" class="pagination-link" aria-label="Tasks">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Tasks</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./lesson1-2-tasks.html" class="pagination-link" aria-label="Tasks">
-        <span class="nav-page-text"><span class="chapter-title">Tasks</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./lesson3-2-sentinel-data.html" class="pagination-link" aria-label="Showcase: Importing Sentinel data">
+        <span class="nav-page-text"><span class="chapter-title">Showcase: Importing Sentinel data</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
