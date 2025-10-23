@@ -1,0 +1,15 @@
+{
+  "hash": "753d4925fd4147c3a846d53e8b893270",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\nexecute:\n  echo: true                 # ← set to true to show sample solution\n  collapse: true\ncode-fold: true\ncode-summary: \"Sample Solution\"\n---\n\n# Tasks\n\n:::{.callout-important}\n- **Try this without AI first** - struggle builds understanding. \n- Ask if you are struggling. Asking builds understanding as well!\n:::\n\n## Task 1\n\nImport the `Produc` dataset (from the package `plm`) using the following code:\n\n\n::: {.cell}\n\n```{.r .cell-code  code-fold=\"false\"}\ndata(Produc, package = \"plm\")\n```\n:::\n\n\n## Task 2\n\n Convert the data from long to wide\n\n\n::: {.cell}\n\n```{.r .cell-code}\nlibrary(plm)\nlibrary(dplyr)\nlibrary(tidyr)\nlibrary(tibble)\ndata(\"Produc\", package = \"plm\")\n\nProduc_wide <- Produc |> \n  select(year, state, unemp) |> \n  pivot_wider(names_from = state, values_from = unemp) |> \n  column_to_rownames(\"year\")\n```\n:::\n\n\n\n\n## Task 3\n\nConvert the data to a matrix\n\n\n::: {.cell}\n\n```{.r .cell-code}\nProduc_matrix <- as.matrix(Produc_wide)\n```\n:::\n\n\n\n## Task 4\n\nCalculate mean unemployment first using the wide dataframe, then the new matrix. Compare the speed difference.\n\n\n::: {.cell}\n\n```{.r .cell-code}\nlibrary(bench)\nbm <- bench::mark(\n    matrix = mean(Produc_matrix, na.rm = TRUE),\n    dataframe = mean(Produc_wide |> unlist(),na.rm = TRUE),\n    filter_gc = FALSE\n)\n\nbm$total_time[2]/bm$total_time[1]\n```\n\n::: {.cell-output .cell-output-stdout}\n\n```\n[1] 5.71s\n```\n\n\n:::\n:::\n\n\n\n\n\n\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

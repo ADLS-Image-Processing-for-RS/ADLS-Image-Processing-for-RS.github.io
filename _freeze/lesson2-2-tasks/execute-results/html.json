@@ -1,0 +1,17 @@
+{
+  "hash": "86b9640de7cc93873649de612d582d0e",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\nexecute:\n  echo: true                 # ← set to true to show sample solution\n  collapse: true\ncode-fold: true\ncode-summary: \"Sample Solution\"\n---\n\n\n## Tasks\n\n\n## Task 1\n\nThe following command returns the path to a tif file on your hard drive:\n\n\n::: {.cell}\n\n```{.r .cell-code  code-fold=\"false\"}\nsystem.file(\"ex/elev.tif\", package=\"terra\")\n```\n:::\n\n   \nUse this path to import the tif file using `rast()`, store it as `r`. It contains the elevation of Luxembourg.\n\n\n::: {.cell}\n\n```{.r .cell-code}\nlibrary(\"terra\")\nr <- system.file(\"ex/elev.tif\", package=\"terra\") |> \n   rast()\n```\n:::\n\n\n## Task 2\n\nCalculate the (global) mean, maximum and minimum elevation values.\n\n\n\n::: {.cell}\n\n```{.r .cell-code}\nglobal(r, c(\"mean\",\"max\",\"min\"), na.rm = TRUE)\n```\n\n::: {.cell-output .cell-output-stdout}\n\n```\n              mean max min\nelevation 348.3366 547 141\n```\n\n\n:::\n:::\n\n\n## Task 3\n\nCalculate slope and aspect (see [terrain functions](https://rspatial.github.io/terra/reference/terrain.html))\n\n\n::: {.cell}\n\n```{.r .cell-code}\nr_slope <- terrain(r, \"slope\")\nr_aspect <- terrain(r, \"aspect\")\n```\n:::\n\n\n## Task 4\n\nDetermine suitable locations of solar panels using the following conditions:\n\n   - Elevation: above 300 MASL\n   - Slope: Between 1 and 3° \n   - Aspect: Southfacing (between 135 and 235°)\n\n\n\n::: {.cell}\n\n```{.r .cell-code}\ngood_elev <- r > 300\ngood_slope <- r_slope > 1 & r_slope <= 3\ngood_aspect <- r_aspect > 135 & r_aspect <= 235\n\ngood <- good_elev & good_slope & good_aspect\n\nplot(good, main = \"Solar panel suitability\")\n```\n\n::: {.cell-output-display}\n![](lesson2-2-tasks_files/figure-html/unnamed-chunk-5-1.png){width=672}\n:::\n:::\n\n\n\n\n\n## Task 5\n\nImport the municipalities of Luxembourg (see below) and calculate the minimum, maximum and mean elevation values per municipality.\n\n\n::: {.cell}\n\n```{.r .cell-code}\nlux <- system.file(\"ex/lux.shp\", package=\"terra\") |> \n  vect()\n\nzones <- rasterize(lux, r, \"NAME_2\")\n```\n:::\n\n\n\n## Task 6\n\nSmooth the elevation values using different focal windows\n\n## Task 7\n\nImport the multispectral Landsat 7 as a raster using the following path\n\n\n::: {.cell}\n\n```{.r .cell-code}\nsystem.file(\"tif/L7_ETMs.tif\",package = \"stars\")\n```\n:::\n\n\n\n::: {.cell}\n\n```{.r .cell-code}\nl7 <- system.file(\"tif/L7_ETMs.tif\",package = \"stars\") |> \n   rast()\n```\n:::\n\n\n## Task 8\n\nCalculate the [NDVI](https://en.wikipedia.org/wiki/Normalized_difference_vegetation_index) using the following formula:\n\n$$\\text{NDVI} = \\frac{\\text{NIR}-\\text{red}}{\\text{NIR}+\\text{red}}$$\n\n\n::: {.cell}\n\n```{.r .cell-code}\nnames(l7) <- c(\"B\", \"G\", \"R\", \"NIR\", \"SWIR\", \"MIR\")\n\n\nNDVI <- (l7[[\"NIR\"]]-l7[[\"R\"]])/(l7[[\"NIR\"]]+l7[[\"R\"]])\n\nlibrary(tmap)\n\n\ntm_shape(NDVI) + tm_raster(style = \"cont\", title = \"NDVI\", midpoint = 0, breaks = c(-1,0,1)) + \n  tm_layout(legend.outside = TRUE)\n```\n\n::: {.cell-output-display}\n![](lesson2-2-tasks_files/figure-html/unnamed-chunk-9-1.png){width=672}\n:::\n:::\n\n\n\n\n\n\n",
+    "supporting": [
+      "lesson2-2-tasks_files"
+    ],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}
