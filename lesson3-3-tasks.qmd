@@ -1,0 +1,47 @@
+---
+execute:
+  echo: false                 # ← set to true to show sample solution
+  collapse: true
+code-fold: true
+code-summary: "Sample Solution"
+---
+
+## Tasks
+
+
+## Task 1
+
+Download the Sentinel 2 Image from [moodle](https://moodle.zhaw.ch/) (*CW40 - Image Classification of Remote Sensing Data*). Import the bands R, B, G and NIR as a raster image in R  (see [Spectral Bands (Wikipedia)](https://en.wikipedia.org/wiki/Sentinel-2#Spectral_bands)).
+
+```{r}
+library(terra)
+
+s2_files <- list.files("data/Sentinel2_Data", full.names = TRUE)
+
+library(stringr)
+
+names(s2_files) <- str_match(s2_files, "B.{2}")[,1]
+
+
+s2_select <- s2_files[names(s2_files) %in% c("B02", "B03","B04","B08")]
+
+s2 <- rast(s2_select)
+
+names(s2) <- names(s2_select)
+```
+
+## Task 2
+
+Create a True-Color RGB Image and a False-Color NirGB Image using the appropriate bands.
+
+
+```{r}
+
+# global(s2[[1]], c("min","max"))
+# plotRGB(s2[[c("B04", "B03", "B02")]])
+
+```
+
+## Task 3
+
+Calculate NDVI of the Sentinel 2 Image using the appropriate bands

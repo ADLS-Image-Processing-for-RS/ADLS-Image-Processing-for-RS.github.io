@@ -1,0 +1,76 @@
+---
+execute:
+  echo: true                 # ← set to true to show sample solution
+  collapse: true
+code-fold: true
+code-summary: "Sample Solution"
+---
+
+# Tasks
+
+:::{.callout-important}
+- **Try this without AI first** - struggle builds understanding. 
+- Ask if you are struggling. Asking builds understanding as well!
+:::
+
+## Task 1
+
+Import the `Produc` dataset (from the package `plm`) using the following code:
+
+```{r}
+#| echo: true
+#| code-fold: false
+data(Produc, package = "plm")
+```
+
+## Task 2
+
+ Convert the data from long to wide
+
+```{r}
+#| output: false
+library(plm)
+library(dplyr)
+library(tidyr)
+library(tibble)
+data("Produc", package = "plm")
+
+Produc_wide <- Produc |> 
+  select(year, state, unemp) |> 
+  pivot_wider(names_from = state, values_from = unemp) |> 
+  column_to_rownames("year")
+
+
+```
+
+
+
+## Task 3
+
+Convert the data to a matrix
+
+```{r}
+Produc_matrix <- as.matrix(Produc_wide)
+```
+
+
+## Task 4
+
+Calculate mean unemployment first using the wide dataframe, then the new matrix. Compare the speed difference.
+
+```{r}
+library(bench)
+bm <- bench::mark(
+    matrix = mean(Produc_matrix, na.rm = TRUE),
+    dataframe = mean(Produc_wide |> unlist(),na.rm = TRUE),
+    filter_gc = FALSE
+)
+
+bm$total_time[2]/bm$total_time[1]
+
+```
+
+
+
+
+

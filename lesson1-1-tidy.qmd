@@ -1,6 +1,6 @@
+
 # From tabular data to raster {#sec-tidy-to-raster}
 
-<!-- Todo: This is too long and takes up too much time -->
 
 ```{r}
 #| echo: false
@@ -53,6 +53,9 @@ is a table.
 
 
 ```{r}
+#| echo: true
+#| code-fold: false
+
 Produc <- read_csv("data/Produc.csv") |> 
     select(-region) |> 
     filter(!(state == "ARIZONA" & year == 1971))
@@ -78,8 +81,8 @@ Produc |>
 
 ```{r}
 #| echo: true
+#| code-fold: false
 #| collapse: true
-
 length(Produc$state)
 n_distinct(Produc$state)
 
@@ -116,6 +119,7 @@ To demonstrate we convert a long to wide.
 
 ```{r}
 #| echo: true
+#| code-fold: false
 
 # Pivoting must be done per variable
 Produc_wide <- Produc |> 
@@ -138,6 +142,8 @@ We can either omit the column "year", (since this is implicit knowledge, $row_i 
 
 Long / tidy:
 ```{r}
+#| echo: true
+#| code-fold: false
 Produc |> 
     head(5) |> 
     kable()
@@ -148,6 +154,8 @@ Produc |>
 Wide / untidy:
 
 ```{r}
+#| echo: true
+#| code-fold: false
 Produc_wide |> 
     head(5) |> 
     kable()
@@ -155,72 +163,9 @@ Produc_wide |>
 ```
 
 
-## Long vs. Wide: Number of cells
-
-How many cells / values do we have after this transformation?
-
-```{r}
-#| echo: true
-
-n_values_new <- Produc_wide |> 
-    dim() |> 
-    prod()
-
-# since we have 8 variables, we multiply by 8:
-n_values_new <- n_values_new*8 
-
-n_values_new
-
-# before we had:
-n_values
-```
-
-
-This is a reduction of `r scales::percent(1-n_values_new/n_values)`
-
-:::{.notes}
-- Dramatic reduction in memory usage - this is why rasters use this format
-- The 8x multiplication accounts for all variables in the original dataset
-- This efficiency becomes critical with large spatial datasets
-- Connect this to why satellite imagery naturally fits wide format
-:::
 
 
 
-```{r}
-#| eval: false
-
-# this shows that the reduction in cells is more pronounced with low number of variables
-expand_grid(n_obs1 = c(48), n_obs2 = c(17), n_variables = c(1:100)) |> 
-    mutate(
-        n_vals_array = n_obs1 * n_obs2 * n_variables,
-        n_vals_tidy = n_obs1 * n_obs2 * (n_variables+2),
-        frac = 1-n_vals_array/n_vals_tidy
-        ) |> 
-            ggplot(aes(n_variables, frac)) +
-            geom_line() +
-            scale_y_continuous(labels = percent_format())
-
-
-```
-
-```{r}
-Produc_matrix <- as.matrix(Produc_wide)
-
-rownames(Produc_matrix) <- 1970:1986
-
-bm <- bench::mark(
-    matrix = mean(Produc_matrix, na.rm = TRUE),
-    df = mean(Produc_wide |> unlist(),na.rm = TRUE),
-    filter_gc = FALSE
-)
-
-speedup <- round(as.numeric(bm$median[2]/bm$median[1]))
-
-
-# plot(bm)
-
-```
 
 
 ## Dataframe → Matrix
@@ -229,7 +174,27 @@ Less repetitions / smaller memory footprint is only part of the advantage:
 
 - All columns now have the same datatype (`dbl`)
   - This means, they can be stored in a matrix / array
-  - This gives us a *big* speed advantage (e.g. calculating the mean over all values is `r speedup`x faster)
+  - This gives us a *big* speed advantage (see @fig-benchmark)
+
+```{r}
+#| echo: false
+#| label: fig-benchmark
+
+Produc_matrix <- as.matrix(Produc_wide)
+
+rownames(Produc_matrix) <- 1970:1986
+
+bm <- bench::mark(
+    matrix = mean(Produc_matrix, na.rm = TRUE),
+    dataframe = mean(Produc_wide |> unlist(),na.rm = TRUE),
+    filter_gc = FALSE
+)
+
+autoplot(bm)
+
+
+```
+
 
 :::{.notes}
 - Homogeneous data types enable matrix operations
@@ -252,27 +217,3 @@ Less repetitions / smaller memory footprint is only part of the advantage:
 :::
 
 
-## Tasks / Exercises
-
-:::{.callout-important}
-- **Try this without AI first** - struggle builds understanding. 
-- Ask if you are struggling. Tasking builds understanding as well!
-:::
-
-1. Import the `Produc` dataset (from the package `plm`) using the following code:
-  ```{.r}
-  data(Produc, package = "plm")
-  ```
-
-2. Convert the data from long to wide
-
-3. Convert the data to a matrix
-
-4. Calculate mean unemployment first using the original dataframe, then the new matrix. Compare the speed difference.
-
-:::{.notes}
-- Give students 10-15 minutes for hands-on practice
-- Walk around and help with pivot_wider syntax
-- The speed comparison should be dramatic - good "wow" moment
-- This reinforces why we'll use matrix-like structures for raster data
-:::

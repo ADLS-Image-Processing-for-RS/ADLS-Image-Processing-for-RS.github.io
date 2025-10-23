@@ -15,10 +15,6 @@ library(gt)
 ```
 
 
-:::{.center}
-<!-- ![](img/swissimageRS.png){width=60%} -->
-:::
-
 
 ## Images are Rasters
 
@@ -38,6 +34,8 @@ library(gt)
 
 
 ```{r}
+#| echo: false
+#| code-fold: false
 #| label: fig-raster-example
 #| layout-nrow: 1
 #| column: page
@@ -98,6 +96,8 @@ p0 +
 
 
 ```{r}
+#| echo: false
+
 library(terra)
 library(sf)
 library(tmap)
@@ -107,11 +107,12 @@ r <- rast(system.file("ex/elev.tif", package="terra"))
 
 f <- system.file("ex/lux.shp", package="terra")
 v <- vect(f)
-# r <- rast(system.file("ex/elev.tif", package="terra"))
 zones <- rasterize(v, r, "NAME_2")
 ```
 
 ```{r}
+#| echo: false
+#| code-fold: false
 #| layout-ncol: 2
 #| column: page
 #| fig-subcap: 
@@ -126,20 +127,35 @@ plot(zones)
 
 ## A simple example: Elevation
 
-```{r}
+::::{.columns}
 
+::: {.column width="50%"}
+```{r}
+#| echo: false
+#| code-fold: false
 
 
 tm_shape(r) + 
   tm_raster(style = "cont",palette = "viridis") +
-  tm_layout(frame = FALSE,legend.position = c("center","BOTTOM"),legend.outside = TRUE)
+  tm_layout(frame = FALSE,legend.show = FALSE)
 
 ```
+:::
 
+::: {.column width="50%"}
 ```{r}
-matrix(r, nrow = terra::nrow(r))[50:60,50:60]
+#| echo: false
+#| code-fold: false
 
+matrix(r, nrow = terra::nrow(r))[50:60,50:55]
 ```
+:::
+
+::::
+
+
+
+
 
 
 ## A more complex example: Spectral data
@@ -159,6 +175,8 @@ matrix(r, nrow = terra::nrow(r))[50:60,50:60]
 
 
 ```{r}
+#| echo: false
+
 l7 <- system.file("tif/L7_ETMs.tif",package = "stars") |> 
     rast() 
 
@@ -178,7 +196,7 @@ l7_full_rgb <- l7_full[[c(3,2,1)]]
 #| fig-cap: 
 #|   - The bands stored internally
 #|   - The RGB Composite
-
+#| echo: false
 
 plot(l7_full_rgb, main = paste(c("Red", "Green", "Blue"),"Band"))
 
@@ -201,6 +219,7 @@ plotRGB(l7_full_rgb, stretch = "histogram", smooth = FALSE)
 #| fig-cap: 
 #|   - Band values
 #|   - RGB True Color Image
+#| echo: false
 
 
 l7 <- l7 |>   aggregate(60, na.rm = TRUE) |> as.int()
@@ -279,6 +298,7 @@ df2 |>
 #| fig-cap: 
 #|   - Band values
 #|   - NIR-GB False Color Image
+#| echo: false
 
 l7_nirgb <- l7[[c(4,2,1)]]
 
@@ -343,7 +363,7 @@ df2 |>
 #| fig-cap:
 #|   - The R, G and B bands mapped to RGB
 #|   - NIR, G and B bands mapped to RGB
-
+#| echo: false
 plotRGB(l7_full[[c(3,2,1)]], stretch = "histogram", smooth = FALSE)
 
 
@@ -352,75 +372,4 @@ plotRGB(l7_full[[c(4,3,2)]], stretch = "histogram", smooth = FALSE)
 ```
 
 
-
-## Tasks / Exercises
-
-:::{.callout-important}
-- **Try this without AI first** - struggle builds understanding. 
-- Ask if you are struggling. Tasking builds understanding as well!
-:::
-
-1. The following command returns the path to a tif file on your hard drive:
-
-   ```{r}
-   #| eval: false
-   #| echo: true
-   system.file("ex/elev.tif", package="terra")
-   ```
-   
-   Use this path to import the tif file using `rast()`, store it as `r`.
-   
-2. Explore this object:
-   - Determine the minimum and maximum elevation values
-   - Make a static map using base plot and `tmap`
-   - Make an interactive map using tmap (`tmap_mode("view")`)
-   - Using tmap, explore different [styles](https://r-tmap.github.io/tmap/reference/tm_raster.html#arg-style) and [palettes](https://r-tmap.github.io/tmap/reference/tm_raster.html#arg-palette). 
-   
-3. The following command returns the path to a tif file on your hard drive:
-
-   ```{r}
-   #| eval: false
-   #| echo: true
-   system.file("tif/L7_ETMs.tif",package = "stars")
-   ```
-   Use this path to import the tif file using `rast()`, store it as `l7`.
-
-   
-4. Explore this object:
-   - Spot the differences to the object `r`
-   - Plot the available layers individually
-   - Rename the layers to: `c("B", "G", "R", "NIR", "SWIR", "MIR")` (see [here](https://r-spatial.github.io/stars/reference/L7_ETMs.html))
-
-
-5. Select the Red Green and Blue bands to create a true color map (`plotRGB` and `tm_rgb`)
-
-```{r}
-
-l7 <- l7_full
-names(l7) <- c("B", "G", "R", "NIR", "SWIR", "MIR")
-
-
-```
-
-6. Select the NIR, Green and Blue bands to create a false color composite
-
-:::{.notes}
-- Allow 15-20 minutes for these exercises
-- Help students with band selection syntax - this is often confusing initially
-- Encourage experimentation with different band combinations
-- Point out how vegetation appears differently in true vs false color
-- This hands-on experience reinforces the theoretical concepts
-:::
-
-```{r}
-#| eval: false
-
-
-tm_shape(l7[[c("NIR","G","B")]]) + tm_rgb()
-
-```
-
-
-
- 
 

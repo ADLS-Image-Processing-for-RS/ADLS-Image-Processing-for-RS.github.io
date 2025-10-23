@@ -1,0 +1,130 @@
+---
+execute:
+  echo: true                 # ← set to true to show sample solution
+  collapse: true
+code-fold: true
+code-summary: "Sample Solution"
+---
+
+
+## Tasks
+
+
+## Task 1
+
+The following command returns the path to a tif file on your hard drive:
+
+```{r}
+#| eval: false
+#| echo: true
+#| code-fold: false
+system.file("ex/elev.tif", package="terra")
+```
+   
+Use this path to import the tif file using `rast()`, store it as `r`. It contains the elevation of Luxembourg.
+
+```{r}
+library("terra")
+r <- system.file("ex/elev.tif", package="terra") |> 
+   rast()
+```
+
+## Task 2
+
+Calculate the (global) mean, maximum and minimum elevation values.
+
+
+```{r}
+
+global(r, c("mean","max","min"), na.rm = TRUE)
+```
+
+## Task 3
+
+Calculate slope and aspect (see [terrain functions](https://rspatial.github.io/terra/reference/terrain.html))
+
+```{r}
+r_slope <- terrain(r, "slope")
+r_aspect <- terrain(r, "aspect")
+
+```
+
+## Task 4
+
+Determine suitable locations of solar panels using the following conditions:
+
+   - Elevation: above 300 MASL
+   - Slope: Between 1 and 3° 
+   - Aspect: Southfacing (between 135 and 235°)
+
+
+```{r}
+good_elev <- r > 300
+good_slope <- r_slope > 1 & r_slope <= 3
+good_aspect <- r_aspect > 135 & r_aspect <= 235
+
+good <- good_elev & good_slope & good_aspect
+
+plot(good, main = "Solar panel suitability")
+
+```
+
+
+
+
+## Task 5
+
+Import the municipalities of Luxembourg (see below) and calculate the minimum, maximum and mean elevation values per municipality.
+
+```{r}
+#| echo: true
+lux <- system.file("ex/lux.shp", package="terra") |> 
+  vect()
+
+zones <- rasterize(lux, r, "NAME_2")
+```
+
+
+## Task 6
+
+Smooth the elevation values using different focal windows
+
+## Task 7
+
+Import the multispectral Landsat 7 as a raster using the following path
+
+```{r}
+#| eval: false
+#| echo: true
+   
+system.file("tif/L7_ETMs.tif",package = "stars")
+```
+
+```{r}
+l7 <- system.file("tif/L7_ETMs.tif",package = "stars") |> 
+   rast()
+```
+
+## Task 8
+
+Calculate the [NDVI](https://en.wikipedia.org/wiki/Normalized_difference_vegetation_index) using the following formula:
+
+$$\text{NDVI} = \frac{\text{NIR}-\text{red}}{\text{NIR}+\text{red}}$$
+
+```{r}
+names(l7) <- c("B", "G", "R", "NIR", "SWIR", "MIR")
+
+
+NDVI <- (l7[["NIR"]]-l7[["R"]])/(l7[["NIR"]]+l7[["R"]])
+
+library(tmap)
+
+
+tm_shape(NDVI) + tm_raster(style = "cont", title = "NDVI", midpoint = 0, breaks = c(-1,0,1)) + 
+  tm_layout(legend.outside = TRUE)
+```
+
+
+
+
+

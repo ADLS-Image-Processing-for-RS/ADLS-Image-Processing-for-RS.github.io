@@ -1,5 +1,59 @@
+
+project:
+  type: book
+  output-dir: docs
+
 book: 
+  title: Image Processing for Remote Sensing
+  reader-mode: true
   chapters:
+    - index.qmd
+    - part: Lesson 1
+      chapters: 
+        - lesson1-1-tidy.qmd
+        - lesson1-2-tasks.qmd
+        - lesson1-3-imagery.qmd
+        - lesson1-4-tasks.qmd
+    - part: Lesson 2
+      chapters:
+        - lesson2-1-operations.qmd
+        - lesson2-2-tasks.qmd
+    # - part: Lesson 3
+    #   chapters: 
+    #     - lesson3-1-datatypes.qmd     # moved nodata to STDS
+    #     - lesson3-2-sentinel-data.qmd
+    # - part: Lesson 4
+    #   chapters: 
+    #     # - lesson4-1-unsupervised-learning.qmd todo: This chapter is incomplete, finish it!
+    #     - lesson4-2-supervised-learning.qmd
+    #     - lesson4-2-feature-engineering.qmd
+    # - part: Lesson 5
+    #   chapters: 
+    #     - lesson5-supervised_learning_focal.ipynb
+    #     - lesson5-supervised_learning.ipynb
+    - part: references.qmd
+format: 
+  html:
+    number-depth: -1
+    number-sections: false
+    css: misc/style.css
+    include-in-header:
+      - misc/script.html
+    theme:
+      light: [flatly]
+      dark: [flatly, "misc/presenter.scss"]
+    highlight-style:
+      light: misc/arrow-light.theme
+      dark: misc/arrow-light.theme
+    
+    
+bibliography: misc/bibliography.bib
+execute: 
+  warning: false
+  message: false
+  echo: false
+freeze: true
 
 
-        
+
+

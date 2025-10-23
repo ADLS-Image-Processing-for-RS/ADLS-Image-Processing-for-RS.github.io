@@ -1,0 +1,118 @@
+---
+execute:
+  echo: true                 # ← set to true to show sample solution
+  collapse: true
+code-fold: true
+code-summary: "Sample Solution"
+---
+
+## Tasks
+
+:::{.callout-important}
+- **Try this without AI first** - struggle builds understanding. 
+- Ask if you are struggling. Asking builds understanding as well!
+:::
+
+## Task 1
+
+The following command returns the path to a tif file on your hard drive:
+
+```{r}
+#| eval: false
+#| echo: true
+#| code-fold: false
+system.file("ex/elev.tif", package="terra")
+```
+   
+Use this path to import the tif file using `rast()`, store it as `r`.
+
+
+```{r}
+library(terra)
+r <- system.file("ex/elev.tif", package="terra") |> 
+  rast()
+```
+
+
+   
+## Task 2
+
+Explore this object:
+
+   - Determine the minimum and maximum elevation values
+   - Make a static map using base plot and `tmap`
+   - Make an interactive map using tmap (`tmap_mode("view")`)
+   - Using tmap, explore different [styles](https://r-tmap.github.io/tmap/reference/tm_raster.html#arg-style) and [palettes](https://r-tmap.github.io/tmap/reference/tm_raster.html#arg-palette). 
+
+
+```{r}
+# Simply looking at the metadata will show min/max values
+r
+
+library(tmap)
+
+tm_shape(r) +
+  tm_raster()
+
+```
+
+## Task 3
+
+The following command returns the path to a tif file on your hard drive:
+
+```{r}
+#| eval: false
+#| echo: true
+#| code-fold: false
+system.file("tif/L7_ETMs.tif",package = "stars")
+```
+
+Use this path to import the tif file using `rast()`, store it as `l7`.
+
+```{r}
+l7 <- system.file("tif/L7_ETMs.tif",package = "stars") |> 
+  rast()
+```
+
+
+## Task 4
+
+Explore this object:
+
+- Spot the differences to the object `r`
+- Plot the available layers individually
+- Rename the layers to: `c("B", "G", "R", "NIR", "SWIR", "MIR")` (see [here](https://r-spatial.github.io/stars/reference/L7_ETMs.html))
+
+
+## Task 5
+
+Select the Red Green and Blue bands to create a true color map (`plotRGB` and `tm_rgb`)
+
+```{r}
+names(l7) <- c("B", "G", "R", "NIR", "SWIR", "MIR")
+```
+
+## Task 6
+
+Select the NIR, Green and Blue bands to create a false color composite
+
+:::{.notes}
+- Allow 15-20 minutes for these exercises
+- Help students with band selection syntax - this is often confusing initially
+- Encourage experimentation with different band combinations
+- Point out how vegetation appears differently in true vs false color
+- This hands-on experience reinforces the theoretical concepts
+:::
+
+```{r}
+#| eval: false
+
+
+tm_shape(l7[[c("NIR","G","B")]]) + tm_rgb()
+
+```
+
+
+
+ 
+

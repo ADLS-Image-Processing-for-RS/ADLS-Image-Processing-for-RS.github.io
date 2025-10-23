@@ -10,15 +10,19 @@ book:
     - index.qmd
     - part: Lesson 1
       chapters: 
-        - lesson1-1-tidy.qmd        
-        - lesson1-2-imagery.qmd
-    # - part: Lesson 2
-    #   chapters: 
-    #     - lesson2-1-operations.qmd 
-    # - part: Lesson 3
-    #   chapters: 
-    #     - lesson3-1-datatypes.qmd     # moved nodata to STDS
-    #     - lesson3-2-sentinel-data.qmd
+        - lesson1-1-tidy.qmd
+        - lesson1-2-tasks.qmd
+        - lesson1-3-imagery.qmd
+        - lesson1-4-tasks.qmd
+    - part: Lesson 2
+      chapters:
+        - lesson2-1-operations.qmd
+        - lesson2-2-tasks.qmd
+    - part: Lesson 3
+      chapters: 
+        - lesson3-1-datatypes.qmd     # moved nodata to STDS
+        - lesson3-2-sentinel-data.qmd
+        - lesson3-3-tasks.qmd
     # - part: Lesson 4
     #   chapters: 
     #     # - lesson4-1-unsupervised-learning.qmd todo: This chapter is incomplete, finish it!

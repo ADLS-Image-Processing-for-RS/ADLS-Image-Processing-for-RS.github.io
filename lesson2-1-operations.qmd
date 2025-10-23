@@ -19,25 +19,13 @@ library(sf)
 library(tmap)
 library(dplyr)
 
-library(rnaturalearth)
-lux <- rnaturalearth::ne_countries(scale = 10, country = "Luxembourg") |> 
-  st_transform(2169)
-
 terraOptions(progress = 0)
 
 r <- rast(system.file("ex/elev.tif", package="terra"))
 
-
-r <- project(r, "epsg:2169")
-
-r_ext <- terra::ext(r)
-
-r2 <- rast(res = 1000, crs = "epsg:2169", ext = r_ext)
-
-r <- resample(r, r2)
-
-
-# writeRaster(r, "data-large/Luxembourg_Elevation.tif")
+lux <- system.file("ex/lux.shp", package="terra") |> 
+  vect()
+zones <- rasterize(lux, r, "NAME_2")
 ```
 
 ```{r}
@@ -97,13 +85,12 @@ mean_elev
 luxembourg_city <- st_point(c(6.131944,49.611667)) |>     
   st_sfc(crs = 4326) |> 
   st_sf() |> 
-  mutate(text = "Luxembourg City") |> 
-  st_transform(2169) |> 
-  st_set_geometry("geom") 
+  mutate(text = "Luxembourg City")
 
 
 p0 +
-  tm_shape(luxembourg_city) + tm_dots(shape = 4, size = 1.4) 
+  tm_shape(luxembourg_city) + 
+  tm_dots(shape = 4, size = 1.4) 
 
 luxembourg_city <- vect(luxembourg_city)
 ```
@@ -120,7 +107,7 @@ r_dist <- mask(r_dist, r)
 ```{r}
 
 p0 +
-  tm_shape(r_dist) + tm_raster(palette = "viridis", style = "cont") +
+  tm_shape(r_dist) + tm_raster(palette = "magma", style = "cont") +
   tm_shape(st_as_sf(luxembourg_city)) + tm_dots(shape = 4, col = "red") +
   tm_layout(legend.show = FALSE)
 
@@ -135,17 +122,7 @@ p0 +
 
 What is the mean altitude *per municipality*?
 
-```{r}
-f <- system.file("ex/lux.shp", package="terra")
-v <- vect(f)
-# r <- rast(system.file("ex/elev.tif", package="terra"))
-zones <- rasterize(v, r, "NAME_2")
 
-```
-
-```{r}
-# writeRaster(zones, "data-large/Luxembourg-Municipalities.tif")
-```
 
 
 ```{r}
@@ -168,7 +145,8 @@ mean_vals <- zonal(r, zones, fun = mean, na.rm = TRUE)
 
 mean_vals2 <- mean_vals |> 
   mutate(ID = row_number()-1, .before = 0) |> 
-  select(-zone)
+  select(-NAME_2)
+
 zones_int <- as.int(zones)
 
 zones_mean <- classify(zones_int, mean_vals2)
@@ -177,7 +155,8 @@ p +
   tm_shape(zones, is.master = TRUE) +
   tm_raster(style = "cat",legend.show = TRUE, palette = "Set1") 
 
-p + tm_shape(zones_mean) + 
+p + 
+  tm_shape(zones_mean) + 
   tm_raster(style = "cont", palette = "viridis", title = "Mean Elevation") 
 ```
 
@@ -270,26 +249,15 @@ plot(l7_rgb_mean)
 
 - In a more complex usecase, we could use the R, G and B band to calculate a grayscale value ($L^*$) using the following formula (from [here](https://stackoverflow.com/a/689547/4139249)):
 
-
-
-::: {.content-hidden unless-format="html"}
-
-$$
-
-\begin{aligned*}
-
+$$\begin{aligned}
+\gamma &= 2.2 \\
 L^* &= 116 \times Y ^ {\frac{1}{3}} - 16\\
-
 Y &= 0.2126 \times R^\gamma+0.7152 \times G^\gamma+0.0722 \times B^\gamma \\
-
-
-\gamma &= 2.2
-
-\end{aligned*}
-
+\end{aligned}
 $$
 
-:::
+
+
 
 
 ```{r}
@@ -297,7 +265,7 @@ $$
 
 g <- 2.2
 
-l7 <- l7/255 # scale values to 0-1 (probabbly not necessary)
+l7 <- l7/255 # scale values to 0-1
 
 Y <- 0.2126 * l7[["R"]]^g + 0.7152 * l7[["G"]]^g + 0.0722 * l7[["B"]]^g
 
@@ -441,41 +409,102 @@ focal(r, sobel_y) |> plot()
 ```
 
 
-## Focal weights (3)
+## From cells to real world units (2)
+
+- We have been specifying our focal weights in terms of cell units
+- In most cases, it is more reasonable to work with real world units
+- The resolution of our raster is `0.008333333` (see `res(r)`) and since our raster is in `WGS84`, the units is "degrees". 
+- To work with more managable units, we can convert the raster to a projected CRS that uses "meters", e.g. [EPSG 2169](https://epsg.io/2169)
 
 
-- We can also create specific *shapes* using weights
-- We don't need to create these matrices by hand. Rather, we can use the function `focalMat` to create different shapes automatically
+```{r}
+res(r)
+```
+
+```{r}
+#| echo: true
+#| output: false
+crs(r, parse = TRUE)
+```
+
+```{r}
+#| echo: false
+
+library(stringr)
+c("(output truncated)","...", crs(r, parse = TRUE)[11:13], "...") |> 
+  str_remove("^\\s\\s\\s\\s")
+  cat(sep = "\n")
+```
+
+```{r}
+#| echo: true
+#| output: false
+# Reproject to a "projected" CRS
+r_2169 <- project(r, "EPSG:2169")
+
+crs(r_2169, parse = TRUE)
+```
+
+```{r}
+#| echo: false
+
+c(crs(r_2169, parse = TRUE)[1:5], "...", "(output truncated)") |> 
+  str_remove("^\\s\\s\\s\\s")
+  cat(sep = "\n")
+```
+
+
+## From cells to real world units (2)
+
+- The resolution of our new raster is `r res(r_2169)[1]` meters.
+- We can resample this to 1 km to simplify things
+
+```{r}
+#| echo: true
+res(r_2169)
+
+# first, create template raster with the same extent and 1km resolution
+template <- rast(res = 1000, ext = ext(r_2169))
+
+# then, resample to this template
+r_2169 <- resample(r_2169, template)
+```
+
+
+## Focal weights with `focalMat`
+
+- Now that we have a raster with managable units and resolution, we can create specific focal *shapes* using `focalMat`.
+- `focalMat` can create circles, rectangles and gaussian shapes. The size of the shape is determined by `d`, which has different meanings for different shapes (always in the units of the CRS):
+  - *circle*: `d` specifies the circle radius
+  - *rectangle*: `d` can be 1 or 2 values, specifiying the dimensions of the rectangle
+  - *Gauss*: the size of *sigma*
+- The function returns a matrix which takes the raster resultion into account. (i.e. `d` is divided by the raster resolution)
+- The sum of all values in the matrix is 1
+
 
 ```{r}
 #| warning: false
 #| echo: true
 
-# Note 
-# - "d" is evaluated in the units of "x" (in our case: meters)
-# - The sum of all weights equals to 1
-# - Note how the edges receive a value of 0
-focal_circle3000 <- focalMat(x = r, d = 3000, "circle")
+focal_circle <- focalMat(x = r_2169, d = 2000, "circle")
 
-focal_circle3000
+focal_circle
 ```
 
 ```{r}
 #| fig-cap: A visual representation of the matrix / filter above
-focal_circle3000 |> rast() |> plot()
+focal_circle |> rast() |> plot()
 ```
 
 
 ```{r}
 #| echo: true
-focal_gauss1000 <- focalMat(x = r, d = 1000, "Gauss")
-
-focal_gauss1000
+focal_gauss <- focalMat(x = r_2169, d = 2000, "Gauss")
 ```
 
 ```{r}
 #| fig-cap: A visual representation of the matrix / filter above
-focal_gauss1000 |> rast() |> plot()
+focal_gauss |> rast() |> plot()
 ```
 
 ## Focal functions in terrain processing
@@ -499,55 +528,5 @@ focal_gauss1000 |> rast() |> plot()
 terrain(r, "slope") |> plot()
 terrain(r, "aspect") |> plot()
 ```
-
-
-## Tasks / Exercises
-
-
-1. Download and import the elevation of Luxembourg from Moodle (CW43 → Datasets) 
-
-2. Calculate the mean, maximum and minimum elevation values
-
-3. Calculate slope and aspect (see [terrain functions](https://rspatial.github.io/terra/reference/terrain.html))
-
-4. Determine suitable locations of solar panels using the following conditions:
-   - Elevation: above 300 MASL
-   - Slope: Between 1 and 3° 
-   - Aspect: Southfacing (between 135 and 235°)
-   
-
-5. Download the Municipalities of Luxembourg from Moodle and calculate the minimum, maximum and mean elevation values per municipality.
-
-6. Smooth the elevation values using different focal windows
-
-7. Import the multispectral Landsat 7 as a raster using the following path
-
-   ```{r}
-   #| eval: false
-   #| echo: true
-    
-   system.file("tif/L7_ETMs.tif",package = "stars")
-   ```
-
-8. Calculate the [NDVI](https://en.wikipedia.org/wiki/Normalized_difference_vegetation_index) using the following formula:
-
-$$\text{NDVI} = \frac{\text{NIR}-\text{red}}{\text{NIR}+\text{red}}$$
-
-```{r}
-
-NDVI <- (l7[["NIR"]]-l7[["R"]])/(l7[["NIR"]]+l7[["R"]])
-
-tm_shape(NDVI) + tm_raster(style = "cont", title = "NDVI", midpoint = 0, breaks = c(-1,0,1)) + 
-  tm_layout(legend.outside = TRUE)
-```
-
-9. Download a Sentinel 2 Image from [browser.dataspace.copernicus.eu](https://browser.dataspace.copernicus.eu/) for a location of your choosing. Import it as a raster image in R. Note that you have to import the individual bands and then recombine the image to a multiband raster.
-
-10. Create a True-Color RGB Image and a False-Color NirGB Image using the appropriate bands (see [Spectral Bands (Wikipedia)](https://en.wikipedia.org/wiki/Sentinel-2#Spectral_bands))
-
-11. Calculate NDVI of the Sentinel 2 Image using the appropriate bands
-
-
-
 
 
