@@ -134,21 +134,18 @@ cat(meta[str_detect(meta, "ADD_OFFSET")], sep = "\n")
 <!--   > `value <- value * scale + offset` -->
 
 - We can now use the `scale` (10'000) and `offset` (-1'000) values to convert the data to reflectance values. 
-- We can then use `hist` to get a histogram of the values in each band
+- We can then use `minmax` to see if our rescaling worked
+
+```{r}
+s2b <- (s2 - 1000)/10000
+
+minmax(s2b)
+```
+
+
 - Note that most bands have values > 1. 
   - We have to decide how to handle these values
   - One option is to simply clip the values to the desired range
-
-```{r}
-#| column: page
-s2b <- (s2 - 1000)/10000
-
-hist(s2b[[1:6]])
-```
-
-```{r}
-hist(s2b[[7:10]])
-```
 
 
 

@@ -1,4 +1,11 @@
+---
+format: revealjs
+---
+
+
 # Data Types, scale and offset {#sec-data-types}
+
+
 
 ```{r}
 #| echo: false
@@ -19,8 +26,10 @@ library(gt)
 - While R and Python have a variety of data types including character strings, raster data is always stored as numeric
 - However, there are quite a number of numeric data types that can be used to store raster data, depending on the range of values and the precision required
 - The choice of data type can have a significant impact on the size of the file and the precision of the data stored
-- Since raster data is powered by GDAL, most raster based software (including R and Python) use the same data types
+- Since raster data is powered by GDAL, most raster based software (including R and Python) use the same data types [when writing files to disk]{.underline}
+  - In memory, only the datatypes supported by the programming languages are supported
 - The numeric data types are supported by `gdal` are summarized in @tbl-datatypes
+
 
 :::{#tbl-datatypes}
 
@@ -102,7 +111,10 @@ x' &= 127.5x+127.5 \\
 
 - We can now use this formula $x' = 127.5x+127.5$ to rescale NDVI values to the range 0 - 255
 - So, rather than storing the NDVI value 0.2, for example, we store the value 153
-- This rescaling is determined by two values: `scale` and `offset` (127.5 for both values in our case)
+- This rescaling is determined by two values: 
+  - `scale` and `offset`
+  - $x' = x \times \text{scale} + \text{offset}$
+  - In our NDVI example, scale is `127.5` and offset is `127.5` as well 
 
 
 
@@ -111,9 +123,10 @@ x' &= 127.5x+127.5 \\
 Note that this transformation to 255 values limits our precision:
 
 - Our values are now limited to in their precision, since we only have 255 possible values
-- We can calculate the available precision like so: $\frac{max(x)-min(x)}{b-a}$ 
-- In our case this is $\frac{1 - (-1)}{255-0} = 0.0078$. 
+- We can calculate the available precision like so: $\frac{1}{\text{scale}}$
+- In our case this is $\frac{1}{127.5} = 0.0078$. 
 - Any measured / calculated NDVI value will be rounded to a multiple of 0.0078.
+- We need to decide if this precision is enough for our use case
 
 
 ## R Implementation for vectors
@@ -172,7 +185,7 @@ tibble(ndvi_measured, ndvi_stored) |>
 - Rather than transforming our values in memory, we can transform them when writing the raster to disk.
 - For this, we can use the arguments `scale = ` and `offset = ` in the `writeRaster` function
 - To use these arguments we need to calculate the `scale` and `offset` values first
-- Rewriting the formula above, we can calculate `scale` and `offset`:
+- Rewriting the formula above, we can calculate `scale` and `offset` as follows:
 
 
 \begin{align}
@@ -188,10 +201,10 @@ tibble(ndvi_measured, ndvi_stored) |>
 get_scale <- function(
     x, 
     a = 0,          # the minimum value of the new range (default 0)
-    b = 255         # the maximum value of the new range (default 255)
+    b = 255,         # the maximum value of the new range (default 255)
+    min_x = min(x),
+    max_x = max(x) 
     ){
-  min_x = min(x)
-  max_x = max(x)
   
   scale <- (b - a) / (max_x - min_x)
   
@@ -201,24 +214,26 @@ get_scale <- function(
 get_offset <- function(
     x, 
     a = 0,          
-    b = 255
+    b = 255,
+    min_x = min(x),
+    max_x = max(x) 
     ){
-  min_x = min(x)
-  max_x = max(x)
   offset <- (a * max_x - b * min_x) / (max_x - min_x)
   
   offset
 }
 
 
-get_scale(ndvi_measured)
+get_scale(ndvi_measured, min_x = -1, max_x = 1)
+get_offset(ndvi_measured, min_x = -1, max_x = 1)
+
 
 ```
 
 
 ## R implementation for rasters II
 
-- The new function `get_scale_offset` works nicely with vectors, but not with rasters
+- The new functions `get_scale()`, `get_offset()` work nicely with vectors, but not with rasters
 - The reason it does not work for raster is that `min(x)` (and `max(x)`) are *local* and not *global* functions
   - They return the minimum / maximum value *per cell over all bands*, not the global minimum / maximum value
   - To calculate the global minimum and maximum value, we can either use `global`, or the slightly faster `minmax` function
@@ -231,32 +246,38 @@ get_scale(ndvi_measured)
 get_scale2 <- function(
     x, 
     a = 0,          
-    b = 255         
+    b = 255,
+    min_max = minmax(x)[,1]
     ){
-  library(terra)
-  min_max = minmax(x) 
-  min_x <- min_max[1,1]
-  max_x <- min_max[2,1]
+      library(terra)
 
-  scale <- (b - a) / (max_x - min_x)
-  
-  1/scale           # invert the scale, sincd writeRaster divides by scale
+      stopifnot(nlyr(x) == 1) # the function currently only works with 1 layer
+      
+      min_x <- min_max[1]
+      max_x <- min_max[2]
+
+      scale <- (b - a) / (max_x - min_x)
+      
+      1/scale           # invert the scale, since writeRaster divides by scale
 }
 
 
 get_offset2 <- function(
     x, 
     a = 0,          
-    b = 255
+    b = 255,
+    min_max = minmax(x)[,1]
     ){
-  library(terra)
-  min_max = minmax(x) 
-  min_x <- min_max[1,1]   
-  max_x <- min_max[2,1]
-  
-  offset <- (a * max_x - b * min_x) / (max_x - min_x)
-  
-  offset * -1       # invert the offset, since writeRaster subtracts the offset
+      library(terra) 
+
+      stopifnot(nlyr(x) == 1) # the function currently only works with 1 layer
+
+      min_x <- min_max[1]   
+      max_x <- min_max[2]
+      
+      offset <- (a * max_x - b * min_x) / (max_x - min_x)
+      
+      offset * -1       # invert the offset, since writeRaster subtracts the offset
 }
 
 
@@ -304,6 +325,9 @@ writeRaster(
 
 
 ```{r}
+#| echo: true
+
+
 writeRaster(
   elev, 
   "data-out/datatypes/FLT8S.tif",
@@ -312,8 +336,24 @@ writeRaster(
   )
 
 
-file.size("data-out/datatypes/INT1U.tif")/file.size("data-out/datatypes/FLT8S.tif")
+filesize_INT1U <- file.size("data-out/datatypes/INT1U.tif")
+filesize_FLT8S <- file.size("data-out/datatypes/FLT8S.tif")
 
 ```
 
+```{r}
 
+val <- percent(1-filesize_INT1U/filesize_FLT8S)
+
+
+tibble(filesize = c(filesize_INT1U, filesize_FLT8S), files = c("INT1U", "FLT8S")) |> 
+  ggplot(aes(files, filesize)) +
+  geom_col() +
+  theme_classic() +
+  scale_y_continuous("Filesize (in bytes)", sec.axis = sec_axis(\(x)x * 1e-6,name = "Filesize (in megabytes)")) +
+  labs(
+    title = "Difference in Filesize when saving with different datatypes",
+    subtitle = paste("INT1U reduces the filesize by", val)
+    ) +
+  theme(axis.title.x = element_blank())
+```
