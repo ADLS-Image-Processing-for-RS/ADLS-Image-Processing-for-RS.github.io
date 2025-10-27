@@ -495,7 +495,7 @@ window.Quarto = {
 </nav>
     </div>
 <!-- main -->
-<main class="content page-columns page-full" id="quarto-document-content">
+<main class="content" id="quarto-document-content">
 
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./lesson3-1-datatypes.html">Lesson 3</a></li><li class="breadcrumb-item"><a href="./lesson3-2-sentinel-data.html"><span class="chapter-title">Showcase: Importing Sentinel data</span></a></li></ol></nav>
@@ -546,7 +546,7 @@ window.Quarto = {
 </ul></li>
 </ul>
 </section>
-<section id="copernicus-safe-format-ii" class="level2 page-columns page-full">
+<section id="copernicus-safe-format-ii" class="level2">
 <h2 class="anchored" data-anchor-id="copernicus-safe-format-ii">Copernicus SAFE Format II</h2>
 <p>The SAFE folder above includes the following content:</p>
 <div class="cell">
@@ -708,35 +708,28 @@ window.Quarto = {
 <!--   > `value <- value * scale + offset` -->
 <ul>
 <li>We can now use the <code>scale</code> (10’000) and <code>offset</code> (-1’000) values to convert the data to reflectance values.</li>
-<li>We can then use <code>hist</code> to get a histogram of the values in each band</li>
+<li>We can then use <code>minmax</code> to see if our rescaling worked</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>s2b <span class="ot">&lt;-</span> (s2 <span class="sc">-</span> <span class="dv">1000</span>)<span class="sc">/</span><span class="dv">10000</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">minmax</span>(s2b)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        B01    B02     B03     B04     B05     B06    B07    B09     B11
+min -0.1000 -0.100 -0.1000 -0.1000 -0.1000 -0.1000 -0.100 -0.100 -0.1000
+max  1.8709  1.802  1.7195  1.6616  1.6448  1.6102  1.594  1.573  1.5258
+        B12
+min -0.1000
+max  1.5155</code></pre>
+</div>
+</div>
+<ul>
 <li>Note that most bands have values &gt; 1.
 <ul>
 <li>We have to decide how to handle these values</li>
 <li>One option is to simply clip the values to the desired range</li>
 </ul></li>
 </ul>
-<div class="cell page-columns page-full">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>s2b <span class="ot">&lt;-</span> (s2 <span class="sc">-</span> <span class="dv">1000</span>)<span class="sc">/</span><span class="dv">10000</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(s2b[[<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>]])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display page-columns page-full">
-<div class="page-columns page-full">
-<figure class="figure page-columns page-full">
-<p class="page-columns page-full"><img src="lesson3-2-sentinel-data_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img column-page" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(s2b[[<span class="dv">7</span><span class="sc">:</span><span class="dv">10</span>]])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="lesson3-2-sentinel-data_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># function to clip values to the desired range</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>force_minmax <span class="ot">&lt;-</span> \(x, <span class="at">min =</span> <span class="dv">0</span>, <span class="at">max =</span> <span class="dv">1</span>){</span>
@@ -763,7 +756,7 @@ max   1   1   1   1   1   1   1   1   1   1</code></pre>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="lesson3-2-sentinel-data_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="lesson3-2-sentinel-data_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -785,7 +778,7 @@ max   1   1   1   1   1   1   1   1   1   1</code></pre>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="lesson3-2-sentinel-data_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="lesson3-2-sentinel-data_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>

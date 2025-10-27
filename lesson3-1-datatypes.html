@@ -551,7 +551,10 @@ window.Quarto = {
 <li>While R and Python have a variety of data types including character strings, raster data is always stored as numeric</li>
 <li>However, there are quite a number of numeric data types that can be used to store raster data, depending on the range of values and the precision required</li>
 <li>The choice of data type can have a significant impact on the size of the file and the precision of the data stored</li>
-<li>Since raster data is powered by GDAL, most raster based software (including R and Python) use the same data types</li>
+<li>Since raster data is powered by GDAL, most raster based software (including R and Python) use the same data types <u>when writing files to disk</u>
+<ul>
+<li>In memory, only the datatypes supported by the programming languages are supported</li>
+</ul></li>
 <li>The numeric data types are supported by <code>gdal</code> are summarized in <a href="#tbl-datatypes" class="quarto-xref">Table&nbsp;<span>7.1</span></a></li>
 </ul>
 <div id="tbl-datatypes" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -632,18 +635,7 @@ Table&nbsp;7.1: The possible ranges of different datatypes in <code>gdal</code> 
 </div>
 </figure>
 </div>
-<div class="notes callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Note
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-1" class="callout-1-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
+<div class="notes">
 <ul>
 <li>If you store categorical data, use integer datatype and store the corespondence in the metadata</li>
 <li>Always be minimalistic about which datatype you need.</li>
@@ -662,8 +654,6 @@ Note
 <li>Transform the values to 0 - 255</li>
 </ul></li>
 </ul>
-</div>
-</div>
 </div>
 </section>
 <section id="choosing-a-data-type" class="level2">
@@ -704,7 +694,12 @@ x' &amp;= 127.5x+127.5 \\
 <ul>
 <li>We can now use this formula <span class="math inline">\(x' = 127.5x+127.5\)</span> to rescale NDVI values to the range 0 - 255</li>
 <li>So, rather than storing the NDVI value 0.2, for example, we store the value 153</li>
-<li>This rescaling is determined by two values: <code>scale</code> and <code>offset</code> (127.5 for both values in our case)</li>
+<li>This rescaling is determined by two values:
+<ul>
+<li><code>scale</code> and <code>offset</code></li>
+<li><span class="math inline">\(x' = x \times \text{scale} + \text{offset}\)</span></li>
+<li>In our NDVI example, scale is <code>127.5</code> and offset is <code>127.5</code> as well</li>
+</ul></li>
 </ul>
 </section>
 <section id="precision" class="level2">
@@ -712,9 +707,10 @@ x' &amp;= 127.5x+127.5 \\
 <p>Note that this transformation to 255 values limits our precision:</p>
 <ul>
 <li>Our values are now limited to in their precision, since we only have 255 possible values</li>
-<li>We can calculate the available precision like so: <span class="math inline">\(\frac{max(x)-min(x)}{b-a}\)</span></li>
-<li>In our case this is <span class="math inline">\(\frac{1 - (-1)}{255-0} = 0.0078\)</span>.</li>
+<li>We can calculate the available precision like so: <span class="math inline">\(\frac{1}{\text{scale}}\)</span></li>
+<li>In our case this is <span class="math inline">\(\frac{1}{127.5} = 0.0078\)</span>.</li>
 <li>Any measured / calculated NDVI value will be rounded to a multiple of 0.0078.</li>
+<li>We need to decide if this precision is enough for our use case</li>
 </ul>
 </section>
 <section id="r-implementation-for-vectors" class="level2">
@@ -771,7 +767,7 @@ x' &amp;= 127.5x+127.5 \\
 <li>Rather than transforming our values in memory, we can transform them when writing the raster to disk.</li>
 <li>For this, we can use the arguments <code>scale =</code> and <code>offset =</code> in the <code>writeRaster</code> function</li>
 <li>To use these arguments we need to calculate the <code>scale</code> and <code>offset</code> values first</li>
-<li>Rewriting the formula above, we can calculate <code>scale</code> and <code>offset</code>:</li>
+<li>Rewriting the formula above, we can calculate <code>scale</code> and <code>offset</code> as follows:</li>
 </ul>
 <p><span class="math display">\[\begin{align}
 \text{scale} &amp;= \frac{b - a}{max(x)-min(x)} \\
@@ -784,10 +780,10 @@ x' &amp;= 127.5x+127.5 \\
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>get_scale <span class="ot">&lt;-</span> <span class="cf">function</span>(</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    x, </span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">a =</span> <span class="dv">0</span>,          <span class="co"># the minimum value of the new range (default 0)</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">b =</span> <span class="dv">255</span>         <span class="co"># the maximum value of the new range (default 255)</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    ){</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  min_x <span class="ot">=</span> <span class="fu">min</span>(x)</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  max_x <span class="ot">=</span> <span class="fu">max</span>(x)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">b =</span> <span class="dv">255</span>,         <span class="co"># the maximum value of the new range (default 255)</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">min_x =</span> <span class="fu">min</span>(x),</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">max_x =</span> <span class="fu">max</span>(x) </span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    ){</span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  scale <span class="ot">&lt;-</span> (b <span class="sc">-</span> a) <span class="sc">/</span> (max_x <span class="sc">-</span> min_x)</span>
 <span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  </span>
@@ -797,26 +793,30 @@ x' &amp;= 127.5x+127.5 \\
 <span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>get_offset <span class="ot">&lt;-</span> <span class="cf">function</span>(</span>
 <span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    x, </span>
 <span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">a =</span> <span class="dv">0</span>,          </span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">b =</span> <span class="dv">255</span></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    ){</span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  min_x <span class="ot">=</span> <span class="fu">min</span>(x)</span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>  max_x <span class="ot">=</span> <span class="fu">max</span>(x)</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">b =</span> <span class="dv">255</span>,</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">min_x =</span> <span class="fu">min</span>(x),</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">max_x =</span> <span class="fu">max</span>(x) </span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    ){</span>
 <span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>  offset <span class="ot">&lt;-</span> (a <span class="sc">*</span> max_x <span class="sc">-</span> b <span class="sc">*</span> min_x) <span class="sc">/</span> (max_x <span class="sc">-</span> min_x)</span>
 <span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>  offset</span>
 <span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="fu">get_scale</span>(ndvi_measured)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="fu">get_scale</span>(ndvi_measured, <span class="at">min_x =</span> <span class="sc">-</span><span class="dv">1</span>, <span class="at">max_x =</span> <span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 130.0526</code></pre>
+<pre><code>[1] 127.5</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">get_offset</span>(ndvi_measured, <span class="at">min_x =</span> <span class="sc">-</span><span class="dv">1</span>, <span class="at">max_x =</span> <span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 127.5</code></pre>
 </div>
 </div>
 </section>
 <section id="r-implementation-for-rasters-ii" class="level2">
 <h2 class="anchored" data-anchor-id="r-implementation-for-rasters-ii">R implementation for rasters II</h2>
 <ul>
-<li>The new function <code>get_scale_offset</code> works nicely with vectors, but not with rasters</li>
+<li>The new functions <code>get_scale()</code>, <code>get_offset()</code> work nicely with vectors, but not with rasters</li>
 <li>The reason it does not work for raster is that <code>min(x)</code> (and <code>max(x)</code>) are <em>local</em> and not <em>global</em> functions
 <ul>
 <li>They return the minimum / maximum value <em>per cell over all bands</em>, not the global minimum / maximum value</li>
@@ -826,36 +826,42 @@ x' &amp;= 127.5x+127.5 \\
 <li>This is how this is implemented in R:</li>
 </ul>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>get_scale2 <span class="ot">&lt;-</span> <span class="cf">function</span>(</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    x, </span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">a =</span> <span class="dv">0</span>,          </span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">b =</span> <span class="dv">255</span>         </span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    ){</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">library</span>(terra)</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  min_max <span class="ot">=</span> <span class="fu">minmax</span>(x) </span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  min_x <span class="ot">&lt;-</span> min_max[<span class="dv">1</span>,<span class="dv">1</span>]</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  max_x <span class="ot">&lt;-</span> min_max[<span class="dv">2</span>,<span class="dv">1</span>]</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  scale <span class="ot">&lt;-</span> (b <span class="sc">-</span> a) <span class="sc">/</span> (max_x <span class="sc">-</span> min_x)</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="dv">1</span><span class="sc">/</span>scale           <span class="co"># invert the scale, sincd writeRaster divides by scale</span></span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>get_offset2 <span class="ot">&lt;-</span> <span class="cf">function</span>(</span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    x, </span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">a =</span> <span class="dv">0</span>,          </span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">b =</span> <span class="dv">255</span></span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>    ){</span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">library</span>(terra)</span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>  min_max <span class="ot">=</span> <span class="fu">minmax</span>(x) </span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>  min_x <span class="ot">&lt;-</span> min_max[<span class="dv">1</span>,<span class="dv">1</span>]   </span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>  max_x <span class="ot">&lt;-</span> min_max[<span class="dv">2</span>,<span class="dv">1</span>]</span>
-<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>  offset <span class="ot">&lt;-</span> (a <span class="sc">*</span> max_x <span class="sc">-</span> b <span class="sc">*</span> min_x) <span class="sc">/</span> (max_x <span class="sc">-</span> min_x)</span>
-<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>  offset <span class="sc">*</span> <span class="sc">-</span><span class="dv">1</span>       <span class="co"># invert the offset, since writeRaster subtracts the offset</span></span>
-<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>get_scale2 <span class="ot">&lt;-</span> <span class="cf">function</span>(</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    x, </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">a =</span> <span class="dv">0</span>,          </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">b =</span> <span class="dv">255</span>,</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">min_max =</span> <span class="fu">minmax</span>(x)[,<span class="dv">1</span>]</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    ){</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>      <span class="fu">library</span>(terra)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>      <span class="fu">stopifnot</span>(<span class="fu">nlyr</span>(x) <span class="sc">==</span> <span class="dv">1</span>) <span class="co"># the function currently only works with 1 layer</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>      min_x <span class="ot">&lt;-</span> min_max[<span class="dv">1</span>]</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>      max_x <span class="ot">&lt;-</span> min_max[<span class="dv">2</span>]</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>      scale <span class="ot">&lt;-</span> (b <span class="sc">-</span> a) <span class="sc">/</span> (max_x <span class="sc">-</span> min_x)</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>      <span class="dv">1</span><span class="sc">/</span>scale           <span class="co"># invert the scale, since writeRaster divides by scale</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>get_offset2 <span class="ot">&lt;-</span> <span class="cf">function</span>(</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>    x, </span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">a =</span> <span class="dv">0</span>,          </span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">b =</span> <span class="dv">255</span>,</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">min_max =</span> <span class="fu">minmax</span>(x)[,<span class="dv">1</span>]</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>    ){</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>      <span class="fu">library</span>(terra) </span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>      <span class="fu">stopifnot</span>(<span class="fu">nlyr</span>(x) <span class="sc">==</span> <span class="dv">1</span>) <span class="co"># the function currently only works with 1 layer</span></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>      min_x <span class="ot">&lt;-</span> min_max[<span class="dv">1</span>]   </span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>      max_x <span class="ot">&lt;-</span> min_max[<span class="dv">2</span>]</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>      offset <span class="ot">&lt;-</span> (a <span class="sc">*</span> max_x <span class="sc">-</span> b <span class="sc">*</span> min_x) <span class="sc">/</span> (max_x <span class="sc">-</span> min_x)</span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>      offset <span class="sc">*</span> <span class="sc">-</span><span class="dv">1</span>       <span class="co"># invert the offset, since writeRaster subtracts the offset</span></span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="r-implementation-for-rasters-example" class="level2">
@@ -864,11 +870,11 @@ x' &amp;= 127.5x+127.5 \\
 <li>Let’s import a raster, calculate the <code>scale</code> and <code>offset</code> values and use these values to write to disk</li>
 </ul>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra)</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>elev <span class="ot">&lt;-</span> <span class="fu">rast</span>(<span class="fu">system.file</span>(<span class="st">"ex/elev.tif"</span>, <span class="at">package=</span><span class="st">"terra"</span>))</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(elev, <span class="at">main =</span> <span class="fu">paste</span>(<span class="fu">minmax</span>(elev),<span class="at">collapse =</span> <span class="st">"-"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>elev <span class="ot">&lt;-</span> <span class="fu">rast</span>(<span class="fu">system.file</span>(<span class="st">"ex/elev.tif"</span>, <span class="at">package=</span><span class="st">"terra"</span>))</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(elev, <span class="at">main =</span> <span class="fu">paste</span>(<span class="fu">minmax</span>(elev),<span class="at">collapse =</span> <span class="st">"-"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -878,20 +884,20 @@ x' &amp;= 127.5x+127.5 \\
 </div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># write to disk with the minimum data type that fits the range </span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># without transformation </span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>scale <span class="ot">&lt;-</span> <span class="fu">get_scale2</span>(elev)</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>offset <span class="ot">&lt;-</span> <span class="fu">get_offset2</span>(elev)</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="fu">writeRaster</span>(</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  elev, </span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">"data-out/datatypes/INT1U.tif"</span>,</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># datatype = "INT1U", </span></span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">overwrite =</span> <span class="cn">TRUE</span>, </span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">scale =</span> scale, </span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">offset =</span> offset</span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># write to disk with the minimum data type that fits the range </span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># without transformation </span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>scale <span class="ot">&lt;-</span> <span class="fu">get_scale2</span>(elev)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>offset <span class="ot">&lt;-</span> <span class="fu">get_offset2</span>(elev)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="fu">writeRaster</span>(</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  elev, </span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">"data-out/datatypes/INT1U.tif"</span>,</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># datatype = "INT1U", </span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">overwrite =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">scale =</span> scale, </span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">offset =</span> offset</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="r-implementation-for-rasters-example-1" class="level2">
@@ -902,8 +908,24 @@ x' &amp;= 127.5x+127.5 \\
 <li>To finish off, let’s compare the file sizes of the raster stored as <code>INT1U</code> (Byte) and <code>FLT8S</code> (Float32)</li>
 </ul>
 <div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.6199451</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">writeRaster</span>(</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  elev, </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"data-out/datatypes/FLT8S.tif"</span>,</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">datatype =</span> <span class="st">"FLT8S"</span>, </span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">overwrite =</span> <span class="cn">TRUE</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>filesize_INT1U <span class="ot">&lt;-</span> <span class="fu">file.size</span>(<span class="st">"data-out/datatypes/INT1U.tif"</span>)</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>filesize_FLT8S <span class="ot">&lt;-</span> <span class="fu">file.size</span>(<span class="st">"data-out/datatypes/FLT8S.tif"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lesson3-1-datatypes_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 
