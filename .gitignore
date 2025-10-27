@@ -3,6 +3,7 @@
 
 /.quarto/
 docs
+slides
 data-large
 data-out
 data
