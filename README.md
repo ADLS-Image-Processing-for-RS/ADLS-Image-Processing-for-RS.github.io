@@ -13,3 +13,11 @@ Course materials for "Image Processing for Remote Sensing" - Applied Digital Lif
 - `quarto preview --profile dev` runs the dev version, with potentially unfinished chapters
 - publish using `quarto publish gh-pages --no-prompt`
 
+## Role of Slides
+
+**Slides serve three key functions in the classroom:**
+
+1. **Navigation**: They provide structure and orientation for both instructors and students, clearly indicating the current topic and learning progression
+2. **Reference material**: They serve as a study resource for students to review content and prepare for assessments
+3. **Teaching prompts**: They include instructor notes highlighting key points and concepts that require emphasis
+

@@ -1,25 +1,36 @@
 ---
-echo: true
+execute: 
+  echo: true
 always_allow_html: yes
+
 ---
 
 # Supervised learning
-
 
 ## Introduction
 
 - Supervised learning is a type of machine learning where the model is trained on a labelled dataset
 - The model learns to map input data to the correct output label
 - Supervised learning is used extensively in remote sensing to enable quantitative analysis of satellite imagery
-- We will use historic satellite imagery to train a model to classify land cover types in a given area
+
+---
+
+- In this lesson, we will use historic aerial imagery to train a binary classification model that distinguishes between forest and non-forest areas
+- We will use ground truth polygon data (reference data showing actual forest extent) to generate training and testing samples
 
 
 ## Task and Data
 
-- The task we will perform is to quantitatively analyze forest cover change over time in the area surrounding the village Ces in Ticino, Switzerland
-- We are provided with historic areal imagery from 1961 from swisstopo [[source](https://map.geo.admin.ch/#/map?lang=de&center=2706292.97,1144053.16&z=9.82&bgLayer=ch.swisstopo.pixelkarte-farbe&topic=ech&layers=ch.swisstopo.swissimage-product_1946,f;ch.swisstopo.swissimage-product@year=1961)] 
-- The resolution of the imagery is 1 m/pixel and it contains only one single band (!!!)
+- The task we will perform is to classify forest and non-forest areas using historic aerial imagery from 1961 in the area surrounding the village Ces in Ticino, Switzerland
+- We will perform **binary classification** to distinguish between forest and non-forest areas
 
+---
+
+- We are provided with:
+  - Historic aerial imagery from 1961 from [swisstopo](https://map.geo.admin.ch/#/map?lang=de&center=2706292.97,1144053.16&z=9.82&bgLayer=ch.swisstopo.pixelkarte-farbe&topic=ech&layers=ch.swisstopo.swissimage-product_1946,f;ch.swisstopo.swissimage-product@year=1961) with 0.5 m/pixel resolution (single band)
+  - Ground truth forest polygons for 1961 that we will use to generate training and testing samples
+
+---
 
 ```{r}
 library(terra)
@@ -35,7 +46,7 @@ ces1961 <- ces1961/255 # normalize the values to [0,1]
 names(ces1961) <- "luminosity"
 ```
 
-
+---
 
 ```{r}
 plot(ces1961, col = grey.colors(255))
@@ -44,82 +55,122 @@ plot(ces1961, col = grey.colors(255))
 
 ## Approach
 
-To solve this task
+To solve this task, we will follow these steps:
 
-1. We first need to create some labelled data
-3. Split our labelled data into training and testing data
-4. Train a model on the training data
-5. Evaluate the model on the testing data
+1. Import the ground truth forest polygon data
+2. Create non-forest areas by calculating the spatial difference between the study area and forest polygons
+3. Generate random sample points from both forest and non-forest areas
+4. Split our sampled data into training and testing datasets
+
+---
+
+5. Extract features (pixel values) at the sample point locations
+6. Train a classification model on the training data
+7. Use the model to predict forest/non-forest for all pixels in the image
+8. Evaluate the model performance using the testing data
 
 
-## Data labelling
+## Ground truth
 
-In preparation, I used QGIS to create labelled points for the following classes:
+For this exercise, we will perform binary classification to distinguish between forest and non-forest areas. We will use existing ground truth polygon data that delineates forest boundaries, which were digitized by hand.
 
-- Forest
-- Buildings
-- Agriculture
-- Shadows
+---
 
+
+Our two classes are:
+
+- **Forest**: Areas covered by forest (from ground truth polygons)
+- **Non-forest**: All other areas (everything outside the forest polygons within our study area)
+
+---
+
+### Loading the ground truth data
+
+We start by loading the forest polygon and creating a complementary non-forest polygon:
 
 ```{r}
-#| echo: false
-
-# this is just for internal preperation of the data
 library(sf)
-library(purrr)
-labelled_datapath <- "data-large/ces/labelled-points.gpkg"
 
-labels_lyrs <- st_layers(labelled_datapath)
-
-labelled_data <- map(labels_lyrs$name, \(x){
-  read_sf(labelled_datapath, layer = x) |> 
-    mutate(class = x) |> 
-    st_set_geometry("geom")
-}) |> 
-  do.call(rbind, args = _)
-
-write_sf(labelled_data, "data-large/ces/labelled-data.gpkg")
-
+# Read the forest polygon for 1961
+ces_polygons <- read_sf("data/ces_polygons.gpkg", "ces_polygons")
+study_area <- read_sf("data/ces_polygons.gpkg", "study_area")
 ```
 
+---
 
+### Generating sample points from polygons
+
+While we have polygon data showing the full extent of forest and non-forest areas, we need point samples for training our model. The `st_sample()` function generates random points within each polygon. This approach:
+
+---
+
+- Creates a balanced dataset (equal number of samples per class)
+- Ensures spatial coverage across the entire extent of each class
+- Provides sufficient samples for robust model training and testing
+
+---
+
+We'll generate 500 points from each class (1000 points total):
 
 ```{r}
-library(sf)
+# Set seed for reproducibility
+set.seed(42)
 
-labelled_data <- read_sf("data-large/ces/labelled-data.gpkg")
+# Generate random points over the entire study area
+sample_points <- st_sample(ces_polygons, 1000) |> 
+  st_sf()
+st_geometry(sample_points) <- "geom"
 
-# We will turn the class into a factor, 
+labelled_data <- st_join(sample_points, ces_polygons) |> 
+  select(-jahr)
+
+# We will turn the class into a factor,
 # which is useful for classification
 labelled_data$class <- factor(labelled_data$class)
 ```
 
-:::: {.content-visible when-format="html"}
-```{r}
-tmap_mode("view")
-```
-::::
+---
 
 ```{r}
-tm_shape(ces1961) + 
-  tm_raster(palette = "-Greys",legend.show = FALSE) +
+#| echo: false
+tmap_mode("plot")
+```
+
+---
+
+```{r}
+#| echo: false
+#| fig-cap: Sample points generated from forest and non-forest polygons. Forest points (green) were sampled from the ground truth forest polygon, while non-forest points (orange) were sampled from the remaining area.
+
+tm_shape(ces1961) +
+  tm_raster(col.scale = tm_scale_continuous(values = "-brewer.greys"), col.legend = tm_legend_hide()) +
   tm_shape(labelled_data) +
-  tm_dots(col = "class") +
-  tm_layout(legend.outside = TRUE)
+  tm_dots(
+    fill = "class", 
+    fill.scale = tm_scale_categorical(values = c("Forest" = "palegreen4", "Non-forest" = "orange"))) +
+  tm_layout(legend.outside = TRUE) +
+  tm_shape(study_area) + tm_borders()
 ```
 
 
 ## Splitting the data
 
-- We need to split our data into training and testing data
-- We will randomly select 70% of the data for training and the remaining 30% for testing
+To properly evaluate our model's performance, we must split our sample data into two independent sets:
+
+- **Training data** (70%): Used to train the model - the model learns patterns from this data
+- **Testing data** (30%): Used to evaluate the model - kept separate to assess how well the model generalizes to unseen data
+
+---
+
+We perform this split separately for each class to ensure balanced representation in both training and testing sets.
 
 :::{.callout-important}
 
-Note that this is *not the recommended approach*, instead we should use a spatially stratified split [see  @brenning2023; and @schratz2021]. To keep things simple for this exercise however, we will use a random split.
+Note that this random split is *not the recommended approach* for spatial data. Instead, we should use a spatially stratified split to account for spatial autocorrelation [see @brenning2023; and @schratz2021]. However, to keep things simple for this introductory exercise, we will use a random split.
 
 :::
+
+---
 
 ```{r}
 
@@ -141,14 +192,20 @@ data_test <- labelled_data |>  # same as above, but the filter is inverted
 
 tmap_mode("plot")
 
-tm_shape(labelled_data) + tm_dots(col = "train", palette = c("blue","red"))
+tm_shape(labelled_data) + 
+  tm_dots(fill = "train", fill.scale = tm_scale_categorical(values = c("blue","red")))
 ```
 
 
 ## Feature Extraction {#sec-feature-extraction1}
 
-- We need to extract the values of the raster data at the labelled points
-- Since we only have one band, our result is a data.frame with one column
+Now we need to extract the pixel values (features) from our raster at each sample point location. These values will be the input data (predictors) for our classification model.
+
+---
+
+- The `terra::extract()` function retrieves raster values at point locations
+- Since our aerial imagery has only one band (luminosity/grayscale), we get one feature value per point
+- Each point now has both a class label (Forest/Non-forest) and a feature value (pixel brightness)
 
 ```{r}
 # ID = FALSE means that we do not want to add an ID column
@@ -159,53 +216,73 @@ head(train_features)
 
 
 ```{r}
-data_train2 <- cbind(data_train, train_features) |> 
+data_train2 <- cbind(data_train[,"class"], train_features) |> 
   st_drop_geometry()
 ```
 
 
 ## Training the model {#sec-training-model1}
 
-- We will use the `rpart` package to train a classification tree
-- The classification tree is also known as a decision tree
-- A decision tree has a flowchart-like structure (see @fig-cart)
-- Classification trees does not always produce the best results, but they are simple and interpretable
+Now we train a classification model using our training data. We'll use a **Classification and Regression Tree (CART)**, also known as a decision tree:
+
+- Decision trees learn simple rules from the data to make predictions
+- They have a flowchart-like structure that makes them highly interpretable
+- The tree splits the data based on feature values (in our case, pixel brightness) to separate classes
+- While not always the most accurate method, they are excellent for understanding what the model has learned
+
+The `rpart()` function builds the tree using the formula `class ~ .`, which means "predict class using all other variables":
 
 ```{r}
 library(rpart)
-cart_model <- rpart(class~., data = data_train2, method = "class")
+cart_model <- rpart(class~luminosity, data = data_train2)
 ```
 
-- As mentioned above, the decision tree is interpretable. We can visualize it using the `rpart.plot` package:
-- Each pixel is classified into one of the four classes based on its value (luminosity) according to the decision tree in @fig-cart
+### Visualizing the decision tree
+
+One major advantage of decision trees is their interpretability. We can visualize the entire model structure:
+
+- Each internal node shows a decision rule (e.g., "Is luminosity < 0.5?")
+- Each branch represents the outcome of that test
+- Each leaf node shows the predicted class
+- For our binary classification, each pixel is classified as Forest or Non-forest based on its luminosity value according to the rules shown in @fig-cart
 
 ```{r}
 #| label: fig-cart
 #| fig-cap: The resulting decision tree. Each internal node represents a test on an attribute, each branch represents the outcome of the test and each leaf node represents a class label
 
 library(rpart.plot)
-rpart.plot(cart_model, type = 3)
+rpart.plot(cart_model)
 ```
 
 
 ## Predicting the probabilities per class for each pixel {#sec-prediction-per-class}
 
-- We will use the trained model to predict the probabilities of each class for each pixel in the raster data
-- We can use the `predict` function to do this
-- The result is a raster with one layer per class, giving the probability of each class for each pixel
+Now we apply our trained model to classify every pixel in the entire image. The `predict()` function in the terra package can work directly with raster data:
+
+- It applies the model to each pixel in the raster
+- For each pixel, it calculates the probability of belonging to each class
+- The result is a multi-layer raster: one layer per class showing the probability (0-1) that each pixel belongs to that class
+- For our binary classification, we get two layers: one for Forest probability and one for Non-forest probability
 
 ```{r}
 ces1961_predict <- predict(ces1961, cart_model)
 
-tm_shape(ces1961_predict) + tm_raster(style = "cont", midpoint = .5, palette = "-Spectral",title = "probability") +
+tm_shape(ces1961_predict) + 
+  tm_raster(
+    # col.scale = tm_scale_continuous(midpoint = .5, values = "-brewer.spectral"),
+    # col.legend = tm_legend(title = "prob")
+    ) +
   tm_layout()
 ```
 
 
 ## Highest probability class {#sec-highest-probability-class}
 
-- We can combine the four layers into a single layer by assigning the class with the highest probability to each pixel
-- For this, we can use the `which.max` function:
+While probability maps are informative, for many applications we need a definitive classification. We can create a final classification map by assigning each pixel to the class with the highest probability:
+
+- The `which.max()` function identifies which layer has the maximum value for each pixel
+- This converts our two probability layers into a single classified raster
+- Each pixel is assigned to either Forest or Non-forest based on which probability is higher
 
 ```{r}
 ces1961_predict2 <- which.max(ces1961_predict)
@@ -216,25 +293,22 @@ classes_df <- data.frame(ID = seq_along(classes), class = classes)
 levels(ces1961_predict2) <- classes_df
 ```
 
-:::: {.content-visible when-format="html"}
-```{r}
-# visualize the result
-tmap_mode("view")
-```
-::::
 
 ```{r}
-tm_shape(ces1961_predict2) + tm_raster(palette = c("gold","gray","palegreen4","black")) +
+tm_shape(ces1961_predict2) +
+  tm_raster(palette = c("Forest" = "palegreen4", "Non-forest" = "orange")) +
   tm_layout(legend.outside = TRUE)
 ```
 
 ## Model Evaluation I {#sec-model-evaluation-1}
 
+Now we evaluate how well our model performs on data it has never seen before - the testing data. This is crucial because:
 
-<!-- todo: more metrics on model performance:  -->
-<!-- https://youtu.be/GLcirSRIapA?si=bSR39sDpQCBcxP1S -->
+- It reveals whether the model can generalize to new data
+- It helps detect overfitting (when a model memorizes training data but fails on new data)
+- It provides an honest assessment of real-world performance
 
-- To evaluate the model, we will use the testing data
+We extract the predicted class for each testing point from our classification raster and compare it to the actual (ground truth) class:
 
 
 ```{r}
@@ -252,7 +326,7 @@ confusion_matrix <- cbind(data_test, test_features) |>
 #| echo: false
 #| label: tbl-confusion-matrix1
 #| class: left
-#| tbl-cap: The confusion matrix shows the predicted values (rows) against the actual values (columns). The diagonal cells (in red) shows the correct predictions. The results are better than expected, the model seems to haev the most problems with the class "agriculture". 
+#| tbl-cap: The confusion matrix shows the predicted values (rows) against the actual values (columns). The diagonal cells (in red) show the correct predictions for our binary classification (Forest vs Non-forest). 
 
 library(tidyr)
 library(kableExtra)
@@ -278,8 +352,8 @@ col_names[1] <- ""
 kable(confusion_matrix2,col.names = col_names) |> 
   kable_styling(full_width = FALSE) |>
   column_spec(1, bold = TRUE) |> 
-  highlight_diagonal(2:5) |> 
-  add_header_above(c(" " = 1, "Actual" = 4)) |>
+  highlight_diagonal(2:3) |> 
+  add_header_above(c(" " = 1, "Actual" = 2)) |>
   collapse_rows(columns = 1)
 
 
@@ -288,7 +362,7 @@ kable(confusion_matrix2,col.names = col_names) |>
 ```
 
 
-## Model Evaluation I {#sec-model-evaluation-2}
+## Model Evaluation II: Overall Accuracy {#sec-model-evaluation-2}
 
 ```{r}
 #| echo: false
@@ -307,8 +381,12 @@ acc <- sum(correct)/sum(tot)
 acc_str <- format(acc, digits = 2)
 ```
 
-- A very simple measure to asses the model performance is the overall accuracy
-- This is the ratio of the number of features correctly classified (diagonals in @tbl-confusion-matrix1) to the total number of features (sum of all column sums in @tbl-confusion-matrix1):
+The **confusion matrix** (@tbl-confusion-matrix1) shows us where our model makes correct and incorrect predictions, but we often want a single number to summarize performance. The simplest metric is **overall accuracy**:
+
+- Overall accuracy is the proportion of correct predictions
+- It's calculated as: (number of correct predictions) / (total number of predictions)
+- The correct predictions are shown on the diagonal of the confusion matrix
+- For binary classification, this tells us what percentage of pixels were correctly classified as Forest or Non-forest
 
 $$\frac{\text{number of features correctly classified}}{\text{total number of features}}$$
 
@@ -322,11 +400,149 @@ $$\frac{`r correct_str`}{`r tot_str`}= `r acc_str`$$
 
 
 
+## Applying the Model to Multiple Years {#sec-temporal-analysis}
+
+Now that we have a trained model that performs well on our 1961 testing data, we can apply it to imagery from other years to analyze forest cover change over time. We have aerial imagery available for the years 1961, 1971, 1977, 1983, 1989, and 1995.
+
+### Loading all imagery
+
+First, we'll load all available imagery and normalize the values:
+
+```{r}
+# Get all available years
+years <- c(1961, 1971, 1977, 1983, 1989, 1995)
+
+# Load all rasters into a list
+ces_all <- lapply(years, \(year) {
+  r <- rast(paste0("data-large/ces/", year, ".tif"))
+  r <- r / 255  # normalize to [0,1]
+  names(r) <- "luminosity"
+  return(r)
+})
+
+# Name the list elements by year
+names(ces_all) <- years
+```
+
+### Predicting forest cover for all years
+
+We can now apply our trained model to each year's imagery:
+
+```{r}
+# Apply the model to all years
+predictions_all <- lapply(ces_all, \(raster) {
+  pred_prob <- predict(raster, cart_model)
+  pred_class <- which.max(pred_prob)
+
+  # Assign class labels
+  classes <- levels(data_train2$class)
+  classes_df <- data.frame(ID = seq_along(classes), class = classes)
+  levels(pred_class) <- classes_df
+
+  return(pred_class)
+})
+
+# Name the list elements by year
+names(predictions_all) <- years
+```
+
+### Side-by-side comparison: Original imagery vs. Classification
+
+For plausibility checking, we'll create side-by-side comparisons of the original imagery and the classification results for each year:
+
+```{r}
+#| fig-width: 12
+#| fig-height: 8
+#| fig-cap: Comparison of original aerial imagery (left) and forest classification (right) for all available years. Forest areas are shown in green, non-forest areas in orange. This allows visual verification of the model's predictions.
+
+library(patchwork)
+
+# Create comparison plots for each year
+plot_comparison <- function(year) {
+  # Original imagery
+  p1 <- tm_shape(ces_all[[as.character(year)]]) +
+    tm_raster(palette = "-Greys", legend.show = FALSE, title = paste(year, "Original")) +
+    tm_layout(main.title = paste(year, "- Original"),
+              main.title.size = 1.2,
+              main.title.position = "center")
+
+  # Classification
+  p2 <- tm_shape(predictions_all[[as.character(year)]]) +
+    tm_raster(palette = c("Forest" = "palegreen4", "Non-forest" = "orange"),
+              title = "Class") +
+    tm_layout(main.title = paste(year, "- Classification"),
+              main.title.size = 1.2,
+              main.title.position = "center",
+              legend.outside = TRUE)
+
+  return(tmap_arrange(p1, p2, ncol = 2))
+}
+
+# Set to plot mode
+tmap_mode("plot")
+
+# Create plots for all years
+for (year in years) {
+  print(plot_comparison(year))
+}
+```
+
+### Forest cover over time
+
+We can also calculate and visualize how forest cover has changed over the years:
+
+```{r}
+#| fig-cap: Change in forest cover over time (1961-1995). The plot shows the total area classified as forest for each year, allowing us to track forest gain or loss over this 34-year period.
+
+# Calculate forest area for each year
+forest_area <- sapply(predictions_all, \(pred) {
+  # Count forest pixels
+  freq_table <- freq(pred)
+  forest_pixels <- freq_table[freq_table$class == "Forest", "count"]
+  # Convert to hectares (1m resolution, so 1 pixel = 1 m²)
+  forest_ha <- forest_pixels / 10000
+  return(forest_ha)
+})
+
+# Create a data frame for plotting
+forest_df <- data.frame(
+  year = as.numeric(names(forest_area)),
+  forest_ha = as.numeric(forest_area)
+)
+
+# Plot
+library(ggplot2)
+ggplot(forest_df, aes(x = year, y = forest_ha)) +
+  geom_line(color = "palegreen4", linewidth = 1.5) +
+  geom_point(color = "palegreen4", size = 3) +
+  labs(x = "Year", y = "Forest area (hectares)",
+       title = "Forest cover change (1961-1995)") +
+  theme_minimal() +
+  theme(text = element_text(size = 12))
+```
+
+
 ## Feature Engineering {#sec-feature-engineering0}
 
-- Currently, our raster data only contains one band. In other words, our feature space is only one-dimensional 
-- It's actually quite a challenge to determine the land cover of a pixel if we regard just a single pixel. We humans rely on *context* (sorrounding pixels) to determine the land cover. You can test this by zooming in very closely on the raster image and try to distinguish the land cover types (see @fig-zoom)
-- We will have a look at possibilities to include context information in @sec-feature-engineering
+### The limitation of single-pixel classification
+
+Our current model makes decisions based solely on a single pixel's brightness value. This is quite limiting:
+
+- Our raster contains only one band (grayscale intensity), giving us just one feature per pixel
+- The model classifies each pixel independently without considering its neighbors
+- Humans, however, rely heavily on **spatial context** - we look at surrounding pixels to identify patterns like textures, shapes, and edges
+- A single dark pixel could be forest shadow, a building, or water - context helps us decide
+
+Try examining @fig-zoom, where we zoom in very closely. Can you distinguish forest from non-forest by looking at individual pixels alone? It's quite difficult!
+
+### Future improvements
+
+In more advanced applications (see @sec-feature-engineering), we could improve classification by:
+
+- Adding **texture features** (measures of spatial variation in neighborhoods)
+- Including **spectral indices** (if we had multispectral data)
+- Incorporating **spatial context** through convolutional approaches
+- Using **object-based** rather than pixel-based classification
 
 ```{r}
 #| label: fig-zoom
@@ -352,6 +568,15 @@ save.image(file = "data-out/workspace.Rdata")
 
 ## Tasks {#sec-tasks-supervised-learning}
 
-1. Download the datasets *labelled-data.gpkg* and *1961.tif* from moodle
-2. Follow the steps described above to train a model to classify the land cover types in the area surrounding the village Ces in Ticino
-3. Evaluate the model using the testing data
+1. Download the datasets *ces.gpkg* and the TIF files for all years (1961-1995) from moodle
+2. Follow the steps described above to train a binary classification model to distinguish between forest and non-forest areas in the region surrounding the village Ces in Ticino
+3. Evaluate the model using the testing data and interpret the confusion matrix
+
+---
+
+4. Apply the model to all available years (1961, 1971, 1977, 1983, 1989, 1995) and examine the side-by-side comparisons
+5. Analyze the forest cover change over time - does the trend make sense? What factors might explain forest gain or loss?
+6. **Optional**: Experiment with different numbers of sample points (`n_points`) to see how it affects model performance
+
+
+## References {#refs}
