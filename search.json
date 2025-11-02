@@ -790,11 +790,110 @@
     ]
   },
   {
+    "objectID": "lesson4-2-supervised-learning.html",
+    "href": "lesson4-2-supervised-learning.html",
+    "title": "Supervised Classification in Remote Sensing",
+    "section": "",
+    "text": "Introduction",
+    "crumbs": [
+      "Lesson 4",
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Supervised Classification in Remote Sensing</span>"
+    ]
+  },
+  {
+    "objectID": "lesson4-2-supervised-learning.html#introduction",
+    "href": "lesson4-2-supervised-learning.html#introduction",
+    "title": "Supervised Classification in Remote Sensing",
+    "section": "",
+    "text": "This lesson demonstrates supervised classification applied to remote sensing imagery\nWe’ll classify historic aerial imagery from 1961 to distinguish forest from non-forest areas in Ces, Ticino, Switzerland\nKey focus: The spatial data workflow using terra/sf, not basic ML concepts\n\n\n\nWhat makes RS classification different?\n\nSpatial structure: Pixels are not independent - spatial autocorrelation matters\nScale of prediction: We predict on entire rasters (millions of pixels), not just point datasets\nSpatial sampling: Ground truth comes from polygons, requiring careful sampling strategies\nFeature engineering: Spatial context (focal operations) is critical, not just pixel values\n\n\nThese differences are why we can’t just apply generic ML tutorials to RS data!\nThe spatial workflow (terra/sf packages) and understanding spatial autocorrelation are essential skills, regardless of whether you use classical ML or deep learning.\n\n\n\n\nData\n\nHistoric aerial imagery from 1961 (swisstopo)\n\nSingle band (grayscale), 0.5 m/pixel resolution\nImages available for: 1961, 1971, 1977, 1983, 1989, 1995\n\nGround truth forest polygons (hand-digitized)",
+    "crumbs": [
+      "Lesson 4",
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Supervised Classification in Remote Sensing</span>"
+    ]
+  },
+  {
+    "objectID": "lesson4-2-supervised-learning.html#workflow-overview",
+    "href": "lesson4-2-supervised-learning.html#workflow-overview",
+    "title": "Supervised Classification in Remote Sensing",
+    "section": "Workflow Overview",
+    "text": "Workflow Overview\n\nLoad ground truth polygons and generate point samples\nSpatial train/test split (⚠ autocorrelation)\nExtract raster features using extract()\nTrain classifier (CART for interpretability)\nPredict on entire raster\nEvaluate and compare approaches",
+    "crumbs": [
+      "Lesson 4",
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Supervised Classification in Remote Sensing</span>"
+    ]
+  },
+  {
+    "objectID": "lesson4-2-supervised-learning.html#ground-truth-spatial-sampling",
+    "href": "lesson4-2-supervised-learning.html#ground-truth-spatial-sampling",
+    "title": "Supervised Classification in Remote Sensing",
+    "section": "Ground Truth & Spatial Sampling",
+    "text": "Ground Truth & Spatial Sampling\n\n\nFrom polygons to points\nUnlike standard ML datasets, our ground truth comes as spatial polygons.\n\n\n\n\n\n\n\n\n\n\n\nWe need point samples for training:\n\n# Load polygons\nlibrary(sf)\nces_polygons &lt;- read_sf(\"data/ces_polygons.gpkg\", \"ces_polygons\")\nstudy_area &lt;- read_sf(\"data/ces_polygons.gpkg\", \"study_area\")\n\n\n\n# Generate spatially distributed samples\nsample_points &lt;- st_sample(ces_polygons, 1000) |&gt;\n  st_sf()\n\n\n\n# extract class per sample\nlabelled_data &lt;- st_join(sample_points, ces_polygons) |&gt;\n  select(-jahr)\n\nlabelled_data$class &lt;- factor(labelled_data$class)\n\n\n\n\n\nSample points from forest (green) and non-forest (orange) polygons\n\n\n\nst_sample()\n\nEnsures spatial coverage across polygon extents\nCreates balanced datasets\nSimple random sampling across the entire study region (more sophisticated strategies exist)\n\n\n\n\nTrain/test split: The spatial autocorrelation problem\n\n\n\n\n\n\nImportant\n\n\n\nSpatial autocorrelation issue: Random splits violate independence assumptions because nearby pixels are correlated. Proper approaches use spatial cross-validation (Brenning 2023; Schratz et al. 2021). We use random splits here for simplicity, but be aware this may overestimate performance.\n\n\n\nPedagogical simplification: Random train/test split\nProduction approach: - Spatial k-fold cross-validation with geographic blocking - Ensures training and test data are spatially separated - Packages: sperrorest, mlr3spatiotempcv, CAST - More realistic performance estimates",
+    "crumbs": [
+      "Lesson 4",
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Supervised Classification in Remote Sensing</span>"
+    ]
+  },
+  {
+    "objectID": "lesson4-2-supervised-learning.html#approach-1-single-band-classifier",
+    "href": "lesson4-2-supervised-learning.html#approach-1-single-band-classifier",
+    "title": "Supervised Classification in Remote Sensing",
+    "section": "Approach 1: Single-Band Classifier",
+    "text": "Approach 1: Single-Band Classifier\nFeature extraction with terra::extract()\n\ntrain_features &lt;- terra::extract(ces1961, data_train, ID = FALSE)\n\ndata_train2 &lt;- cbind(data_train[,\"class\"], train_features) |&gt;\n  st_drop_geometry()\n\ndata_train2\n\n\n\n\n       class luminosity\n1 Non-forest  0.6352941\n2     Forest  0.2078431\n3     Forest  0.3960784\n4     Forest  0.2980392\n5     Forest  0.1294118\n6 Non-forest  0.6980392\n\n\n\n\nTraining\nWe use CART (decision trees) for interpretability. As experienced ML practitioners, feel free to substitute with Random Forest, XGBoost, etc.\n\nlibrary(rpart)\ncart_model &lt;- rpart(class~luminosity, data = data_train2)\n\n\nPedagogical choice: CART for transparency\nProduction alternatives: - Random Forest / XGBoost: Better accuracy, handles non-linearity - Support Vector Machines: Good with limited training data - Neural Networks: Requires more data but state-of-the-art performance\nCART lets students see exactly what decision boundaries the model learned.\n\n\n\n\n\n\n\n\n\n\nFigure 10.1: Decision tree for single-band classification\n\n\n\n\n\n\n\n\nRaster prediction\n\n# Predict probability per class for all pixels\nces1961_predict &lt;- predict(ces1961, cart_model)\n\n# Get highest probability class\nces1961_predict2 &lt;- which.max(ces1961_predict)\n\n\n\n\n\nClassification result - single band approach\n\n\n\n\n\nEvaluation\n\n\n\n\nTable 10.1: Confusion matrix for single-band classification\n\n\n\n\n\n\n\n\n\n\n\n\n\nActual\n\n\n\n\nForest\nNon-forest\n\n\n\n\nForest\n137\n22\n\n\nNon-forest\n55\n87\n\n\n\n\n\n\n\n\nOverall accuracy: 0.74",
+    "crumbs": [
+      "Lesson 4",
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Supervised Classification in Remote Sensing</span>"
+    ]
+  },
+  {
+    "objectID": "lesson4-2-supervised-learning.html#sec-spatial-context",
+    "href": "lesson4-2-supervised-learning.html#sec-spatial-context",
+    "title": "Supervised Classification in Remote Sensing",
+    "section": "The Spatial Context Problem",
+    "text": "The Spatial Context Problem\n\nAt pixel level, it is hard to distinguish forest from non-forest\nSpatial context is essential: Humans use spatial context (texture, patterns, neighbors) to classify land cover\n\n\n\n\n\n\n\nFigure 10.2\n\n\n\n\nThis is the core limitation of pixel-based classification.\nModern deep learning (CNNs) solves this automatically by processing image patches, but we’ll first show the manual approach to understand why spatial context matters.",
+    "crumbs": [
+      "Lesson 4",
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Supervised Classification in Remote Sensing</span>"
+    ]
+  },
+  {
+    "objectID": "lesson4-2-supervised-learning.html#sec-feature-engineering",
+    "href": "lesson4-2-supervised-learning.html#sec-feature-engineering",
+    "title": "Supervised Classification in Remote Sensing",
+    "section": "Approach 2: Adding Spatial Features",
+    "text": "Approach 2: Adding Spatial Features\n\nFocal operations as feature extractors: Focal operations aggregate neighborhood values, providing spatial context\n\n\ni &lt;- 5\nfocal_window &lt;- matrix(rep(1, i^2), nrow = i)\n\n# Calculate standard deviation in each neighborhood\nces1961_focal_sd &lt;- focal(ces1961, focal_window, fun = \"sd\")\n\n\nPedagogical approach: Handcrafted focal features\nWhy we do this: - Explicit, understandable feature engineering - Shows what spatial context means (texture/variation) - Works with classical ML algorithms\nProduction approach: Convolutional Neural Networks (CNNs) - CNNs learn optimal spatial filters automatically during training - First layer convolution weights = learned focal operations - Can learn multi-scale features (equivalent to multiple focal window sizes) - State-of-the-art: U-Net, DeepLabV3+, Vision Transformers\n\n\n\n\n\n\n\n\n\n\nOriginal raster\n\n\n\n\n\n\n\nAfter focal SD filter (shows texture/variation)\n\n\n\n\n\n\nFigure 10.3\n\n\n\n\n\nNormalization for multi-feature learning\nWhen combining features, normalize to [0,1] using min-max scaling:\n\\[x' = \\frac{x - \\min(x)}{\\max(x) - \\min(x)}\\]\n\nminmax_normalization &lt;- function(x){\n  minmax_vals &lt;- minmax(x)[,1]\n  (x - minmax_vals[1]) / (minmax_vals[2] - minmax_vals[1])\n}\n\nces1961_focal_sd &lt;- minmax_normalization(ces1961_focal_sd)\n\n# Combine original and focal features\nces_multi &lt;- c(ces1961, ces1961_focal_sd)\nnames(ces_multi) &lt;- c(\"luminosity\", \"focal_sd\")\n\n\n\n\nTraining with spatial features\n\ncart_model_multi &lt;- rpart(class~., data = data_train2_multi)\n\n\n\n\n\n\n\n\n\nFigure 10.4: Decision tree now uses both luminosity and spatial texture\n\n\n\n\n\n\n\n\nPrediction and evaluation\n\n\n\n\nTable 10.2: Confusion matrix with spatial features\n\n\n\n\n\n\n\n\n\n\n\n\n\nActual\n\n\n\n\nForest\nNon-forest\n\n\n\n\nForest\n175\n37\n\n\nNon-forest\n17\n72\n\n\n\n\n\n\n\n\nOverall accuracy: 0.82 (vs. 0.74 without spatial features)\n\n\n\nFurther improvements\nFor advanced applications, consider:\n\nMore focal features: mean, variance, edge detection filters\nMulti-scale features: focal operations at different window sizes\nDeep learning: CNNs naturally capture spatial context\nObject-based classification: segment first, then classify\nProper spatial CV: Use spatial blocking for more realistic evaluation\n\n\nKey message for students:\nOur approach teaches the concepts: - Why spatial context matters - How to work with spatial data in R - The ML workflow for remote sensing\nIn practice, you’d use deep learning frameworks (TensorFlow/PyTorch) with architectures designed for image segmentation. The concepts remain the same, but the implementation is more sophisticated.\nGood starting points: - TorchGeo (PyTorch for geospatial data) - segmentation_models.pytorch (pre-built architectures) - Papers: U-Net for RS, DeepLabV3+, attention mechanisms",
+    "crumbs": [
+      "Lesson 4",
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Supervised Classification in Remote Sensing</span>"
+    ]
+  },
+  {
+    "objectID": "lesson4-2-supervised-learning.html#tasks",
+    "href": "lesson4-2-supervised-learning.html#tasks",
+    "title": "Supervised Classification in Remote Sensing",
+    "section": "Tasks",
+    "text": "Tasks\n\nCore exercises\n\nDownload datasets (ces_polygons.gpkg and TIF files for 1961-1995) from Moodle\nImplement the complete workflow:\n\nLoad and sample spatial ground truth\nTrain classifier (single band or with additional features)\nEvaluate with confusion matrix\n\nApply model temporally and analyze forest cover trends",
+    "crumbs": [
+      "Lesson 4",
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Supervised Classification in Remote Sensing</span>"
+    ]
+  },
+  {
+    "objectID": "lesson4-2-supervised-learning.html#refs",
+    "href": "lesson4-2-supervised-learning.html#refs",
+    "title": "Supervised Classification in Remote Sensing",
+    "section": "References",
+    "text": "References\n\n\n\n\nBrenning, Alexander. 2023. “Spatial ML Model Assessment and Interpretation.” OpenGeoHub Summer School 2023. OpenGeoHub Foundation. https://doi.org/10.5446/63464.\n\n\nSchratz, Patrick, Marc Becker, Michel Lang, and Alexander Brenning. 2021. “Mlr3spatiotempcv: Spatiotemporal Resampling Methods for Machine Learning in r.” arXiv Preprint arXiv:2110.12674.",
+    "crumbs": [
+      "Lesson 4",
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Supervised Classification in Remote Sensing</span>"
+    ]
+  },
+  {
     "objectID": "references.html",
     "href": "references.html",
     "title": "References",
     "section": "",
-    "text": "Amatulli, Giuseppe. “Geocomputation and Machine Learning for\nEnvironmental Applications.” http://spatial-ecology.net/docs/build/html/GDAL/gdal_osgeo.html.\n\n\nBaltagi, Badi Hani, and Badi H Baltagi. 2008. Econometric Analysis\nof Panel Data. Vol. 4. Springer. https://bcs.wiley.com/he-bcs/Books?action=resource&bcsId=4338&itemId=1118672321&resourceId=13452.\n\n\nHorn, Berthold KP. 1981. “Hill Shading and the Reflectance\nMap.” Proceedings of the IEEE 69 (1): 14–47.\n\n\nLovelace, Robin, Jakub Nowosad, and Jannes Muenchow. 2019.\nGeocomputation with r. Chapman; Hall/CRC.\n\n\nPebesma, Edzer, and Roger Bivand. 2023. Spatial Data Science: With\nApplications in R. Boca Raton: Chapman; Hall/CRC. https://doi.org/10.1201/9780429459016.\n\n\nWickham, Hadley. 2014. “Tidy Data.” Journal of\nStatistical Software 59 (10): 1–23. https://doi.org/10.18637/jss.v059.i10.",
+    "text": "Amatulli, Giuseppe. “Geocomputation and Machine Learning for\nEnvironmental Applications.” http://spatial-ecology.net/docs/build/html/GDAL/gdal_osgeo.html.\n\n\nBaltagi, Badi Hani, and Badi H Baltagi. 2008. Econometric Analysis\nof Panel Data. Vol. 4. Springer. https://bcs.wiley.com/he-bcs/Books?action=resource&bcsId=4338&itemId=1118672321&resourceId=13452.\n\n\nBrenning, Alexander. 2023. “Spatial ML Model Assessment and\nInterpretation.” OpenGeoHub Summer School 2023. OpenGeoHub\nFoundation. https://doi.org/10.5446/63464.\n\n\nHorn, Berthold KP. 1981. “Hill Shading and the Reflectance\nMap.” Proceedings of the IEEE 69 (1): 14–47.\n\n\nLovelace, Robin, Jakub Nowosad, and Jannes Muenchow. 2019.\nGeocomputation with r. Chapman; Hall/CRC.\n\n\nPebesma, Edzer, and Roger Bivand. 2023. Spatial Data Science: With\nApplications in R. Boca Raton: Chapman; Hall/CRC. https://doi.org/10.1201/9780429459016.\n\n\nSchratz, Patrick, Marc Becker, Michel Lang, and Alexander Brenning.\n2021. “Mlr3spatiotempcv: Spatiotemporal Resampling Methods for\nMachine Learning in r.” arXiv Preprint arXiv:2110.12674.\n\n\nWickham, Hadley. 2014. “Tidy Data.” Journal of\nStatistical Software 59 (10): 1–23. https://doi.org/10.18637/jss.v059.i10.",
     "crumbs": [
       "References"
     ]

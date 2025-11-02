@@ -1,0 +1,28 @@
+/* Hide notes completely - only shown via console */
+.notes{
+  display: none;
+}
+
+
+
+
+.speaker {
+    margin-top: 100vh;
+}
+
+
+hr{
+  display: none;
+}
+
+.presenter-btn{
+    background-color: gray;
+}
+
+figcaption{
+  text-align: center;
+}
+
+.left > figure > figcaption{
+  text-align: left !important;
+}
