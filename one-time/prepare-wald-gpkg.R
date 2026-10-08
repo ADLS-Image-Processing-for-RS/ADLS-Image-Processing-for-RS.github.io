@@ -1,26 +1,24 @@
 
-
 library(sf)
 
-
-wald1961 <- st_read("data/ces.gpkg", "Wald_1961")
-
-study_area <- st_minimum_rotated_rectangle(wald1961)
-
-study_area$area <- NULL
-
-nicht_wald1961 <- st_difference(st_buffer(study_area, -5), st_union(wald1961))
-
-wald1961
-nicht_wald1961$area <- as.numeric(st_area(nicht_wald1961))
-nicht_wald1961$class <- "Non-forest"
-wald1961$class <- "Forest"
+# Read the forest polygon for 1961
+forest_poly <- read_sf("data/ces.gpkg", layer = "Wald_1961")
+# Create a bounding box for the study area
+study_area <- st_minimum_rotated_rectangle(forest_poly)
 
 
+# Create non-forest polygon (study area minus forest)
+# Note: st_difference can be slow for complex geometries
+non_forest_poly <- st_difference(study_area, st_union(forest_poly))
+non_forest_poly$area <- as.numeric(st_area(non_forest_poly))
 
-ces_polygons <- rbind(wald1961, nicht_wald1961)
+non_forest_poly$class <- "Non-Forest"
 
-st_write(ces_polygons, "data/ces_polygons.gpkg", append = FALSE)
-st_write(study_area, "data/ces_polygons.gpkg", layer = "study_area")
 
+forest_poly$class <- "Forest"
+
+
+forest_1961 <- bind_rows(forest_poly, non_forest_poly)
+
+st_write(forest_1961, "data/ces_polygons.gpkg")
 

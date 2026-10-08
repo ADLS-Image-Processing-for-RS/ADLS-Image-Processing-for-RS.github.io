@@ -201,11 +201,12 @@ tmap_save(ces_crop, "img/ces-crop.png",height = 20, width = 20, units = "cm")
 
 ## ------------------------------------------------------------------------------------------
 # Define 5x5 neighborhood
-n <- 5
-focal_window <- matrix(rep(1, n^2), ncol = n)
+
+i <- 5
+focal_window <- matrix(rep(1, i^2), nrow = i)
 
 # Calculate standard deviation in each neighborhood
-ces1961_focal_sd <- focal(ces1961, focal_window, fun = sd, fillvalue = 0)
+ces1961_focal_sd <- focal(ces1961, focal_window, fun = "sd")
 
 
 ## ------------------------------------------------------------------------------------------
@@ -215,9 +216,6 @@ ces1961_focal_sd <- focal(ces1961, focal_window, fun = sd, fillvalue = 0)
 #|   - Original raster
 #|   - After focal SD filter (shows texture/variation)
 #| echo: false
-
-ces1961_focal_sd_crop <- crop(ces1961_focal_sd, e)
-
 
 ces_focal_crop <- tm_shape(crop(ces1961_focal_sd, e)) + 
   tm_raster(col.scale = tm_scale_continuous(values = "-brewer.greys"))

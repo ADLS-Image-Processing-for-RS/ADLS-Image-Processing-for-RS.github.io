@@ -22,6 +22,12 @@ always_allow_html: yes
 - **Spatial sampling**: Ground truth comes from polygons, requiring careful sampling strategies
 - **Feature engineering**: Spatial context (focal operations) is critical, not just pixel values
 
+:::{.notes}
+These differences are why we can't just apply generic ML tutorials to RS data!
+
+The spatial workflow (`terra`/`sf` packages) and understanding spatial autocorrelation are essential skills, regardless of whether you use classical ML or deep learning.
+:::
+
 ---
 
 ### Data
@@ -31,6 +37,11 @@ always_allow_html: yes
   - Images available for: 1961, 1971, 1977, 1983, 1989, 1995
 - Ground truth forest polygons (hand-digitized)
 
+
+## {background-iframe="https://map.geo.admin.ch/#/map?lang=de&center=2706292.97,1144053.16&z=9.82&topic=ech&layers=ch.swisstopo.swissimage-product_1946,f;ch.swisstopo.swissimage-product@year=1961&bgLayer=ch.swisstopo.pixelkarte-farbe" background-interactive=true}
+
+
+
 ---
 
 
@@ -39,9 +50,9 @@ always_allow_html: yes
 ## Workflow Overview
 
 
-1. Load spatial ground truth (polygons) and generate point samples
-2. Spatial train/test split (acknowledging autocorrelation issues)
-3. Extract raster features at point locations using `terra::extract()`
+1. Load ground truth polygons and generate point samples
+2. Spatial train/test split (⚠ autocorrelation)
+3. Extract raster features using `extract()`
 4. Train classifier (CART for interpretability)
 5. **Predict on entire raster**
 6. Evaluate and compare approaches
@@ -72,11 +83,19 @@ We need point samples for training:
 library(sf)
 ces_polygons <- read_sf("data/ces_polygons.gpkg", "ces_polygons")
 study_area <- read_sf("data/ces_polygons.gpkg", "study_area")
+```
 
+[]{}
+
+```{r}
 # Generate spatially distributed samples
 sample_points <- st_sample(ces_polygons, 1000) |>
   st_sf()
- 
+```
+
+[]{}
+
+```{r}
 # extract class per sample
 labelled_data <- st_join(sample_points, ces_polygons) |>
   select(-jahr)
@@ -105,8 +124,19 @@ labelled_data$class <- factor(labelled_data$class)
 **Spatial autocorrelation issue**: Random splits violate independence assumptions because nearby pixels are correlated. Proper approaches use spatial cross-validation [@brenning2023; @schratz2021]. We use random splits here for simplicity, but be aware this may overestimate performance.
 :::
 
+:::{.notes}
+**Pedagogical simplification**: Random train/test split
 
-## Approach 1: Single-Band Classification
+**Production approach**:
+- Spatial k-fold cross-validation with geographic blocking
+- Ensures training and test data are spatially separated
+- Packages: `sperrorest`, `mlr3spatiotempcv`, `CAST`
+- More realistic performance estimates
+:::
+
+
+
+## Approach 1: Single-Band Classifier
 
 Feature extraction with `terra::extract()`
 
@@ -129,7 +159,7 @@ data_train2
 
 load("data/data_train.Rda")
 
-data_train2
+head(data_train2)
 
 ```
 
@@ -144,6 +174,17 @@ We use CART (decision trees) for interpretability. As experienced ML practitione
 library(rpart)
 cart_model <- rpart(class~luminosity, data = data_train2)
 ```
+
+:::{.notes}
+**Pedagogical choice**: CART for transparency
+
+**Production alternatives**:
+- Random Forest / XGBoost: Better accuracy, handles non-linearity
+- Support Vector Machines: Good with limited training data
+- Neural Networks: Requires more data but state-of-the-art performance
+
+CART lets students see *exactly* what decision boundaries the model learned.
+:::
 
 ---
 
@@ -171,11 +212,6 @@ ces1961_predict <- predict(ces1961, cart_model)
 
 # Get highest probability class
 ces1961_predict2 <- which.max(ces1961_predict)
-
-# Assign class labels
-classes <- levels(data_train2$class)
-classes_df <- data.frame(ID = seq_along(classes), class = classes)
-levels(ces1961_predict2) <- classes_df
 ```
 
 ---
@@ -233,30 +269,46 @@ acc_basic_str <- format(acc_basic, digits = 2)
 
 ## The Spatial Context Problem {#sec-spatial-context}
 
-### Why single pixels fail
+- At pixel level, it is hard to distinguish forest from non-forest
+- Spatial context is essential: Humans use spatial context (texture, patterns, neighbors) to classify land cover
+
+![](img/ces-crop.png){#fig-zoom-problem}
 
 
-![At pixel level, can you distinguish forest from non-forest? Spatial context is essential.](img/ces-crop.png){#fig-zoom-problem}
+:::{.notes}
+This is the **core limitation** of pixel-based classification.
 
----
-
-**Key insight**: Humans use spatial context (texture, patterns, neighbors) to classify land cover. Our model currently uses only single pixel values - it's "blind" to spatial structure.
+Modern deep learning (CNNs) solves this automatically by processing image patches, but we'll first show the manual approach to understand *why* spatial context matters.
+:::
 
 
 ## Approach 2: Adding Spatial Features {#sec-feature-engineering}
 
-### Focal operations as feature extractors
-
-**Focal operations** aggregate neighborhood values, providing spatial context:
+- Focal operations as feature extractors: **Focal operations** aggregate neighborhood values, providing spatial context
 
 ```{r}
-# Define 5x5 neighborhood
-n <- 5
-focal_window <- matrix(rep(1, n^2), ncol = n)
+i <- 5
+focal_window <- matrix(rep(1, i^2), nrow = i)
 
 # Calculate standard deviation in each neighborhood
-ces1961_focal_sd <- focal(ces1961, focal_window, fun = sd, fillvalue = 0)
+ces1961_focal_sd <- focal(ces1961, focal_window, fun = "sd")
 ```
+
+:::{.notes}
+**Pedagogical approach**: Handcrafted focal features
+
+**Why we do this**:
+- Explicit, understandable feature engineering
+- Shows *what* spatial context means (texture/variation)
+- Works with classical ML algorithms
+
+**Production approach**: Convolutional Neural Networks (CNNs)
+- CNNs learn optimal spatial filters automatically during training
+- First layer convolution weights = learned focal operations
+- Can learn multi-scale features (equivalent to multiple focal window sizes)
+- State-of-the-art: U-Net, DeepLabV3+, Vision Transformers
+:::
+
 
 ---
 
@@ -293,17 +345,9 @@ names(ces_multi) <- c("luminosity", "focal_sd")
 ### Training with spatial features
 
 ```{r}
-# Extract both features
-train_features_multi <- terra::extract(ces_multi, data_train, ID = FALSE)
-data_train2_multi <- cbind(data_train, train_features_multi) |>
-  st_drop_geometry() |> 
-  select(-area)
-
-# Train model
 cart_model_multi <- rpart(class~., data = data_train2_multi)
 ```
 
----
 
 ```{r}
 #| label: fig-cart-multi
@@ -354,6 +398,25 @@ For advanced applications, consider:
 - **Deep learning**: CNNs naturally capture spatial context
 - **Object-based classification**: segment first, then classify
 - **Proper spatial CV**: Use spatial blocking for more realistic evaluation
+
+
+
+
+:::{.notes}
+**Key message for students**:
+
+Our approach teaches the *concepts*:
+- Why spatial context matters
+- How to work with spatial data in R
+- The ML workflow for remote sensing
+
+In practice, you'd use deep learning frameworks (TensorFlow/PyTorch) with architectures designed for image segmentation. The concepts remain the same, but the implementation is more sophisticated.
+
+Good starting points:
+- `TorchGeo` (PyTorch for geospatial data)
+- `segmentation_models.pytorch` (pre-built architectures)
+- Papers: U-Net for RS, DeepLabV3+, attention mechanisms
+:::
 
 
 <!--
@@ -488,6 +551,10 @@ save.image(file = "data-out/workspace.Rdata")
    - Train classifier (single band or with additional features)
    - Evaluate with confusion matrix
 3. Apply model temporally and analyze forest cover trends
+
+
+
+
 
 
 
