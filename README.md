@@ -9,11 +9,13 @@ Course materials for "Image Processing for Remote Sensing" - Applied Digital Lif
 
 ## Student Enrollment (HS26)
 
-- **IPRS** (this course): 13 participants
-- **GISc & Geodatabases**: 6 participants, of which 5 are also in IPRS
-- 8 IPRS students have **not** taken GISc & Geodatabases
+|                    | In GISc & GeoDB | Not in GISc & GeoDB | Total |
+|--------------------|----------------:|--------------------:|------:|
+| **In IPRS**        | 5               | 8                   | 13    |
+| **Not in IPRS**    | 1               | —                   | —     |
+| **Total**          | 6               | —                   | —     |
 
-This matters for content planning: the majority of IPRS students already know raster data basics and map algebra from GISc. See overlap analysis below.
+This matters for content planning: 5/13 IPRS students already know raster data basics and map algebra from GISc, but 8 do not.
 
 ## Notes to self:
 
