@@ -9,3 +9,6 @@ data-out
 data
 adls-image-processing
 adls-image-processing_attachments.zip
+lesson4-2-supervised-learning_files/
+
+**/*.quarto_ipynb

@@ -1,16 +1,16 @@
 
-project: 
-  title: "Image Processing for Remote Sensing"
-  output-dir: slides
-
-format: revealjs
-    
-bibliography: misc/bibliography.bib
-execute: 
-  warning: false
-  message: false
-  echo: false
-freeze: true
+  project: 
+    title: "Image Processing for Remote Sensing"
+    output-dir: docs/slides
+  
+  format: revealjs-clean
+      
+  bibliography: misc/bibliography.bib
+  execute: 
+    warning: false
+    message: false
+    echo: false
+  freeze: true
 
 
 

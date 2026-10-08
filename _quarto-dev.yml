@@ -22,11 +22,10 @@ book:
     #   chapters: 
     #     - lesson3-1-datatypes.qmd     # moved nodata to STDS
     #     - lesson3-2-sentinel-data.qmd
-    # - part: Lesson 4
-    #   chapters: 
-    #     # - lesson4-1-unsupervised-learning.qmd todo: This chapter is incomplete, finish it!
-    #     - lesson4-2-supervised-learning.qmd
-    #     - lesson4-2-feature-engineering.qmd
+    - part: Lesson 4
+      chapters:
+    #     - lesson4-1-unsupervised-learning.qmd # todo: This chapter is incomplete, finish it!
+        - lesson4-2-supervised-learning.qmd
     # - part: Lesson 5
     #   chapters: 
     #     - lesson5-supervised_learning_focal.ipynb
@@ -36,7 +35,7 @@ format:
   html:
     number-depth: -1
     number-sections: false
-    css: misc/style.css
+    css: misc/book-style.css
     include-in-header:
       - misc/script.html
     theme:
