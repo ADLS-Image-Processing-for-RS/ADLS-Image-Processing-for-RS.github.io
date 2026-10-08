@@ -4,12 +4,15 @@
 }
 
 
-.smaller-font{
-    font-size: smaller !important;
-}
+
 
 .speaker {
     margin-top: 100vh;
+}
+
+
+hr{
+  display: none;
 }
 
 .presenter-btn{
