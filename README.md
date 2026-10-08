@@ -7,6 +7,14 @@ Course materials for "Image Processing for Remote Sensing" - Applied Digital Lif
 - **Students**: Light theme, normal URLs
 - **Teaching**: Dark theme for slide spacing, click sections to see notes in browser console
 
+## Student Enrollment (HS26)
+
+- **IPRS** (this course): 13 participants
+- **GISc & Geodatabases**: 6 participants, of which 5 are also in IPRS
+- 8 IPRS students have **not** taken GISc & Geodatabases
+
+This matters for content planning: the majority of IPRS students already know raster data basics and map algebra from GISc. See overlap analysis below.
+
 ## Notes to self:
 
 - Switching the theme activates the presenter mode
