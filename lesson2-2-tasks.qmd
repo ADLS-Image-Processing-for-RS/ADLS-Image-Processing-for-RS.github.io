@@ -7,6 +7,10 @@ code-summary: "Sample Solution"
 ---
 
 
+# Raster Operations — Tasks
+
+[Open slides](lesson2-1-operations.html){target="_blank" .btn .btn-outline-primary}
+
 ## Tasks
 
 

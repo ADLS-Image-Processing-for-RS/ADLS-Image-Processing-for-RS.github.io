@@ -1,29 +1,31 @@
 project:
-  type: book
+  type: website
   output-dir: docs
-
-book:
-  title: Image Processing for Remote Sensing
-  reader-mode: true
-  chapters:
+  render:
     - index.qmd
-    - part: Lesson 1
-      chapters:
-        - lesson1-tasks.qmd
-    # - part: Lesson 2
-    #   chapters:
-    #     - lesson2-1-operations.qmd
-    #     - lesson2-2-tasks.qmd
-    # - part: Lesson 3
-    #   chapters:
-    #     - lesson3-1-datatypes.qmd
-    #     - lesson3-2-sentinel-data.qmd
-    #     - lesson3-3-tasks.qmd
-    # - part: Lesson 4
-      # chapters:
-    #     - lesson4-1-unsupervised-learning.qmd
-        # - lesson4-2-supervised-learning.qmd
-    - part: references.qmd
+    - lesson1.qmd
+    - lesson1-tasks.qmd
+    - lesson2-1-operations.qmd
+    - lesson2-2-tasks.qmd
+    - lesson4-2-supervised-learning.qmd
+    - references.qmd
+
+website:
+  title: Image Processing for Remote Sensing
+  page-navigation: true
+  sidebar:
+    contents:
+      - index.qmd
+      - section: Lesson 1
+        contents:
+          - lesson1-tasks.qmd
+      # - section: Lesson 2
+      #   contents:
+      #     - lesson2-2-tasks.qmd
+      # - section: Lesson 4
+      #   contents:
+      #     - lesson4-2-supervised-learning.qmd
+      - references.qmd
 
 format:
   html:

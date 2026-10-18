@@ -15,5 +15,6 @@ lesson4-2-supervised-learning_files/
 *.html
 *_files/
 *.log
+*.rmarkdown
 
 **/*.quarto_ipynb
