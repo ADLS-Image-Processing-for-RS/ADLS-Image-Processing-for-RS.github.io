@@ -1,4 +1,5 @@
 ---
+format: revealjs-clean
 execute:
   echo: true
   eval: false

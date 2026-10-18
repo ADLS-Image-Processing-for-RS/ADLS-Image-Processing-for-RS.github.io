@@ -1,4 +1,5 @@
 ---
+format: revealjs-clean
 echo: true
 ---
 # Feature Engineering {#sec-feature-engineering}

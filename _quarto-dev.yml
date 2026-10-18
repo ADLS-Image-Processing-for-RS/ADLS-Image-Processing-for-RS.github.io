@@ -10,10 +10,8 @@ book:
     - index.qmd
     - part: Lesson 1
       chapters: 
-        - lesson1-1-tidy.qmd
-        - lesson1-2-tasks.qmd
-        - lesson1-3-imagery.qmd
-        - lesson1-4-tasks.qmd
+        - lesson1.qmd
+        - lesson1-tasks.qmd
     - part: Lesson 2
       chapters:
         - lesson2-1-operations.qmd

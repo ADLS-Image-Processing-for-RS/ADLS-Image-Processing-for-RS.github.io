@@ -1,0 +1,284 @@
+---
+execute:
+  echo: false
+  eval: true
+  collapse: true
+code-fold: true
+code-summary: "Sample Solution"
+---
+
+# Tasks (Lesson 1)
+
+:::{.callout-important}
+- **Try this without AI first** - struggle builds understanding.
+- Ask if you are struggling. Asking builds understanding as well!
+:::
+
+We recommend [**Positron**](https://positron.posit.co/) as your IDE for this course. It is built on VS Code, so the interface and shortcuts will feel familiar if you come from Python. It has a dedicated Variables pane, an integrated R console, and first-class support for both R and Python in the same project.
+
+:::{.callout-tip}
+## R for Python users
+
+| Python | R | Notes |
+|---|---|---|
+| `x = 5` | `x <- 5` | `<-` is the conventional assignment in R; `=` works but is avoided at the top level |
+| `import numpy as np` | `library(terra)` | Load packages with `library()`, install once with `install.packages("terra")` |
+| `a[0]` | `a[1]` | R is **1-indexed** |
+| `df.pivot(...)` | `pivot_wider(...)` | Reshaping is done with `tidyr` functions |
+| `df.method()` chaining | `df \|> func()` | R uses the native pipe `\|>` to chain operations |
+| `None` / `float('nan')` | `NA` | R uses `NA` for all missing values; most functions have an `na.rm = TRUE` argument |
+| `arr.shape` | `dim(x)`, `nrow(x)`, `ncol(x)` | No single `.shape`; use `dim()` for the full dimensions |
+:::
+
+## Task 1
+
+Import the `Produc` dataset (from the package `plm`) using the following code:
+
+```{r}
+#| echo: true
+#| code-fold: false
+data(Produc, package = "plm")
+```
+
+## Task 2
+
+Convert the data from long to wide
+
+:::{.callout-tip collapse="true"}
+## Tip: pipes and tidyverse
+
+The `|>` pipe passes the left-hand result as the **first argument** of the next function — equivalent to writing nested calls, but readable left-to-right. If you know pandas method chaining (`.groupby().agg()`), the mental model is the same.
+
+`tidyr` and `dplyr` together are R's closest equivalent to pandas: 
+
+- `pivot_wider()` ~ `df.pivot()`
+- `select()` ~ `df[["col"]]`
+- `filter()` ~ `df[df.x > 0]`
+- `mutate()` ~ `df["new"] = ...`.
+:::
+
+```{r}
+#| output: false
+library(plm)
+library(dplyr)
+library(tidyr)
+library(tibble)
+data("Produc", package = "plm")
+
+Produc_wide <- Produc |>
+  select(year, state, unemp) |>
+  pivot_wider(names_from = state, values_from = unemp) |>
+  column_to_rownames("year")
+```
+
+## Task 3
+
+Convert the wide dataframe to a matrix
+
+```{r}
+Produc_matrix <- as.matrix(Produc_wide)
+```
+
+## Task 4
+
+Calculate mean unemployment first using the wide dataframe, then the matrix. Compare the speed.
+
+```{r}
+library(bench)
+bm <- bench::mark(
+    matrix = mean(Produc_matrix, na.rm = TRUE),
+    dataframe = mean(Produc_wide |> unlist(), na.rm = TRUE),
+    filter_gc = FALSE
+)
+
+bm$total_time[2] / bm$total_time[1]
+```
+
+## Task 5
+
+The following command returns the path to a GeoTIFF file on your hard drive:
+
+:::{.callout-tip collapse="true"}
+## Tip: terra vs rasterio / numpy
+
+`terra` is R's primary raster package. If you have used `rasterio` or `numpy` arrays for raster data in Python, here is a rough mapping:
+
+| Python | R (terra) |
+|---|---|
+| `rasterio.open("f.tif")` | `rast("f.tif")` |
+| `src.read()` → numpy array | `values(r)` → matrix |
+| `src.meta` | print the `SpatRaster` object |
+| `src.crs` | `crs(r)` |
+| `src.transform` / `src.res` | `res(r)`, `ext(r)` |
+
+Unlike a raw numpy array, a `SpatRaster` keeps its spatial metadata (CRS, extent, resolution) attached at all times.
+:::
+
+```{r}
+#| eval: false
+#| echo: true
+#| code-fold: false
+system.file("ex/elev.tif", package = "terra")
+```
+
+Use this path to import the file using `rast()`, store it as `r`.
+
+```{r}
+library(terra)
+r <- system.file("ex/elev.tif", package = "terra") |>
+  rast()
+```
+
+## Task 6
+
+Explore this object:
+
+- Determine the minimum and maximum elevation values
+- Make a static map using base `plot()` and `tmap`
+- Make an interactive map using tmap (`tmap_mode("view")`)
+- Using tmap, explore different [styles](https://r-tmap.github.io/tmap/reference/tm_raster.html#arg-style) and [palettes](https://r-tmap.github.io/tmap/reference/tm_raster.html#arg-palette)
+
+```{r}
+r  # printing the object shows min/max in the metadata
+
+library(tmap)
+
+tm_shape(r) +
+  tm_raster()
+```
+
+## Task 7
+
+Import the Landsat 7 image:
+
+```{r}
+#| eval: false
+#| echo: true
+#| code-fold: false
+system.file("tif/L7_ETMs.tif", package = "stars")
+```
+
+Store it as `l7`. Then rename its layers to `c("B", "G", "R", "NIR", "SWIR", "MIR")` (see [here](https://r-spatial.github.io/stars/reference/L7_ETMs.html)).
+
+```{r}
+l7 <- system.file("tif/L7_ETMs.tif", package = "stars") |>
+  rast()
+
+names(l7) <- c("B", "G", "R", "NIR", "SWIR", "MIR")
+```
+
+## Task 8
+
+Compare `r` and `l7`:
+
+- How many layers does each have?
+- What is the resolution of each?
+- What is the extent of each?
+- Plot all layers of `l7` individually
+
+```{r}
+nlyr(r)
+nlyr(l7)
+
+res(r)
+res(l7)
+
+ext(r)
+ext(l7)
+
+plot(l7)
+```
+
+## Task 9
+
+Select the Red, Green and Blue bands from `l7` to create a true color composite using `plotRGB()` and `tm_rgb()`.
+
+```{r}
+library(tmap)
+
+plotRGB(l7[[c("R", "G", "B")]], stretch = "histogram")
+
+tm_shape(l7[[c("R", "G", "B")]]) + tm_rgb()
+```
+
+## Task 10
+
+Select the NIR, Green and Blue bands from `l7` to create a false color composite.
+
+```{r}
+tm_shape(l7[[c("NIR", "G", "B")]]) + tm_rgb()
+```
+
+## Task 11
+
+Query the full metadata of `r` and `l7`:
+
+- Number of rows, columns, and layers
+- Spatial extent
+- Pixel resolution
+- CRS (use `crs(..., describe = TRUE)` for a readable summary)
+
+```{r}
+#| output: false
+# r
+nrow(r); ncol(r); nlyr(r)
+ext(r)
+res(r)
+crs(r, describe = TRUE)
+
+# l7
+nrow(l7); ncol(l7); nlyr(l7)
+ext(l7)
+res(l7)
+crs(l7, describe = TRUE)
+```
+
+## Task 12
+
+Check whether `r` uses a geographic or projected CRS. Reproject it to EPSG:2169 (Luxembourg national projection) and compare `res()` before and after.
+
+:::{.callout-tip collapse="true"}
+## Tip: CRS and reprojection
+
+In Python you would use `pyproj.CRS` or `geopandas`/`rasterio`'s `.to_crs()`. In `terra`, `project(r, "EPSG:2169")` handles both the coordinate transform and the pixel resampling in one step. A geographic CRS (degrees) will show `res()` values around `0.008`, while a projected CRS (metres) will show values in the hundreds — same pixel, different units.
+:::
+
+```{r}
+#| output: false
+crs(r, describe = TRUE)   # geographic: WGS84, units = degrees
+
+r_projected <- project(r, "EPSG:2169")
+
+res(r)            # degrees
+res(r_projected)  # meters
+```
+
+## Task 13
+
+Create a masked version of `r` where all elevations **below 300 m** are set to `NA`. Visualize both the original and the masked raster side by side.
+
+```{r}
+library(tmap)
+
+r_masked <- ifel(r < 300, NA, r)
+
+tmap_arrange(
+  tm_shape(r)        + tm_raster(style = "cont", palette = "viridis", legend.show = FALSE),
+  tm_shape(r_masked) + tm_raster(style = "cont", palette = "viridis", legend.show = FALSE)
+)
+```
+
+## Task 14
+
+Write the reprojected raster from Task 12 to disk as a GeoTIFF. Then read it back and verify that the CRS and resolution are preserved.
+
+```{r}
+#| output: false
+#| 
+writeRaster(r_projected, "data-out/elev_2169.tif", overwrite = TRUE)
+
+r_check <- rast("data-out/elev_2169.tif")
+
+crs(r_check, describe = TRUE)
+res(r_check)
+```

@@ -1,5 +1,5 @@
 ---
-format: revealjs
+format: revealjs-clean
 ---
 
 

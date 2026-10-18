@@ -1,0 +1,904 @@
+---
+format: revealjs-clean
+---
+
+```{r}
+#| echo: false
+
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(kableExtra)
+library(tidyr)
+library(scales)
+library(tibble)
+library(gt)
+library(abind)
+library(terra)
+library(sf)
+library(tmap)
+
+```
+
+## {.smaller}
+
+:::: {.columns}
+
+::: {.column width="60%"}
+![](img/rata.jpeg){style="border-radius: 100%; width: 50%;"}
+:::
+
+::: {.column width="40%"}
+
+
+ZHAW School of Life Sciences and Facility Management  
+Institute of Natural Resource Sciences  
+Grüentalstrasse 14, 8820 Wädenswil  
+
++41 (0) 58 934 55 63  
+nils.ratnaweera@zhaw.ch  
+
+
+Research Associate at the Research Group for Geoinformatics  
+[www.zhaw.ch/iunr/geoinformatik](http://www.zhaw.ch/iunr/geoinformatik)  
+:::
+
+::::
+
+# From tabular data to raster {#sec-tidy-to-raster}
+
+
+## Tabular data
+
+- @wickham2014: Tidy tabular data: Each variable is a column, each observation is a row, and each type of observational unit
+is a table.
+- Below is a dataset from @baltagi2008
+- *Observation* is a state in a particular year
+- *Variable* is a measured parameter (see below)
+
+:::{.notes}
+- Start with Wickham's fundamental definition - this is the foundation
+- Emphasize this is about data structure, not just organization
+- The Produc dataset is a classic econometric panel dataset - good for demonstrating concepts
+- Make sure students understand what constitutes an "observation" vs a "variable"
+:::
+
+
+## 
+
+```{r}
+#| echo: false
+#| code-fold: false
+
+Produc <- read_csv("data/Produc.csv") |>
+    select(-region) |>
+    filter(!(state == "ARIZONA" & year == 1971))
+
+Produc |>
+  select(state, year, unemp, water, emp, util) |> 
+  head() |>
+  kable()
+```
+
+
+:::{.callout-note .notes collapse="true"}
+- This is considered a *long* table and is great for modelling and visualization.
+- It's bad for memory (a lot of repetitions)
+- parameters:
+  - pcap: public capital stock
+  - hwy: highway and streets
+  - water: water and sewer facilities
+  - util: other public buildings and structures
+  - pc: private capital stock
+  - gsp: gross state product
+  - emp: labor input measured by the employment in non–agricultural payrolls
+  - unemp: state unemployment rate
+
+:::
+
+
+
+## Long tables have a lot of repetitions:
+
+- `state`: 815 values, but only 48 unique states
+- `year`: 815 values, but only 17 unique years
+- Total: 8'150 values in the table
+
+
+:::{.notes}
+- Walk through the calculation step by step
+- 816 total entries for state, but only 48 unique states
+- This repetition is characteristic of long/tidy format
+- Great for analysis but wasteful of memory
+- This leads naturally to why we might want wide format for raster data
+:::
+
+
+
+## Wide tables have less repetitions.
+
+
+
+```{r}
+
+# Pivoting must be done per variable
+Produc_wide <- Produc |>
+    select(state, year, unemp) |>
+    pivot_wider(names_from = state, values_from = unemp) |>
+    column_to_rownames("year")
+
+Produc_wide |> 
+  select(1:4) |> 
+  head() |> 
+  kable()
+```
+
+
+
+
+:::{.callout-note .notes collapse="true"}
+
+We can either omit the column "year", (since this is implicit knowledge, $row_i + 1970$), or use it as a `rowname`.
+
+- This is the key transition - from statistical/analysis format to raster format
+- Wide format is more memory efficient but less flexible for analysis
+- This mirrors how raster data is naturally stored
+
+:::
+
+
+
+## Long vs Wide: Long / tidy:
+
+
+```{r}
+Produc |>
+    head(5) |>
+    select(1:5) |> 
+    kable()
+```
+
+
+## Long vs Wide: Wide / untidy:
+
+```{r}
+Produc_wide |>
+    head(5) |>
+    select(1:5) |> 
+    kable()
+
+```
+
+
+
+
+## Dataframe → Matrix
+
+The gain from converting to a matrix:
+
+- A dataframe is a **list of column vectors** — each column is a separate object in memory
+- A matrix stores all values in **one contiguous block** of memory
+- All values have the same type (`dbl`) → no per-column type metadata, enables *vectorized* operations
+- Row/column names are stored once separately, not repeated
+
+---
+
+- Limitations:
+  - Only advantageous if the data is *densely* populated (few `NA`s)
+  - Only relevant if the data is large
+
+
+```{r}
+#| echo: false
+
+Produc_matrix <- as.matrix(Produc_wide)
+
+Produc_matrix[1:5, 1:5]
+
+```
+
+```{r}
+#| label: fig-benchmark
+#| eval: false
+rownames(Produc_matrix) <- 1970:1986
+
+bm <- bench::mark(
+    matrix = mean(Produc_matrix, na.rm = TRUE),
+    dataframe = mean(Produc_wide |> unlist(),na.rm = TRUE),
+    filter_gc = FALSE
+)
+
+autoplot(bm)
+```
+
+
+:::{.notes}
+- Homogeneous data types enable matrix operations
+- Matrices are stored contiguously in memory - much faster access
+- This speed difference becomes enormous with large raster datasets
+- Matrix operations are highly optimized and often vectorized
+
+- If data is mostly missing, wide format can be wasteful
+- For small datasets, the overhead isn't worth it
+- Remote sensing data is typically large and dense - perfect for this approach
+- This sets up why raster format is natural for imagery
+:::
+
+
+
+
+
+
+# Imagery Data {#sec-imagery-data}
+
+## Images are Rasters
+
+- The spatial raster data model represents the world with the continuous grid of cells (a.k.a. pixels)
+- This data model often refers to so-called regular grids, in which each cell has the same, constant size
+- Through its inherent model, this data naturally fits into the *wide* data structure
+
+:::{.notes}
+- This connects directly to the previous lesson on wide vs long data
+- Emphasize that raster data is inherently a grid/matrix structure
+- Each pixel has a fixed location - this is why wide format makes sense
+- Regular grids are the foundation of most remote sensing data
+- We will focus on the regular grids only. However, several other types of grids exist, including rotated, sheared, rectilinear, and curvilinear grids (see Chapter 1 of @edzer2023).
+
+:::
+
+---
+
+```{r}
+#| echo: false
+#| code-fold: false
+#| label: fig-raster-example
+#| layout-nrow: 2
+#| fig-height: 5
+#| column: page
+#| fig-cap:
+#|   - Cell offset from origin (lower left)
+#|   - Cell values (for example elevation)
+#|   - Color representation of cell value
+
+
+scale_minmax <- \(x){(x-min(x))/(max(x)-min(x))}
+library(ambient)
+
+grid_size <- 5
+
+df <-expand_grid(x = seq_len(grid_size), y = seq_len(grid_size)) |>
+  mutate(z = gen_perlin(x,y,frequency = .1,seed = 1)) |>
+  mutate(z = as.integer(round(scale_minmax(z)*10)))
+
+p0 <- df |>
+ggplot(aes(x,y)) +
+    geom_tile(fill = "white", color = "black",lwd = .4) +
+  scale_fill_gradientn(colors = RColorBrewer::brewer.pal(11, "Spectral")) +
+  theme_void() +
+  theme(legend.position = "none") +
+  coord_equal()
+
+library(glue)
+
+p0 +
+  geom_text(aes(label = glue("[{x-1},{y-1}]")))
+
+p0 +
+  geom_text(aes(label = z))
+
+
+p0 +
+  geom_tile(aes(fill = z), color = "black",lwd = .4)
+
+
+```
+
+
+
+
+## Types of raster data
+
+- Raster datasets usually represent continuous phenomena such as elevation, temperature, population density or spectral data.
+- Discrete features such as soil or land-cover classes can also be represented in the raster data model
+
+
+:::{.notes}
+- Distinguish between continuous (elevation, temperature) and discrete (land cover classes) data
+- Both can be stored in raster format, but analysis approaches differ
+- Most remote sensing applications deal with continuous spectral values
+- Discrete classifications often result from processing continuous data
+:::
+
+---
+
+```{r}
+#| echo: false
+
+r <- rast(system.file("ex/elev.tif", package="terra"))
+
+f <- system.file("ex/lux.shp", package="terra")
+v <- vect(f)
+zones <- rasterize(v, r, "NAME_2")
+```
+
+```{r}
+#| echo: false
+#| code-fold: false
+#| layout-ncol: 2
+#| column: page
+#| fig-subcap:
+#|  - A continuous raster with the elevation of Luxembourg
+#|  - A discrete raster with the municipalities of Luxembourg
+
+plot(r)
+
+plot(zones)
+```
+
+
+## A simple example: Elevation
+
+::::{.columns}
+
+::: {.column width="50%"}
+```{r}
+#| echo: false
+#| code-fold: false
+
+
+tm_shape(r) +
+  tm_raster(style = "cont",palette = "viridis") +
+  tm_layout(frame = FALSE,legend.show = FALSE)
+
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+#| echo: false
+#| code-fold: false
+
+matrix(r, nrow = terra::nrow(r))[50:60,50:55]
+```
+:::
+
+::::
+
+
+
+
+## A more complex example: Spectral data
+
+- Typically, RS imagery consists of more than 1 band
+- In this case, the data is stored in a 3 dimensional *array* (where *band* is the 3rd-dimension)
+- A RS image can contain any number of bands.
+- The most well known type of RS imagery consists of 3 Bands from the red, blue and green spectrum
+
+:::{.notes}
+- Move from 2D (single band) to 3D (multi-band) concept
+- Each band captures different wavelengths of electromagnetic spectrum
+- RGB is familiar to students - good starting point
+- Modern satellites can have hundreds of bands (hyperspectral)
+:::
+
+---
+
+```{r}
+#| echo: false
+
+l7 <- system.file("tif/L7_ETMs.tif",package = "stars") |>
+    rast()
+
+
+l7_full <- l7
+
+l7_full_rgb <- l7_full[[c(3,2,1)]]
+
+
+```
+
+
+```{r}
+#| label: fig-multi
+#| layout-ncol: 2
+#| column: page
+#| fig-cap:
+#|   - The bands stored internally
+#|   - The RGB Composite
+#| echo: false
+#| fig-height: 5
+
+plot(l7_full_rgb, main = paste(c("Red", "Green", "Blue"),"Band"))
+
+plotRGB(l7_full_rgb, stretch = "histogram", smooth = FALSE)
+
+
+```
+
+
+
+## Each band is a 2D matrix
+
+
+```{r}
+#| fig.asp: 1
+#| layout-nrow: 1
+#| fig-height: 5
+#| column: page
+#| label: fig-raster-composite
+#| fig-cap:
+#|   - Band values
+#|   - RGB True Color Image
+#| echo: false
+
+
+l7 <- l7 |>   aggregate(60, na.rm = TRUE) |> as.int()
+
+spectral <- RColorBrewer::brewer.pal(11, "Spectral") |> rev()
+
+
+l7_rgb <- l7[[c(3,2,1)]]
+
+l7_rgb_df <- as.data.frame(l7_rgb, xy = TRUE)
+
+colnames(l7_rgb_df)[3:5] <- paste0("L7_",c("red","green","blue"))
+
+
+
+df2 <- l7_rgb_df |>
+  pivot_longer(cols = starts_with("L7_"),names_prefix = "L7_") |>
+  mutate(name = factor(name, levels = c("red","green","blue"),ordered = TRUE))
+
+  q0 <- df2 |>
+  ggplot(aes(x,y)) +
+    geom_tile(color = "black", fill = NA) +
+    coord_equal() +
+    theme_void() +
+    scale_fill_gradientn(colors = spectral) +
+    theme(legend.position = "none")+
+    facet_wrap(~name, ncol = 1)
+
+q0 +
+  geom_text(aes(label = value))
+
+# q0 +
+  # geom_tile(aes(fill = value), color = "black", lwd = .2)
+
+
+df2 |>
+  pivot_wider() |>
+  mutate(fill = rgb(red, green, blue,maxColorValue = max(df2$value))) |>
+  ggplot(aes(x,y)) +
+  geom_tile(aes(fill = fill)) +
+  scale_fill_identity() +
+    coord_equal() +
+    theme_void() +
+    theme(legend.position = "none")
+
+
+```
+
+
+
+## Multispectral Datasets
+
+- Multiband datasets usually capture different parts of the EM spectrum
+- E.g. the Landsat image from the previous example has 6 bands capturing the following wavelengths:
+  - **Band 1**: Blue (0.45 - 0.52 µm)
+  - **Band 2**: Green (0.52 - 0.60 µm)
+  - **Band 3**: Red (0.63 - 0.69 µm)
+  - **Band 4**: Near-Infrared (0.77 - 0.90 µm)
+  - **Band 5**: Short-wave Infrared (1.55 - 1.75 µm)
+  - **Band 7**: Mid-Infrared (2.08 - 2.35 µm)
+
+:::{.notes}
+- Point out that Band 6 (thermal) is missing from this list - was not included in this dataset
+- Each band serves different purposes: visible for true color, NIR for vegetation health, SWIR for moisture
+- These wavelength ranges are carefully chosen based on atmospheric windows and target phenomena
+- Students will learn to use different band combinations for different applications
+:::
+
+
+## NirGB Image
+
+```{r}
+#| layout-nrow: 1
+#| label: fig-nirgb
+#| column: page
+#| fig-cap:
+#|   - Band values
+#|   - NIR-GB False Color Image
+#| echo: false
+
+l7_nirgb <- l7[[c(4,2,1)]]
+
+l7_nirgb_df <- as.data.frame(l7_nirgb, xy = TRUE)
+
+colnames(l7_nirgb_df)[3:5] <- paste0("L7_",c("NIR","green","blue"))
+
+
+
+df2 <- l7_nirgb_df |>
+  pivot_longer(cols = starts_with("L7_"),names_prefix = "L7_") |>
+  mutate(name = factor(name, levels = c("NIR","green","blue"),ordered = TRUE))
+
+q0 <- df2 |>
+  ggplot(aes(x,y)) +
+    geom_tile(color = "black", fill = NA) +
+    coord_equal() +
+    theme_void() +
+    scale_fill_gradientn(colors = spectral) +
+    theme(legend.position = "none")+
+    facet_wrap(~name, ncol = 1)
+
+q0 +
+  geom_text(aes(label = value))
+
+# q0 +
+  # geom_tile(aes(fill = value), color = "black", lwd = .2)
+
+
+df2 |>
+  pivot_wider() |>
+  mutate(fill = rgb(NIR, green, blue,maxColorValue = max(df2$value))) |>
+  ggplot(aes(x,y)) +
+  geom_tile(aes(fill = fill)) +
+  scale_fill_identity() +
+    coord_equal() +
+    theme_void() +
+    theme(legend.position = "none")
+
+
+```
+
+
+
+## Representations of multispectral data
+
+- A *true color* image is created by using the Red (3), Green (2) and Blue (1) Band and mapping these to RGB
+- A *false color* image is created by mapping other bands to RGB
+
+:::{.notes}
+- True color: what our eyes would see if we were there
+- False color: reveals information not visible to human eye
+- NIR false color is very common - vegetation appears red because it reflects strongly in NIR
+- Different false color combinations highlight different features (water, urban areas, etc.)
+:::
+
+
+```{r}
+#| label: fig-rgb-nirgb
+#| layout-ncol: 2
+#| column: page
+#| fig-cap:
+#|   - The R, G and B bands mapped to RGB
+#|   - NIR, G and B bands mapped to RGB
+#| echo: false
+plotRGB(l7_full[[c(3,2,1)]], stretch = "histogram", smooth = FALSE)
+
+
+plotRGB(l7_full[[c(4,3,2)]], stretch = "histogram", smooth = FALSE)
+
+```
+
+
+
+# The SpatRaster Object
+
+## What makes a matrix a raster?
+
+- We established that a raster *is* a matrix of values
+- But a plain matrix has no spatial meaning — it does not know *where* on Earth it is
+
+---
+
+- A **SpatRaster** (`terra`) extends a matrix with three pieces of spatial metadata:
+  - **Extent**: the geographic bounding box (xmin, xmax, ymin, ymax)
+  - **Resolution**: the size of one pixel in CRS units
+  - **CRS**: the coordinate reference system — the spatial reference frame
+- Together, extent + resolution + CRS allow every pixel to be located precisely on Earth
+
+:::{.notes}
+- This is the key conceptual bridge from the matrix world to georeferenced spatial data
+- Without CRS + extent, a raster is just a matrix floating in space
+- All spatial operations (project, resample, mask, extract) rely on these three being set correctly
+:::
+
+## Printing a SpatRaster shows all metadata
+
+```{r}
+#| echo: true
+r <- rast(system.file("ex/elev.tif", package = "terra"))
+r
+```
+
+:::{.notes}
+- Walk through each field: class, dimensions (nrow x ncol x nlyr), resolution, extent, CRS
+- "sources" tells us the file on disk — if in memory only, this would say "memory"
+- min/max are the data value range, not the spatial extent
+:::
+
+## Querying individual components
+
+```{r}
+#| echo: true
+nrow(r)   # rows (y dimension)
+ncol(r)   # columns (x dimension)
+nlyr(r)   # number of layers / bands
+```
+
+```{r}
+#| echo: true
+ext(r)    # bounding box in CRS units
+res(r)    # pixel size (x, y) in CRS units
+```
+
+:::{.notes}
+- nrow × ncol = total number of pixels per band
+- ext() and res() together define the raster grid — if you know three, you can derive the fourth
+- Here, res() is in degrees because the CRS is geographic (WGS84)
+- Ask students: if res() returns 0.00833 degrees, how large is a pixel in meters at the equator? (~930m)
+:::
+
+
+
+# Coordinate Reference Systems
+
+## What is a CRS?
+
+- A CRS defines how coordinates relate to real locations on Earth
+- Two broad families:
+  - **Geographic CRS** — coordinates in *degrees* (longitude, latitude) on a spherical Earth model
+    Example: WGS84 (EPSG:4326), used by GPS
+  - **Projected CRS** — coordinates in *meters* (or feet) on a flat (2D) surface
+    Example: EPSG:2169 (Luxembourg), UTM zones
+- Most downloaded satellite data uses WGS84; spatial analysis often requires a projected CRS
+
+:::{.notes}
+- The Earth is curved, so projecting it onto a flat surface always introduces distortion
+- Geographic CRS is fine for storage and display; projected CRS is needed for distance/area calculations
+- A focal window of 3×3 in degrees is not 3×3 meters — this is why CRS matters for map algebra
+:::
+
+## Checking the CRS
+
+```{r}
+#| echo: true
+crs(r, describe = TRUE)   # human-readable summary
+```
+
+:::{.notes}
+- `describe = TRUE` gives a concise one-line summary: name, authority, code
+- The full WKT is what gets embedded in file metadata — this is what other software reads
+- If CRS is missing (NA), spatial operations may silently give wrong results
+:::
+
+## Reprojecting with `project()`
+
+- Use `project()` to reproject a raster to a different CRS
+- The raster is resampled so that pixels align to the new grid
+
+```{r}
+#| echo: true
+r_projected <- project(r, "EPSG:2169")
+
+res(r)           # original: degrees
+res(r_projected) # projected: meters
+```
+
+:::{.notes}
+- After projecting to EPSG:2169, res() returns meters (~927m here)
+- This is the same physical pixel size expressed in a different unit
+- project() involves interpolation, which slightly modifies values — only reproject when necessary
+- We will use this in Lesson 2 when we need focal windows in real-world units (meters)
+:::
+
+## Why CRS matters for analysis
+
+::::{.columns}
+
+::: {.column width="50%"}
+
+**Geographic (degrees)**
+
+- Resolution of `0.00833°`
+- A focal window of 3 cells ≈ 0.025°
+- Pixel "size" varies with latitude
+
+:::
+
+::: {.column width="50%"}
+
+**Projected (meters)**
+
+- Resolution of `~927m`
+- A focal window of 3 cells = 2.8 km
+- Pixel size is constant everywhere
+
+:::
+
+::::
+
+:::{.notes}
+- This difference becomes critical in Lesson 2 when we create focal windows
+- `focalMat(r, d = 2000, "circle")` requires the raster to be in meters to mean "2km radius"
+- Always check `crs(r, describe = TRUE)` and `res(r)` before doing spatial analysis
+:::
+
+
+
+# NoData in Raster Data
+
+## What does NA mean in a raster?
+
+- In tabular data, `NA` means "value not recorded" for an observation
+- In raster data, `NA` has additional spatial meaning:
+  - **Outside the study area** — pixels beyond the boundary of interest
+  - **Other**, such as Sensor failure, Atmospheric effects etc.
+- NA pixels are *not* skipped in raster algebra — they propagate: `5 + NA = NA`
+
+:::{.notes}
+- This propagation behavior is different from what students may expect from tabular workflows
+- In raster operations, NA cells stay NA unless explicitly handled (na.rm = TRUE, mask, ifel)
+- Students will encounter this immediately when working with real satellite data (cloud cover)
+:::
+
+## How NAs arise: study area boundaries
+
+```{r}
+#| echo: true
+#| layout-ncol: 2
+#| column: page
+#| fig-cap:
+#|   - The raw raster extent (bounding box)
+#|   - NAs outside the study area boundary
+
+r <- rast(system.file("ex/elev.tif", package = "terra"))
+lux <- vect(system.file("ex/lux.shp", package = "terra"))
+
+# show the bounding box vs the actual data extent
+plot(r, main = "Values within Luxembourg boundary")
+plot(lux, add = TRUE)
+```
+
+:::{.notes}
+- The raster grid is always rectangular — but the real data often covers an irregular shape
+- Cells outside the country boundary are NA
+- The bounding box (ext()) covers the whole rectangle
+:::
+
+## Working with NA: `is.na()` and `mask()`
+
+```{r}
+#| echo: true
+
+# identify where NAs are
+na_raster <- is.na(r)
+```
+
+```{r}
+#| echo: true
+
+# mask: set cells outside a vector boundary to NA
+r_masked <- mask(r, lux)
+```
+
+```{r}
+#| echo: true
+
+# replace NA with a specific value (e.g. 0)
+r_filled <- ifel(is.na(r), 0, r)
+```
+
+:::{.notes}
+- is.na() returns a Boolean raster: 1 where NA, 0 elsewhere
+- mask() takes a vector or raster boundary and sets everything outside to NA
+- ifel() is the raster equivalent of ifelse() for cell-by-cell conditional replacement
+- na.rm = TRUE in aggregation functions (mean, sum) ignores NAs, like in base R
+:::
+
+## Edge effects in focal operations
+
+- Focal operations require a neighborhood around each cell
+- Cells at the **raster edge** do not have a full neighborhood
+- By default, this produces NA in the output border
+
+```{r}
+#| echo: true
+#| layout-ncol: 2
+#| column: page
+#| fig-cap:
+#|   - 3×3 focal mean (note NA border)
+#|   - 3×3 focal mean with fillNA = TRUE
+
+r_foc     <- focal(r, w = 3, fun = mean)
+r_foc_pad <- focal(r, w = 3, fun = mean, fillNA = TRUE)
+
+plot(r_foc,     main = "fillNA = FALSE (default)")
+plot(r_foc_pad, main = "fillNA = TRUE")
+```
+
+:::{.notes}
+- fillNA = TRUE pads the border with NAs before computing, so the output has the same extent as the input
+- For large windows the effect is more pronounced — a 11×11 window loses 5 cells on every side
+- This will matter in Lesson 2 when we compare focal window sizes
+:::
+
+
+
+# Reading and Writing Rasters
+
+## Common raster file formatsCommon raster {.smaller}
+
+| Format | Extension | Notes |
+|---|---|---|
+| GeoTIFF | `.tif` | Universal standard; stores CRS, extent, metadata |
+| JPEG2000 | `.jp2` | Used by Sentinel-2 (ESA); lossy or lossless |
+| NetCDF | `.nc` | Common in climate science; supports time dimension |
+| HDF5 | `.h5 / .he5` | Used by MODIS, Landsat Collection 2 |
+| Cloud-Optimized GeoTIFF | `.tif` (COG) | GeoTIFF optimized for remote/cloud access |
+
+:::{.notes}
+- Students will encounter JP2 in Lesson 3 when working with Sentinel-2 SAFE files
+- NetCDF is important for temporal datasets (e.g. ERA5 climate reanalysis)
+- COG is increasingly important for cloud workflows (reading subsets without downloading the whole file)
+- **GeoTIFF is the recommended format** for most workflows
+- All formats are read/written by GDAL — `terra` uses GDAL under the hood
+
+:::
+
+---
+
+
+
+## Reading rasters from disk
+
+```{r}
+#| echo: true
+#| eval: false
+
+# read a single-band GeoTIFF
+r <- rast("data/elevation.tif")
+
+# read a multi-band GeoTIFF
+l7 <- rast("data/L7_ETMs.tif")
+
+# read one specific band from a multi-band file
+band3 <- rast("data/L7_ETMs.tif", lyrs = 3)
+```
+
+- `rast()` reads all spatial metadata automatically (CRS, extent, resolution)
+- The data is **not loaded into RAM** by default — `terra` reads values on demand (lazy loading)
+- Use `values(r)` or `as.matrix(r)` to force loading all values into memory
+
+:::{.notes}
+- Lazy loading is critical for large rasters that don't fit in RAM
+- terra processes large rasters in chunks internally — students don't need to manage this
+- Printing the object shows "source: ..." confirming it's backed by a file, not just in memory
+:::
+
+## Writing rasters to disk
+
+```{r}
+#| echo: true
+#| eval: false
+
+# write to GeoTIFF (all metadata is preserved automatically)
+writeRaster(r, "data-out/elevation_out.tif")
+
+# overwrite an existing file
+writeRaster(r, "data-out/elevation_out.tif", overwrite = TRUE)
+
+# specify the data type explicitly (default is Float32)
+writeRaster(r, "data-out/elevation_byte.tif", datatype = "INT1U", overwrite = TRUE)
+```
+
+- CRS, extent, resolution, band names and data type are all written into the file
+- Any software that reads GeoTIFF (QGIS, Python/rasterio, ArcGIS) will read the same metadata
+- Choosing the right `datatype` matters for file size — covered in Lesson 3
+
+:::{.notes}
+- This is intentionally brief — the datatype/scale/offset topic is fully developed in Lesson 3
+- Reinforce: the file stores everything needed to reconstruct the raster — students don't need separate sidecar files
+- Warn about overwrite = TRUE — it silently overwrites without a prompt
+:::
