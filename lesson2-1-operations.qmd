@@ -5,6 +5,16 @@ format: revealjs-clean
 # Raster Operations / Map algebra
 
 
+## Learning Objectives
+
+By the end of this lesson you will be able to:
+
+- Distinguish the four map algebra operation types: **global**, **zonal**, **local**, and **focal**
+- Apply each type using `terra` in R
+- Choose the appropriate operation for a given spatial task
+- Work with focal kernels in both cell units and real-world units
+
+
 ## Introduction
 
 - Map algebra can be defined as operations that modify or summarize raster cell values, with reference to surrounding cells, zones, or statistical functions that apply to every cell.
@@ -13,6 +23,10 @@ format: revealjs-clean
   2. **Focal** or neighborhood operations. Most often the output cell value is the result of a 3 x 3 input cell block
   3. **Zonal** operations are similar to focal operations, but the surrounding pixel grid on which new values are computed can have irregular sizes and shapes
   4. **Global** or per-raster operations. That means the output cell derives its value potentially from one or several entire rasters
+
+::: {.notes}
+The four types differ in spatial scope — how many cells contribute to each output value. Ask students: if I want the mean elevation of each municipality, which type is that? If I want to smooth noise in a satellite image?
+:::
 
 
 ```{r}
@@ -46,8 +60,12 @@ r_boundaries[r_boundaries == 0] <- NA
 
 ## Global Operation (1)
 
-- The most common global operations are descriptive statistics for the entire raster dataset such as the minimum, maximum or mean value. 
+- The most common global operations are descriptive statistics for the entire raster dataset such as the minimum, maximum or mean value.
 - For example: What is the mean elevation value for Luxembourg?
+
+::: {.notes}
+Common mistake: `mean(r)` computes a per-cell mean across bands (a local operation), not a raster-wide mean. `global()` is the correct function for whole-raster statistics.
+:::
 
 
 ```{r}
@@ -125,6 +143,10 @@ p0 +
 
 What is the mean altitude *per municipality*?
 
+::: {.notes}
+Conceptually this is a spatial group_by + summarize. The zones raster must be integer/categorical — use `rasterize()` to convert vector polygons first. Global is a special case of zonal where the entire raster is a single zone.
+:::
+
 
 
 
@@ -163,10 +185,9 @@ p +
   tm_raster(style = "cont", palette = "viridis", title = "Mean Elevation") 
 ```
 
-:::{.callout-note collapse="true}
+:::{.callout-note collapse="true"}
 
 - The global operation can be seen as a special case of a zonal operation, where the only "Zone" is the entire dataset
-
 
 :::
 
@@ -174,6 +195,10 @@ p +
 
 - Local operations comprise all cell-by-cell operations in one or several layers.
 - For example, we can classify the elevation into values above and below a certain threshold
+
+::: {.notes}
+All arithmetic (+, -, *, /) and logical (>, <, &, |) operators work element-wise on rasters in terra. Boolean rasters are the foundation of masking and multi-condition selection (as in the solar panel example in the tasks).
+:::
 
 
 ```{r}
@@ -289,10 +314,13 @@ tm_shape(L) + tm_raster(style = "cont", palette = grey.colors(255)) +
 
 ## Focal {#sec-focal-1}
 
-- While local functions operate on one cell focal operations take into account a central (focal) cell *and its neighbors*. 
-- The neighborhood (also named kernel, filter or moving window) under consideration is typically of size 3-by-3 cells (that is the central cell and its eight surrounding neighbors), but can take on any other size or shape as defined by the user. 
+- While local functions operate on one cell focal operations take into account a central (focal) cell *and its neighbors*.
+- The neighborhood (also named kernel, filter or moving window) under consideration is typically of size 3-by-3 cells (that is the central cell and its eight surrounding neighbors), but can take on any other size or shape as defined by the user.
 - A focal operation applies an aggregation function to all cells within the specified neighborhood, uses the corresponding output as the new value for the central cell, and moves on to the next central cell
 
+::: {.notes}
+Key trade-off: larger window → more smoothing but larger NA border (edge effect). `fillNA = TRUE` mitigates this by using whatever neighbors are available at the edges rather than requiring the full window.
+:::
 
 :::{#fig-focal}
 
@@ -412,7 +440,7 @@ focal(r, sobel_y) |> plot()
 ```
 
 
-## From cells to real world units (2)
+## From cells to real world units (1)
 
 - We have been specifying our focal weights in terms of cell units
 - In most cases, it is more reasonable to work with real world units
@@ -516,6 +544,10 @@ focal_gauss |> rast() |> plot()
 - Similarly, calculating the aspect (azimuth) of a location is a very typical task when dealing with elevation data
 - These algorithms are used so often, that they are implemented in a dedicated function (`terrain()`)
 
+::: {.notes}
+`terrain()` is just a convenience wrapper around a focal operation with a specific kernel. Horn's algorithm uses a 3×3 weighted neighborhood to estimate the gradient in x and y directions, from which slope and aspect are derived.
+:::
+
 
 
 ```{r}
@@ -532,4 +564,13 @@ terrain(r, "slope") |> plot()
 terrain(r, "aspect") |> plot()
 ```
 
+
+## Summary
+
+| Type | Scope | Key functions |
+|------|-------|---------------|
+| **Global** | Entire raster | `global()`, `distance()` |
+| **Zonal** | Defined regions | `zonal()`, `rasterize()` |
+| **Local** | Per cell | `classify()`, `>`, `&`, `mean()` across bands |
+| **Focal** | Moving window | `focal()`, `focalMat()`, `terrain()` |
 

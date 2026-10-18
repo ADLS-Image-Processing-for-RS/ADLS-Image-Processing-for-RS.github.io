@@ -7,9 +7,15 @@ code-summary: "Sample Solution"
 ---
 
 
+
 # Raster Operations — Tasks
 
 [Open slides](lesson2-1-operations.html){target="_blank" .btn .btn-outline-primary}
+
+:::{.callout-important}
+- **Try this without AI first** — struggle builds understanding.
+- Ask if you are stuck. Asking builds understanding too!
+:::
 
 ## Tasks
 
@@ -78,53 +84,107 @@ plot(good, main = "Solar panel suitability")
 
 ## Task 5
 
-Import the municipalities of Luxembourg (see below) and calculate the minimum, maximum and mean elevation values per municipality.
+Reclassify the elevation raster into three categories using `classify()`:
+
+- *Low*: below the 33rd percentile
+- *Mid*: between the 33rd and 66th percentile
+- *High*: above the 66th percentile
+
+Use `global()` with `quantile` to compute the cut points.
 
 ```{r}
-#| echo: true
-lux <- system.file("ex/lux.shp", package="terra") |> 
-  vect()
-
-zones <- rasterize(lux, r, "NAME_2")
+cuts <- global(r, quantile, probs = c(0, .33, .66, 1), na.rm = TRUE)
+r_class <- classify(r, as.numeric(cuts))
+levels(r_class) <- data.frame(ID = 0:2, category = c("low", "mid", "high"))
+plot(r_class)
 ```
 
 
 ## Task 6
 
-Smooth the elevation values using different focal windows
+Import the municipalities of Luxembourg and calculate the minimum, maximum, and mean elevation per municipality. Then visualize the mean elevation per municipality as a map.
+
+```{r}
+#| echo: true
+library(tmap)
+lux <- system.file("ex/lux.shp", package="terra") |>
+  vect()
+zones <- rasterize(lux, r, "NAME_2")
+```
+
+```{r}
+mean_vals <- zonal(r, zones, fun = mean, na.rm = TRUE)
+min_vals  <- zonal(r, zones, fun = min,  na.rm = TRUE)
+max_vals  <- zonal(r, zones, fun = max,  na.rm = TRUE)
+
+mean_vals2 <- mean_vals |>
+  dplyr::mutate(ID = dplyr::row_number() - 1, .before = 0) |>
+  dplyr::select(-NAME_2)
+zones_mean <- classify(as.int(zones), mean_vals2)
+
+tm_shape(zones_mean) +
+  tm_raster(style = "cont", palette = "viridis", title = "Mean Elevation (m)") +
+  tm_layout(legend.outside = TRUE)
+```
+
 
 ## Task 7
 
-Import the multispectral Landsat 7 as a raster using the following path
+Smooth the elevation raster using a 3×3 and an 11×11 mean focal window. Compare the two results visually side by side.
+
+```{r}
+w3  <- matrix(rep(1, 9),   ncol = 3)
+w11 <- matrix(rep(1, 121), ncol = 11)
+r_smooth3  <- focal(r, w3,  fun = mean, fillNA = TRUE)
+r_smooth11 <- focal(r, w11, fun = mean, fillNA = TRUE)
+par(mfrow = c(1, 2))
+plot(r_smooth3,  main = "3x3 focal mean")
+plot(r_smooth11, main = "11x11 focal mean")
+```
+
+
+## Task 8
+
+Reproject the elevation raster to EPSG:2169 (Luxembourg national grid, units: metres) and resample to 1 km resolution. Then apply a circular focal filter with a 5 km radius using `focalMat()`.
+
+```{r}
+r_proj <- project(r, "EPSG:2169")
+template <- rast(res = 1000, ext = ext(r_proj))
+r_1km <- resample(r_proj, template)
+w_circle <- focalMat(r_1km, d = 5000, type = "circle")
+r_circle <- focal(r_1km, w_circle, fun = sum, na.rm = TRUE)
+plot(r_circle, main = "5 km circular mean elevation")
+```
+
+
+## Task 9
+
+Import the multispectral Landsat 7 image as a raster:
 
 ```{r}
 #| eval: false
 #| echo: true
-   
-system.file("tif/L7_ETMs.tif",package = "stars")
+system.file("tif/L7_ETMs.tif", package = "stars")
 ```
 
 ```{r}
-l7 <- system.file("tif/L7_ETMs.tif",package = "stars") |> 
-   rast()
+l7 <- system.file("tif/L7_ETMs.tif", package = "stars") |>
+  rast()
 ```
 
-## Task 8
 
-Calculate the [NDVI](https://en.wikipedia.org/wiki/Normalized_difference_vegetation_index) using the following formula:
+## Task 10
+
+Calculate the [NDVI](https://en.wikipedia.org/wiki/Normalized_difference_vegetation_index) using the formula below and visualize the result with a diverging color scale centered at 0.
 
 $$\text{NDVI} = \frac{\text{NIR}-\text{red}}{\text{NIR}+\text{red}}$$
 
 ```{r}
 names(l7) <- c("B", "G", "R", "NIR", "SWIR", "MIR")
-
-
-NDVI <- (l7[["NIR"]]-l7[["R"]])/(l7[["NIR"]]+l7[["R"]])
-
+NDVI <- (l7[["NIR"]] - l7[["R"]]) / (l7[["NIR"]] + l7[["R"]])
 library(tmap)
-
-
-tm_shape(NDVI) + tm_raster(style = "cont", title = "NDVI", midpoint = 0, breaks = c(-1,0,1)) + 
+tm_shape(NDVI) +
+  tm_raster(style = "cont", title = "NDVI", midpoint = 0, breaks = c(-1, 0, 1)) +
   tm_layout(legend.outside = TRUE)
 ```
 
