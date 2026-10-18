@@ -39,11 +39,31 @@ Since IPRS runs first and 5/6 GISc students have taken it, **the fix belongs in 
 - GISc's unique value-add is the vector model (simple features, spatial operations) and vector-raster integration — lean into that
 - Only 1 GISc student lacks the IPRS background; handle via self-study reference, not repeated lectures
 
-## Notes to self:
+## Project structure
 
-- Switching the theme activates the presenter mode
-- `quarto preview --profile dev` runs the dev version, with potentially unfinished chapters
-- publish using `quarto publish gh-pages --no-prompt`
+This is a **Quarto website** (not a book). Each `.qmd` renders with its own format:
+
+- `lesson*.qmd` — revealjs slides, linked from the corresponding tasks page
+- `lesson*-tasks.qmd` — HTML task pages, visible in the sidebar
+
+Slides are included in `project: render:` but excluded from the sidebar. Students reach them via the "Open slides" button at the top of each tasks page.
+
+### Configs
+
+| File | Purpose |
+|------|---------|
+| `_quarto.yml` | Production — only published lessons in sidebar |
+| `_quarto-dev.yml` | Dev — all lessons visible |
+
+### Workflow
+
+- Preview: `quarto preview --profile dev`
+- Render: `quarto render` (production) or `quarto render --profile dev`
+- Publish: `quarto publish gh-pages --no-prompt`
+
+## Notes to self
+
+- Switching the theme activates the presenter mode (dark = presenter, shows speaker notes in browser console)
 
 ## Role of Slides
 
