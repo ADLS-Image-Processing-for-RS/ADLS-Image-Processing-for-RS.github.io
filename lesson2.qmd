@@ -9,20 +9,57 @@ format: revealjs-clean
 
 By the end of this lesson you will be able to:
 
-- Distinguish the four map algebra operation types: **global**, **zonal**, **local**, and **focal**
-- Apply each type using `terra` in R
-- Choose the appropriate operation for a given spatial task
-- Work with focal kernels in both cell units and real-world units
+- Explain the four sensor **resolution types** and their trade-offs
+- Distinguish and apply the four **map algebra operation types** in R
+- Understand why **spectral indices** are more robust than raw band values
+- Perform **raster–vector operations**: crop, mask, and extract
+- Connect **focal operations** to convolutions in image processing
+
+
+## The Four Resolutions
+
+| Resolution | Definition |
+|-----------|-----------|
+| **Spatial** | Ground size of one pixel |
+| **Temporal** | Revisit frequency |
+| **Spectral** | Number & width of bands |
+| **Radiometric** | Intensity levels (bit depth) |
+
+**Trade-off example:** Sentinel-2: 10 m · 5 days · 13 bands vs. MODIS: 500 m · daily · 36 bands — higher resolution in one dimension typically comes at the cost of another.
+
+::: {.notes}
+For flood mapping you need daily updates → MODIS. For field-level crop mapping you need 10 m pixels → Sentinel-2. Hyperspectral sensors (EnMAP, AVIRIS) trade spatial resolution for hundreds of spectral bands. Radiometric resolution matters for detecting subtle reflectance differences — 16-bit data captures far more detail than 8-bit.
+:::
+
+
+## From Sensor to Analysis: DN vs. Reflectance {.smaller}
+
+- Sensors record **Digital Numbers (DN)**: raw detector output
+- DN values depend on illumination angle, atmospheric conditions, and sensor calibration — **not directly comparable** across dates or sensors
+
+**Calibration pipeline:**
+
+| Step | Corrects for |
+|------|-------------|
+| DN → Radiance | Sensor gain & offset |
+| Radiance → TOA Reflectance | Solar illumination angle |
+| TOA → Surface Reflectance | Atmospheric scattering & absorption |
+
+Spectral indices are designed to work with reflectance: more **sensor- and date-independent** than raw DN.
+
+::: {.notes}
+Sentinel-2 Level-2A = surface reflectance (values scaled ×10000). Level-1C = TOA only. Always check the product level. A common gotcha: computing NDVI on raw Level-2A integers (without dividing by 10000) still gives the right *ratio* because the scale cancels — but it matters when comparing across sensors.
+:::
 
 
 ## Introduction
 
-- Map algebra can be defined as operations that modify or summarize raster cell values, with reference to surrounding cells, zones, or statistical functions that apply to every cell.
-- Map algebra divides raster operations into four subclasses:
-  1. **Local** or per-cell operations
-  2. **Focal** or neighborhood operations. Most often the output cell value is the result of a 3 x 3 input cell block
-  3. **Zonal** operations are similar to focal operations, but the surrounding pixel grid on which new values are computed can have irregular sizes and shapes
-  4. **Global** or per-raster operations. That means the output cell derives its value potentially from one or several entire rasters
+- Map algebra: operations that modify or summarize raster cell values
+- Four subclasses, differing in **spatial scope**:
+  1. **Local** — per-cell operations
+  2. **Focal** — central cell + neighborhood (typically 3×3)
+  3. **Zonal** — irregular regions defined by a second raster
+  4. **Global** — entire raster(s)
 
 ::: {.notes}
 The four types differ in spatial scope — how many cells contribute to each output value. Ask students: if I want the mean elevation of each municipality, which type is that? If I want to smooth noise in a satellite image?
@@ -55,6 +92,43 @@ r_boundaries <- boundaries(r_bool)
 
 r_boundaries[r_boundaries == 0] <- NA
 
+```
+
+
+## Operation Types — Illustrated
+
+```{r}
+#| label: fig-op-types
+#| echo: false
+#| fig-height: 2.5
+#| fig-cap: "Local (one cell), Focal (3×3 neighborhood), Zonal (coloured regions), Global (entire raster)"
+
+library(ggplot2)
+library(patchwork)
+
+tile_plot <- function(m, title) {
+  n <- nrow(m)
+  df <- expand.grid(x = seq_len(n), y = n:1)
+  df$fill <- as.vector(t(m))
+  ggplot(df, aes(x, y, fill = fill)) +
+    geom_tile(color = "white", linewidth = 0.8) +
+    scale_fill_identity() +
+    coord_equal() +
+    theme_void() +
+    labs(title = title) +
+    theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 11))
+}
+
+w <- "#E8E8E8"; b <- "#4472C4"; d <- "#1F3864"; o <- "#ED7D31"; g <- "#70AD47"
+
+m_local  <- matrix(w, 5, 5); m_local[3, 3] <- b
+m_focal  <- matrix(w, 5, 5); m_focal[2:4, 2:4] <- b; m_focal[3, 3] <- d
+m_zonal  <- matrix(w, 5, 5); m_zonal[1:2, ] <- o; m_zonal[3:5, 1:3] <- g; m_zonal[3:5, 4:5] <- b
+m_global <- matrix(b, 5, 5)
+
+tile_plot(m_local, "Local") + tile_plot(m_focal, "Focal") +
+  tile_plot(m_zonal, "Zonal") + tile_plot(m_global, "Global") +
+  plot_layout(nrow = 1)
 ```
 
 
@@ -103,18 +177,19 @@ mean_elev
 - For example, what is the distance from each cell to *Luxembourg City*, the capital of Luxembourg?
 
 ```{r}
-luxembourg_city <- st_point(c(6.131944,49.611667)) |>     
-  st_sfc(crs = 4326) |> 
-  st_sf() |> 
+luxembourg_city <- st_point(c(6.131944,49.611667)) |>
+  st_sfc(crs = 4326) |>
+  st_sf() |>
   mutate(text = "Luxembourg City")
 
-
 p0 +
-  tm_shape(luxembourg_city) + 
-  tm_dots(shape = 4, size = 1.4) 
+  tm_shape(luxembourg_city) +
+  tm_dots(shape = 4, size = 1.4)
 
 luxembourg_city <- vect(luxembourg_city)
 ```
+
+## Global Operation (2) — Result
 
 ```{r}
 #| echo: true
@@ -122,8 +197,6 @@ luxembourg_city <- vect(luxembourg_city)
 r_dist <- distance(r, luxembourg_city)
 r_dist <- mask(r_dist, r)
 ```
-
-
 
 ```{r}
 
@@ -158,6 +231,7 @@ mean_vals <- zonal(r, zones, fun = mean, na.rm = TRUE)
 
 ```
 
+## Zonal — Result
 
 ```{r}
 #| label: fig-zonal
@@ -168,21 +242,21 @@ mean_vals <- zonal(r, zones, fun = mean, na.rm = TRUE)
 #|   - Mean elevation per zone / per municipality
 
 
-mean_vals2 <- mean_vals |> 
-  mutate(ID = row_number()-1, .before = 0) |> 
+mean_vals2 <- mean_vals |>
+  mutate(ID = row_number()-1, .before = 0) |>
   select(-NAME_2)
 
 zones_int <- as.int(zones)
 
 zones_mean <- classify(zones_int, mean_vals2)
 
-p + 
+p +
   tm_shape(zones, is.master = TRUE) +
-  tm_raster(style = "cat",legend.show = TRUE, palette = "Set1") 
+  tm_raster(style = "cat",legend.show = TRUE, palette = "Set1")
 
-p + 
-  tm_shape(zones_mean) + 
-  tm_raster(style = "cont", palette = "viridis", title = "Mean Elevation") 
+p +
+  tm_shape(zones_mean) +
+  tm_raster(style = "cont", palette = "viridis", title = "Mean Elevation")
 ```
 
 :::{.callout-note collapse="true"}
@@ -214,12 +288,13 @@ r_bool[r > mean_elev] <- FALSE
 r_bool[r <= mean_elev] <- TRUE
 
 
-``` 
+```
 
+## Local (1)
 
 ```{r}
 
-p + 
+p +
   tm_shape(r_bool) +
   tm_raster(palette = "viridis", title = "Low Elevation")
 
@@ -235,20 +310,25 @@ p +
 
 ```{r}
 #| echo: true
+#| output: false
 cuts <- global(r, quantile, probs = c(0, .33, .66, 1), na.rm = TRUE)
 
 r_classify <- classify(r, as.numeric(cuts))
 
 # this next line just replaces the default labels with some custom ones
 levels(r_classify) <- data.frame(ID = 0:2, category = c("low","mid","high"))
+```
 
+## Local (2)
+
+```{r}
 p + tm_shape(r_classify) +
     tm_raster(style = "cat",legend.show = TRUE, palette = "viridis", title = "Elevation") +
     tm_layout(legend.show = TRUE)
 ```
 
 
-## Local (3)
+## Local (3) {.smaller}
 
 - Local operations are often used with multiple bands
 - For example, we could calculate the mean intensity values of red, green and blue:
@@ -266,6 +346,8 @@ plot(l7_rgb, nr = 1)
 
 ```
 
+## Local (3)
+
 ```{r}
 #| echo: true
 l7_rgb_mean <- mean(l7_rgb)
@@ -273,7 +355,7 @@ l7_rgb_mean <- mean(l7_rgb)
 plot(l7_rgb_mean)
 ```
 
-## Local (4)
+## Local (4) {.smaller}
 
 - In a more complex usecase, we could use the R, G and B band to calculate a grayscale value ($L^*$) using the following formula (from [here](https://stackoverflow.com/a/689547/4139249)):
 
@@ -290,6 +372,7 @@ $$
 
 ```{r}
 #| echo: true
+#| output: false
 
 g <- 2.2
 
@@ -299,9 +382,9 @@ Y <- 0.2126 * l7[["R"]]^g + 0.7152 * l7[["G"]]^g + 0.0722 * l7[["B"]]^g
 
 L <- 116* Y^(1/3)-16
 
-
 ```
 
+## Local (4)
 
 ```{r}
 
@@ -310,6 +393,63 @@ tm_shape(L) + tm_raster(style = "cont", palette = grey.colors(255)) +
 
 
 ```
+
+
+## Spectral Indices: Why They Work
+
+Healthy vegetation has a characteristic spectral signature:
+
+- **Absorbs red** (~650 nm): chlorophyll uses it for photosynthesis
+- **Strongly reflects NIR** (~800 nm): leaf cell structure scatters infrared light
+
+```{r}
+#| label: fig-spectral-signature
+#| echo: false
+#| fig-height: 2.8
+
+library(ggplot2)
+
+wl   <- c(450, 500, 550, 600, 650, 700, 750, 800, 850, 900)
+veg  <- c(0.04, 0.05, 0.10, 0.05, 0.04, 0.09, 0.40, 0.47, 0.48, 0.47)
+soil <- c(0.07, 0.10, 0.13, 0.16, 0.18, 0.20, 0.22, 0.24, 0.25, 0.26)
+
+df <- data.frame(
+  wl   = rep(wl, 2),
+  ref  = c(veg, soil),
+  type = rep(c("Vegetation", "Bare soil"), each = length(wl))
+)
+
+ggplot(df, aes(wl, ref, color = type)) +
+  annotate("rect", xmin = 620, xmax = 700, ymin = 0, ymax = 0.55, alpha = 0.12, fill = "red") +
+  annotate("rect", xmin = 750, xmax = 900, ymin = 0, ymax = 0.55, alpha = 0.12, fill = "darkred") +
+  annotate("text", x = 660, y = 0.52, label = "Red", color = "red3", size = 3.5, fontface = "bold") +
+  annotate("text", x = 825, y = 0.52, label = "NIR",  color = "darkred", size = 3.5, fontface = "bold") +
+  geom_line(linewidth = 1.4) +
+  scale_color_manual(values = c("Vegetation" = "#2d7a4e", "Bare soil" = "#b5854a")) +
+  labs(x = "Wavelength (nm)", y = "Reflectance", color = NULL) +
+  theme_minimal(base_size = 11) +
+  theme(legend.position = "bottom")
+```
+
+
+## Normalized Difference Indices
+
+$$\text{Index} = \frac{A - B}{A + B} \in [-1,\, +1]$$
+
+Normalization reduces the effect of illumination differences.
+
+| Index | Formula | Detects |
+|-------|---------|---------|
+| **NDVI** | (NIR − Red) / (NIR + Red) | Vegetation density |
+| **NDWI** | (Green − NIR) / (Green + NIR) | Open water |
+| **NDSI** | (Green − SWIR) / (Green + SWIR) | Snow & ice |
+| **NBR** | (NIR − SWIR) / (NIR + SWIR) | Burn severity |
+
+All are **local raster operations** — the same cell-by-cell arithmetic, different band combinations.
+
+::: {.notes}
+The normalized difference structure cancels out much of the multiplicative effect of illumination. NDWI has two conflicting definitions — Gao (1996) uses NIR/SWIR, McFeeters (1996) uses Green/NIR. Always check which is cited. The NBR is widely used for post-fire damage assessment with Sentinel-2 or Landsat.
+:::
 
 
 ## Focal {#sec-focal-1}
@@ -388,11 +528,12 @@ focal3by3
 
 ```{r}
 #| echo: true
-focal11by11
+#| output: false
+focal11by11  # same structure, 11×11
 ```
 
 
-## Focal weights (2)
+## Focal weights (2) {.smaller}
 
 - However, we can also create uneven weights:
 
@@ -410,9 +551,12 @@ laplacian
 
 ```
 
-So are the [sobel filters](https://en.wikipedia.org/wiki/Sobel_operator)
+So are the [sobel filters](https://en.wikipedia.org/wiki/Sobel_operator) — shown on the next slide.
+
+## Focal weights (2) — Sobel {.smaller}
 
 ```{r}
+#| echo: true
 
 sobel_x <- matrix(c(-1,-2,-1,0,0,0,1,2,1), nrow=3)
 
@@ -440,6 +584,27 @@ focal(r, sobel_y) |> plot()
 ```
 
 
+## Focal Operations = Convolutions {.smaller}
+
+A focal operation with a weight matrix *is* a **discrete convolution**:
+
+$$(\text{output})_{i,j} = \sum_{m}\sum_{n} w_{m,n} \cdot r_{i+m,\, j+n}$$
+
+This is exactly the operation in **convolutional neural networks (CNNs)**:
+
+| Hand-crafted kernel | Equivalent CNN concept |
+|---------------------|----------------------|
+| Gaussian blur | Smoothing / anti-aliasing layer |
+| Sobel x/y | Edge detection layer |
+| Mean filter | Average pooling |
+
+**The key difference**: in deep learning, kernels are *learned from data* rather than designed manually.
+
+::: {.notes}
+Worth emphasizing with DS students — a CNN is essentially many stacked focal operations with learned kernels. The Sobel filter they just saw is exactly what a CNN's first conv layer approximates when trained on natural images. The bias-variance tradeoff applies too: larger kernels → more smoothing = more bias, less variance.
+:::
+
+
 ## From cells to real world units (1)
 
 - We have been specifying our focal weights in terms of cell units
@@ -454,34 +619,8 @@ res(r)
 
 ```{r}
 #| echo: true
-#| output: false
-crs(r, parse = TRUE)
-```
-
-```{r}
-#| echo: false
-
-library(stringr)
-c("(output truncated)","...", crs(r, parse = TRUE)[11:13], "...") |> 
-  str_remove("^\\s\\s\\s\\s")
-  cat(sep = "\n")
-```
-
-```{r}
-#| echo: true
-#| output: false
 # Reproject to a "projected" CRS
 r_2169 <- project(r, "EPSG:2169")
-
-crs(r_2169, parse = TRUE)
-```
-
-```{r}
-#| echo: false
-
-c(crs(r_2169, parse = TRUE)[1:5], "...", "(output truncated)") |> 
-  str_remove("^\\s\\s\\s\\s")
-  cat(sep = "\n")
 ```
 
 
@@ -504,14 +643,9 @@ r_2169 <- resample(r_2169, template)
 
 ## Focal weights with `focalMat`
 
-- Now that we have a raster with managable units and resolution, we can create specific focal *shapes* using `focalMat`.
-- `focalMat` can create circles, rectangles and gaussian shapes. The size of the shape is determined by `d`, which has different meanings for different shapes (always in the units of the CRS):
-  - *circle*: `d` specifies the circle radius
-  - *rectangle*: `d` can be 1 or 2 values, specifiying the dimensions of the rectangle
-  - *Gauss*: the size of *sigma*
-- The function returns a matrix which takes the raster resultion into account. (i.e. `d` is divided by the raster resolution)
-- The sum of all values in the matrix is 1
-
+- `focalMat` creates focal matrices in real-world units (CRS units)
+- Shapes: *circle* (`d` = radius), *rectangle* (`d` = dimensions), *Gauss* (`d` = sigma)
+- Values sum to 1; matrix size adapts to raster resolution
 
 ```{r}
 #| warning: false
@@ -523,10 +657,11 @@ focal_circle
 ```
 
 ```{r}
-#| fig-cap: A visual representation of the matrix / filter above
+#| fig-cap: Circle filter (2 km radius)
 focal_circle |> rast() |> plot()
 ```
 
+## Focal weights with `focalMat` — Gauss
 
 ```{r}
 #| echo: true
@@ -534,7 +669,7 @@ focal_gauss <- focalMat(x = r_2169, d = 2000, "Gauss")
 ```
 
 ```{r}
-#| fig-cap: A visual representation of the matrix / filter above
+#| fig-cap: Gaussian filter (sigma = 2 km)
 focal_gauss |> rast() |> plot()
 ```
 
@@ -548,21 +683,93 @@ focal_gauss |> rast() |> plot()
 `terrain()` is just a convenience wrapper around a focal operation with a specific kernel. Horn's algorithm uses a 3×3 weighted neighborhood to estimate the gradient in x and y directions, from which slope and aspect are derived.
 :::
 
-
+## Focal functions in terrain processing
 
 ```{r}
 #| echo: true
 #| layout-nrow: 1
 #| label: fig-terrain
 #| column: page
-#| fig-cap: 
+#| fig-cap:
 #|   - Calculating slope using a predefined algorithm
-#|   - Calculating aspect 
+#|   - Calculating aspect
 
 
 terrain(r, "slope") |> plot()
 terrain(r, "aspect") |> plot()
 ```
+
+
+## Raster–Vector Operations {.smaller}
+
+Vector data represents discrete geometries: **points**, **lines**, **polygons** — each with a geometry and attributes.
+
+Three fundamental operations linking rasters and vectors:
+
+| Operation | Function | What it does |
+|-----------|----------|-------------|
+| **Crop** | `crop()` | Reduce raster extent to bounding box of vector |
+| **Mask** | `mask()` | Set cells outside vector geometry to NA |
+| **Extract** | `extract()` | Get raster cell values at vector locations |
+
+::: {.notes}
+`crop()` + `mask()` is almost always used together: crop first (fast — just clips the extent), mask second (precise — removes cells outside the geometry). Extract bridges to tabular analysis — it returns a data frame, not a raster.
+:::
+
+
+## Crop & Mask
+
+```{r}
+#| echo: true
+#| output: false
+
+one_muni <- lux[5, ]           # one municipality polygon
+
+r_crop <- crop(r, one_muni)
+r_mask <- mask(r_crop, one_muni)
+```
+
+## Crop & Mask
+
+```{r}
+#| label: fig-crop-mask
+#| fig-cap:
+#|   - Original raster with municipality boundary
+#|   - crop() — trims to bounding box
+#|   - mask() — outside cells set to NA
+#| layout-nrow: 1
+#| column: page
+
+plot(r,      main = "Original"); lines(one_muni)
+plot(r_crop, main = "crop()")
+plot(r_mask, main = "mask()")
+```
+
+
+## Extract {.smaller}
+
+```{r}
+#| echo: true
+
+# Sample 20 random point locations
+pts <- spatSample(r, 20, as.points = TRUE, na.rm = TRUE)
+
+# Elevation value at each point
+extract(r, pts) |> head(5)
+```
+
+`extract()` also accepts polygon geometries and an aggregation function:
+
+```{r}
+#| echo: true
+
+# Mean elevation per municipality polygon
+extract(r, lux, fun = mean, na.rm = TRUE) |> head(3)
+```
+
+::: {.notes}
+Polygon extract with `fun =` is similar to `zonal()`, but works directly on vector geometry without rasterizing first. For large datasets, the `rasterize()` + `zonal()` approach is usually faster. `extract()` without `fun =` returns every cell value per polygon — useful for building training datasets for classification.
+:::
 
 
 ## Summary
@@ -571,6 +778,7 @@ terrain(r, "aspect") |> plot()
 |------|-------|---------------|
 | **Global** | Entire raster | `global()`, `distance()` |
 | **Zonal** | Defined regions | `zonal()`, `rasterize()` |
-| **Local** | Per cell | `classify()`, `>`, `&`, `mean()` across bands |
+| **Local** | Per cell | `classify()`, `>`, `&`, spectral indices |
 | **Focal** | Moving window | `focal()`, `focalMat()`, `terrain()` |
+| **Vector ops** | Geometry-based | `crop()`, `mask()`, `extract()` |
 
