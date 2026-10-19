@@ -1,14 +1,13 @@
 ---
 execute:
-  echo: true                 # ← set to true to show sample solution
-  collapse: true
+  echo: false                 # ← set to true to show sample solution
 code-fold: true
 code-summary: "Sample Solution"
 ---
 
 
 
-# Raster Operations — Tasks
+# Lesson 2: Raster Operations
 
 [Open slides](lesson2.html){target="_blank" .btn .btn-outline-primary}
 
@@ -106,6 +105,7 @@ Import the municipalities of Luxembourg and calculate the minimum, maximum, and 
 
 ```{r}
 #| echo: true
+#| code-fold: false
 library(tmap)
 lux <- system.file("ex/lux.shp", package="terra") |>
   vect()
@@ -152,7 +152,7 @@ r_proj <- project(r, "EPSG:2169")
 template <- rast(res = 1000, ext = ext(r_proj))
 r_1km <- resample(r_proj, template)
 w_circle <- focalMat(r_1km, d = 5000, type = "circle")
-r_circle <- focal(r_1km, w_circle, fun = sum, na.rm = TRUE)
+r_circle <- focal(r_1km, w_circle, fun = mean, na.rm = TRUE)
 plot(r_circle, main = "5 km circular mean elevation")
 ```
 
@@ -164,6 +164,7 @@ Import the multispectral Landsat 7 image as a raster:
 ```{r}
 #| eval: false
 #| echo: true
+#| code-fold: false
 system.file("tif/L7_ETMs.tif", package = "stars")
 ```
 
