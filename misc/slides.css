@@ -1,0 +1,7 @@
+.reveal .slide-background.titlepage {
+  background-color: #1e3a5f !important;
+}
+.reveal section.titlepage h1 {
+  color: white !important;
+  text-shadow: none;
+}

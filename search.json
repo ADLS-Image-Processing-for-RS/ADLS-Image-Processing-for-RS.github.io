@@ -1,10 +1,280 @@
 [
   {
+    "objectID": "references.html",
+    "href": "references.html",
+    "title": "Image Processing for Remote Sensing",
+    "section": "",
+    "text": "References",
+    "crumbs": [
+      "References"
+    ]
+  },
+  {
+    "objectID": "lesson2-tasks.html",
+    "href": "lesson2-tasks.html",
+    "title": "Lesson 2: Raster Operations",
+    "section": "",
+    "text": "Open slides\n\n\n\n\n\n\nImportant\n\n\n\n\nTry this without AI first — struggle builds understanding.\nAsk if you are stuck. Asking builds understanding too!\n\n\n\n\n\n\n\n\nThe following command returns the path to a tif file on your hard drive:\n\nsystem.file(\"ex/elev.tif\", package=\"terra\")\n\nUse this path to import the tif file using rast(), store it as r. It contains the elevation of Luxembourg.\n\n\n\nCalculate the (global) mean, maximum and minimum elevation values.\n\n\n              mean max min\nelevation 348.3366 547 141\n\n\n\n\n\nCalculate slope and aspect (see terrain functions)\n\n\n\nDetermine suitable locations of solar panels using the following conditions:\n\nElevation: above 300 MASL\nSlope: Between 1 and 3°\nAspect: Southfacing (between 135 and 235°)\n\n\n\n\n\n\n\n\n\n\n\n\n\nReclassify the elevation raster into three categories using classify():\n\nLow: below the 33rd percentile\nMid: between the 33rd and 66th percentile\nHigh: above the 66th percentile\n\nUse global() with quantile to compute the cut points.\n\n\n\n\n\n\n\n\n\n\n\n\nImport the municipalities of Luxembourg and calculate the minimum, maximum, and mean elevation per municipality. Then visualize the mean elevation per municipality as a map.\n\nlibrary(tmap)\nlux &lt;- system.file(\"ex/lux.shp\", package=\"terra\") |&gt;\n  vect()\nzones &lt;- rasterize(lux, r, \"NAME_2\")\n\n\n\n\n\n\n\n\n\n\n\n\n\nSmooth the elevation raster using a 3×3 and an 11×11 mean focal window. Compare the two results visually side by side.\n\n\n\n\n\n\n\n\n\n\n\n\nReproject the elevation raster to EPSG:2169 (Luxembourg national grid, units: metres) and resample to 1 km resolution. Then apply a circular focal filter with a 5 km radius using focalMat().\n\n\n\n\n\n\n\n\n\n\n\n\nImport the multispectral Landsat 7 image as a raster:\n\nsystem.file(\"tif/L7_ETMs.tif\", package = \"stars\")\n\n\n\n\nCalculate the NDVI using the formula below and visualize the result with a diverging color scale centered at 0.\n\\[\\text{NDVI} = \\frac{\\text{NIR}-\\text{red}}{\\text{NIR}+\\text{red}}\\]",
+    "crumbs": [
+      "Lesson 2: Raster Operations"
+    ]
+  },
+  {
+    "objectID": "lesson2-tasks.html#task-1",
+    "href": "lesson2-tasks.html#task-1",
+    "title": "Lesson 2: Raster Operations",
+    "section": "",
+    "text": "The following command returns the path to a tif file on your hard drive:\n\nsystem.file(\"ex/elev.tif\", package=\"terra\")\n\nUse this path to import the tif file using rast(), store it as r. It contains the elevation of Luxembourg.",
+    "crumbs": [
+      "Lesson 2: Raster Operations"
+    ]
+  },
+  {
+    "objectID": "lesson2-tasks.html#task-2",
+    "href": "lesson2-tasks.html#task-2",
+    "title": "Lesson 2: Raster Operations",
+    "section": "",
+    "text": "Calculate the (global) mean, maximum and minimum elevation values.\n\n\n              mean max min\nelevation 348.3366 547 141",
+    "crumbs": [
+      "Lesson 2: Raster Operations"
+    ]
+  },
+  {
+    "objectID": "lesson2-tasks.html#task-3",
+    "href": "lesson2-tasks.html#task-3",
+    "title": "Lesson 2: Raster Operations",
+    "section": "",
+    "text": "Calculate slope and aspect (see terrain functions)",
+    "crumbs": [
+      "Lesson 2: Raster Operations"
+    ]
+  },
+  {
+    "objectID": "lesson2-tasks.html#task-4",
+    "href": "lesson2-tasks.html#task-4",
+    "title": "Lesson 2: Raster Operations",
+    "section": "",
+    "text": "Determine suitable locations of solar panels using the following conditions:\n\nElevation: above 300 MASL\nSlope: Between 1 and 3°\nAspect: Southfacing (between 135 and 235°)",
+    "crumbs": [
+      "Lesson 2: Raster Operations"
+    ]
+  },
+  {
+    "objectID": "lesson2-tasks.html#task-5",
+    "href": "lesson2-tasks.html#task-5",
+    "title": "Lesson 2: Raster Operations",
+    "section": "",
+    "text": "Reclassify the elevation raster into three categories using classify():\n\nLow: below the 33rd percentile\nMid: between the 33rd and 66th percentile\nHigh: above the 66th percentile\n\nUse global() with quantile to compute the cut points.",
+    "crumbs": [
+      "Lesson 2: Raster Operations"
+    ]
+  },
+  {
+    "objectID": "lesson2-tasks.html#task-6",
+    "href": "lesson2-tasks.html#task-6",
+    "title": "Lesson 2: Raster Operations",
+    "section": "",
+    "text": "Import the municipalities of Luxembourg and calculate the minimum, maximum, and mean elevation per municipality. Then visualize the mean elevation per municipality as a map.\n\nlibrary(tmap)\nlux &lt;- system.file(\"ex/lux.shp\", package=\"terra\") |&gt;\n  vect()\nzones &lt;- rasterize(lux, r, \"NAME_2\")",
+    "crumbs": [
+      "Lesson 2: Raster Operations"
+    ]
+  },
+  {
+    "objectID": "lesson2-tasks.html#task-7",
+    "href": "lesson2-tasks.html#task-7",
+    "title": "Lesson 2: Raster Operations",
+    "section": "",
+    "text": "Smooth the elevation raster using a 3×3 and an 11×11 mean focal window. Compare the two results visually side by side.",
+    "crumbs": [
+      "Lesson 2: Raster Operations"
+    ]
+  },
+  {
+    "objectID": "lesson2-tasks.html#task-8",
+    "href": "lesson2-tasks.html#task-8",
+    "title": "Lesson 2: Raster Operations",
+    "section": "",
+    "text": "Reproject the elevation raster to EPSG:2169 (Luxembourg national grid, units: metres) and resample to 1 km resolution. Then apply a circular focal filter with a 5 km radius using focalMat().",
+    "crumbs": [
+      "Lesson 2: Raster Operations"
+    ]
+  },
+  {
+    "objectID": "lesson2-tasks.html#task-9",
+    "href": "lesson2-tasks.html#task-9",
+    "title": "Lesson 2: Raster Operations",
+    "section": "",
+    "text": "Import the multispectral Landsat 7 image as a raster:\n\nsystem.file(\"tif/L7_ETMs.tif\", package = \"stars\")",
+    "crumbs": [
+      "Lesson 2: Raster Operations"
+    ]
+  },
+  {
+    "objectID": "lesson2-tasks.html#task-10",
+    "href": "lesson2-tasks.html#task-10",
+    "title": "Lesson 2: Raster Operations",
+    "section": "",
+    "text": "Calculate the NDVI using the formula below and visualize the result with a diverging color scale centered at 0.\n\\[\\text{NDVI} = \\frac{\\text{NIR}-\\text{red}}{\\text{NIR}+\\text{red}}\\]",
+    "crumbs": [
+      "Lesson 2: Raster Operations"
+    ]
+  },
+  {
+    "objectID": "lesson1-tasks.html",
+    "href": "lesson1-tasks.html",
+    "title": "Lesson 1: Raster Data — Tasks",
+    "section": "",
+    "text": "Open slides\n\n\n\n\n\n\nImportant\n\n\n\n\nTry this without AI first - struggle builds understanding.\nAsk if you are struggling. Asking builds understanding as well!\n\n\n\nWe recommend Positron as your IDE for this course. It is built on VS Code, so the interface and shortcuts will feel familiar if you come from Python. It has a dedicated Variables pane, an integrated R console, and first-class support for both R and Python in the same project.\n\n\n\n\n\n\nTipR for Python users\n\n\n\n\n\n\n\n\n\n\n\nPython\nR\nNotes\n\n\n\n\nx = 5\nx &lt;- 5\n&lt;- is the conventional assignment in R; = works but is avoided at the top level\n\n\nimport numpy as np\nlibrary(terra)\nLoad packages with library(), install once with install.packages(\"terra\")\n\n\na[0]\na[1]\nR is 1-indexed\n\n\ndf.pivot(...)\npivot_wider(...)\nReshaping is done with tidyr functions\n\n\ndf.method() chaining\ndf \\|&gt; func()\nR uses the native pipe \\|&gt; to chain operations\n\n\nNone / float('nan')\nNA\nR uses NA for all missing values; most functions have an na.rm = TRUE argument\n\n\narr.shape\ndim(x), nrow(x), ncol(x)\nNo single .shape; use dim() for the full dimensions\n\n\n\n\n\n\n\nImport the Produc dataset (from the package plm) using the following code:\n\ndata(Produc, package = \"plm\")\n\n\n\n\nConvert the data from long to wide\n\n\n\n\n\n\nTipTip: pipes and tidyverse\n\n\n\n\n\nThe |&gt; pipe passes the left-hand result as the first argument of the next function — equivalent to writing nested calls, but readable left-to-right. If you know pandas method chaining (.groupby().agg()), the mental model is the same.\ntidyr and dplyr together are R’s closest equivalent to pandas:\n\npivot_wider() ~ df.pivot()\nselect() ~ df[[\"col\"]]\nfilter() ~ df[df.x &gt; 0]\nmutate() ~ df[\"new\"] = ....\n\n\n\n\n\n\n\nConvert the wide dataframe to a matrix\n\n\n\nCalculate mean unemployment first using the wide dataframe, then the matrix. Compare the speed.\n\n\n[1] 5.93s\n\n\n\n\n\nThe following command returns the path to a GeoTIFF file on your hard drive:\n\n\n\n\n\n\nTipTip: terra vs rasterio / numpy\n\n\n\n\n\nterra is R’s primary raster package. If you have used rasterio or numpy arrays for raster data in Python, here is a rough mapping:\n\n\n\nPython\nR (terra)\n\n\n\n\nrasterio.open(\"f.tif\")\nrast(\"f.tif\")\n\n\nsrc.read() → numpy array\nvalues(r) → matrix\n\n\nsrc.meta\nprint the SpatRaster object\n\n\nsrc.crs\ncrs(r)\n\n\nsrc.transform / src.res\nres(r), ext(r)\n\n\n\nUnlike a raw numpy array, a SpatRaster keeps its spatial metadata (CRS, extent, resolution) attached at all times.\n\n\n\n\nsystem.file(\"ex/elev.tif\", package = \"terra\")\n\nUse this path to import the file using rast(), store it as r.\n\n\n\nExplore this object:\n\nDetermine the minimum and maximum elevation values\nMake a static map using base plot() and tmap\nMake an interactive map using tmap (tmap_mode(\"view\"))\nUsing tmap, explore different styles and palettes\n\n\n\nclass       : SpatRaster\nsize        : 90, 95, 1  (nrow, ncol, nlyr)\nresolution  : 0.008333333, 0.008333333  (x, y)\nextent      : 5.741667, 6.533333, 49.44167, 50.19167  (xmin, xmax, ymin, ymax)\ncoord. ref. : lon/lat WGS 84 (EPSG:4326)\nsource      : elev.tif\nname        : elevation\nmin value   :       141\nmax value   :       547\n\n\n\n\n\n\n\n\n\n\n\n\nImport the Landsat 7 image:\n\nsystem.file(\"tif/L7_ETMs.tif\", package = \"stars\")\n\nStore it as l7. Then rename its layers to c(\"B\", \"G\", \"R\", \"NIR\", \"SWIR\", \"MIR\") (see here).\n\n\n\nCompare r and l7:\n\nHow many layers does each have?\nWhat is the resolution of each?\nWhat is the extent of each?\nPlot all layers of l7 individually\n\n\n\n[1] 1\n\n\n[1] 6\n\n\n[1] 0.008333333 0.008333333\n\n\n[1] 28.5 28.5\n\n\nSpatExtent : 5.7416666666666663, 6.5333333333333332, 49.441666666666663, 50.191666666666663 (xmin, xmax, ymin, ymax)\n\n\nSpatExtent : 288776.25000080315, 298722.75000054995, 9110728.7500289921, 9120760.7500287369 (xmin, xmax, ymin, ymax)\n\n\n\n\n\n\n\n\n\n\n\n\nSelect the Red, Green and Blue bands from l7 to create a true color composite using plotRGB() and tm_rgb().\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nSelect the NIR, Green and Blue bands from l7 to create a false color composite.\n\n\n\n\n\n\n\n\n\n\n\n\nQuery the full metadata of r and l7:\n\nNumber of rows, columns, and layers\nSpatial extent\nPixel resolution\nCRS (use crs(..., describe = TRUE) for a readable summary)\n\n\n\n\nCheck whether r uses a geographic or projected CRS. Reproject it to EPSG:2169 (Luxembourg national projection) and compare res() before and after.\n\n\n\n\n\n\nTipTip: CRS and reprojection\n\n\n\n\n\nIn Python you would use pyproj.CRS or geopandas/rasterio’s .to_crs(). In terra, project(r, \"EPSG:2169\") handles both the coordinate transform and the pixel resampling in one step. A geographic CRS (degrees) will show res() values around 0.008, while a projected CRS (metres) will show values in the hundreds — same pixel, different units.\n\n\n\n\n\n\nCreate a masked version of r where all elevations below 300 m are set to NA. Visualize both the original and the masked raster side by side.\n\n\n\n\n\n\n\n\n\n\n\n\nWrite the reprojected raster from Task 12 to disk as a GeoTIFF. Then read it back and verify that the CRS and resolution are preserved.",
+    "crumbs": [
+      "Lesson 1: Raster Data"
+    ]
+  },
+  {
+    "objectID": "lesson1-tasks.html#task-1",
+    "href": "lesson1-tasks.html#task-1",
+    "title": "Lesson 1: Raster Data — Tasks",
+    "section": "",
+    "text": "Import the Produc dataset (from the package plm) using the following code:\n\ndata(Produc, package = \"plm\")",
+    "crumbs": [
+      "Lesson 1: Raster Data"
+    ]
+  },
+  {
+    "objectID": "lesson1-tasks.html#task-2",
+    "href": "lesson1-tasks.html#task-2",
+    "title": "Lesson 1: Raster Data — Tasks",
+    "section": "",
+    "text": "Convert the data from long to wide\n\n\n\n\n\n\nTipTip: pipes and tidyverse\n\n\n\n\n\nThe |&gt; pipe passes the left-hand result as the first argument of the next function — equivalent to writing nested calls, but readable left-to-right. If you know pandas method chaining (.groupby().agg()), the mental model is the same.\ntidyr and dplyr together are R’s closest equivalent to pandas:\n\npivot_wider() ~ df.pivot()\nselect() ~ df[[\"col\"]]\nfilter() ~ df[df.x &gt; 0]\nmutate() ~ df[\"new\"] = ....",
+    "crumbs": [
+      "Lesson 1: Raster Data"
+    ]
+  },
+  {
+    "objectID": "lesson1-tasks.html#task-3",
+    "href": "lesson1-tasks.html#task-3",
+    "title": "Lesson 1: Raster Data — Tasks",
+    "section": "",
+    "text": "Convert the wide dataframe to a matrix",
+    "crumbs": [
+      "Lesson 1: Raster Data"
+    ]
+  },
+  {
+    "objectID": "lesson1-tasks.html#task-4",
+    "href": "lesson1-tasks.html#task-4",
+    "title": "Lesson 1: Raster Data — Tasks",
+    "section": "",
+    "text": "Calculate mean unemployment first using the wide dataframe, then the matrix. Compare the speed.\n\n\n[1] 5.93s",
+    "crumbs": [
+      "Lesson 1: Raster Data"
+    ]
+  },
+  {
+    "objectID": "lesson1-tasks.html#task-5",
+    "href": "lesson1-tasks.html#task-5",
+    "title": "Lesson 1: Raster Data — Tasks",
+    "section": "",
+    "text": "The following command returns the path to a GeoTIFF file on your hard drive:\n\n\n\n\n\n\nTipTip: terra vs rasterio / numpy\n\n\n\n\n\nterra is R’s primary raster package. If you have used rasterio or numpy arrays for raster data in Python, here is a rough mapping:\n\n\n\nPython\nR (terra)\n\n\n\n\nrasterio.open(\"f.tif\")\nrast(\"f.tif\")\n\n\nsrc.read() → numpy array\nvalues(r) → matrix\n\n\nsrc.meta\nprint the SpatRaster object\n\n\nsrc.crs\ncrs(r)\n\n\nsrc.transform / src.res\nres(r), ext(r)\n\n\n\nUnlike a raw numpy array, a SpatRaster keeps its spatial metadata (CRS, extent, resolution) attached at all times.\n\n\n\n\nsystem.file(\"ex/elev.tif\", package = \"terra\")\n\nUse this path to import the file using rast(), store it as r.",
+    "crumbs": [
+      "Lesson 1: Raster Data"
+    ]
+  },
+  {
+    "objectID": "lesson1-tasks.html#task-6",
+    "href": "lesson1-tasks.html#task-6",
+    "title": "Lesson 1: Raster Data — Tasks",
+    "section": "",
+    "text": "Explore this object:\n\nDetermine the minimum and maximum elevation values\nMake a static map using base plot() and tmap\nMake an interactive map using tmap (tmap_mode(\"view\"))\nUsing tmap, explore different styles and palettes\n\n\n\nclass       : SpatRaster\nsize        : 90, 95, 1  (nrow, ncol, nlyr)\nresolution  : 0.008333333, 0.008333333  (x, y)\nextent      : 5.741667, 6.533333, 49.44167, 50.19167  (xmin, xmax, ymin, ymax)\ncoord. ref. : lon/lat WGS 84 (EPSG:4326)\nsource      : elev.tif\nname        : elevation\nmin value   :       141\nmax value   :       547",
+    "crumbs": [
+      "Lesson 1: Raster Data"
+    ]
+  },
+  {
+    "objectID": "lesson1-tasks.html#task-7",
+    "href": "lesson1-tasks.html#task-7",
+    "title": "Lesson 1: Raster Data — Tasks",
+    "section": "",
+    "text": "Import the Landsat 7 image:\n\nsystem.file(\"tif/L7_ETMs.tif\", package = \"stars\")\n\nStore it as l7. Then rename its layers to c(\"B\", \"G\", \"R\", \"NIR\", \"SWIR\", \"MIR\") (see here).",
+    "crumbs": [
+      "Lesson 1: Raster Data"
+    ]
+  },
+  {
+    "objectID": "lesson1-tasks.html#task-8",
+    "href": "lesson1-tasks.html#task-8",
+    "title": "Lesson 1: Raster Data — Tasks",
+    "section": "",
+    "text": "Compare r and l7:\n\nHow many layers does each have?\nWhat is the resolution of each?\nWhat is the extent of each?\nPlot all layers of l7 individually\n\n\n\n[1] 1\n\n\n[1] 6\n\n\n[1] 0.008333333 0.008333333\n\n\n[1] 28.5 28.5\n\n\nSpatExtent : 5.7416666666666663, 6.5333333333333332, 49.441666666666663, 50.191666666666663 (xmin, xmax, ymin, ymax)\n\n\nSpatExtent : 288776.25000080315, 298722.75000054995, 9110728.7500289921, 9120760.7500287369 (xmin, xmax, ymin, ymax)",
+    "crumbs": [
+      "Lesson 1: Raster Data"
+    ]
+  },
+  {
+    "objectID": "lesson1-tasks.html#task-9",
+    "href": "lesson1-tasks.html#task-9",
+    "title": "Lesson 1: Raster Data — Tasks",
+    "section": "",
+    "text": "Select the Red, Green and Blue bands from l7 to create a true color composite using plotRGB() and tm_rgb().",
+    "crumbs": [
+      "Lesson 1: Raster Data"
+    ]
+  },
+  {
+    "objectID": "lesson1-tasks.html#task-10",
+    "href": "lesson1-tasks.html#task-10",
+    "title": "Lesson 1: Raster Data — Tasks",
+    "section": "",
+    "text": "Select the NIR, Green and Blue bands from l7 to create a false color composite.",
+    "crumbs": [
+      "Lesson 1: Raster Data"
+    ]
+  },
+  {
+    "objectID": "lesson1-tasks.html#task-11",
+    "href": "lesson1-tasks.html#task-11",
+    "title": "Lesson 1: Raster Data — Tasks",
+    "section": "",
+    "text": "Query the full metadata of r and l7:\n\nNumber of rows, columns, and layers\nSpatial extent\nPixel resolution\nCRS (use crs(..., describe = TRUE) for a readable summary)",
+    "crumbs": [
+      "Lesson 1: Raster Data"
+    ]
+  },
+  {
+    "objectID": "lesson1-tasks.html#task-12",
+    "href": "lesson1-tasks.html#task-12",
+    "title": "Lesson 1: Raster Data — Tasks",
+    "section": "",
+    "text": "Check whether r uses a geographic or projected CRS. Reproject it to EPSG:2169 (Luxembourg national projection) and compare res() before and after.\n\n\n\n\n\n\nTipTip: CRS and reprojection\n\n\n\n\n\nIn Python you would use pyproj.CRS or geopandas/rasterio’s .to_crs(). In terra, project(r, \"EPSG:2169\") handles both the coordinate transform and the pixel resampling in one step. A geographic CRS (degrees) will show res() values around 0.008, while a projected CRS (metres) will show values in the hundreds — same pixel, different units.",
+    "crumbs": [
+      "Lesson 1: Raster Data"
+    ]
+  },
+  {
+    "objectID": "lesson1-tasks.html#task-13",
+    "href": "lesson1-tasks.html#task-13",
+    "title": "Lesson 1: Raster Data — Tasks",
+    "section": "",
+    "text": "Create a masked version of r where all elevations below 300 m are set to NA. Visualize both the original and the masked raster side by side.",
+    "crumbs": [
+      "Lesson 1: Raster Data"
+    ]
+  },
+  {
+    "objectID": "lesson1-tasks.html#task-14",
+    "href": "lesson1-tasks.html#task-14",
+    "title": "Lesson 1: Raster Data — Tasks",
+    "section": "",
+    "text": "Write the reprojected raster from Task 12 to disk as a GeoTIFF. Then read it back and verify that the CRS and resolution are preserved.",
+    "crumbs": [
+      "Lesson 1: Raster Data"
+    ]
+  },
+  {
     "objectID": "index.html",
     "href": "index.html",
     "title": "Image Processing for Remote Sensing",
     "section": "",
-    "text": "Welcome!\nWelcome to the Part Geospatial Computing in the course Image Processing for Remote Sensing. This course is taught in the Bachelor Degree Applied Digital Life Sciences at the Zurich University of Applied Sciences (ZHAW).",
+    "text": "Welcome to the Part Geospatial Computing in the course Image Processing for Remote Sensing. This course is taught in the Bachelor Degree Applied Digital Life Sciences at the Zurich University of Applied Sciences (ZHAW).\n\n\nVisit https://www.zhaw.ch/de/lsfm/institute-zentren/iunr/geooekologie/geoinformatik#c121022 to introduce yourself\nThese materials will be used as “slides” in class, but are designed to be used to read up on the topics later on\nWe will use R to introduce the basics of image processing, since R lends itself to illustrate many basic consepts nicely.\nOnce the concepts are understood, they can be applied to many other programming languages",
     "crumbs": [
       "Welcome!"
     ]
@@ -14,163 +284,527 @@
     "href": "index.html#welcome",
     "title": "Image Processing for Remote Sensing",
     "section": "",
-    "text": "Visit https://www.zhaw.ch/de/lsfm/institute-zentren/iunr/geooekologie/geoinformatik#c121022 to introduce yourself\nThese materials will be used as “slides” in class, but are designed to be used to read up on the topics later on\nWe will use R to introduce the basics of image processing, since R lends itself to illustrate many basic consepts nicely.\nOnce the concepts are understood, they can be applied to many other programming languages",
+    "text": "Welcome to the Part Geospatial Computing in the course Image Processing for Remote Sensing. This course is taught in the Bachelor Degree Applied Digital Life Sciences at the Zurich University of Applied Sciences (ZHAW).\n\n\nVisit https://www.zhaw.ch/de/lsfm/institute-zentren/iunr/geooekologie/geoinformatik#c121022 to introduce yourself\nThese materials will be used as “slides” in class, but are designed to be used to read up on the topics later on\nWe will use R to introduce the basics of image processing, since R lends itself to illustrate many basic consepts nicely.\nOnce the concepts are understood, they can be applied to many other programming languages",
     "crumbs": [
       "Welcome!"
     ]
   },
   {
-    "objectID": "lesson1-tasks.html",
-    "href": "lesson1-tasks.html",
-    "title": "Tasks (Lesson 1)",
+    "objectID": "lesson1.html#section",
+    "href": "lesson1.html#section",
+    "title": "Image Processing for Remote Sensing",
     "section": "",
-    "text": "Task 1\nWe recommend Positron as your IDE for this course. It is built on VS Code, so the interface and shortcuts will feel familiar if you come from Python. It has a dedicated Variables pane, an integrated R console, and first-class support for both R and Python in the same project.\nImport the Produc dataset (from the package plm) using the following code:\ndata(Produc, package = \"plm\")",
-    "crumbs": [
-      "Lesson 1",
-      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Tasks (Lesson 1)</span>"
-    ]
+    "text": "ZHAW School of Life Sciences and Facility Management\nInstitute of Natural Resource Sciences\nGrüentalstrasse 14, 8820 Wädenswil\n+41 (0) 58 934 55 63\nnils.ratnaweera@zhaw.ch\nResearch Associate at the Research Group for Geoinformatics\nwww.zhaw.ch/iunr/geoinformatik"
   },
   {
-    "objectID": "lesson1-tasks.html#task-2",
-    "href": "lesson1-tasks.html#task-2",
-    "title": "Tasks (Lesson 1)",
-    "section": "Task 2",
-    "text": "Task 2\nConvert the data from long to wide\n\n\n\n\n\n\nTipTip: pipes and tidyverse\n\n\n\n\n\nThe |&gt; pipe passes the left-hand result as the first argument of the next function — equivalent to writing nested calls, but readable left-to-right. If you know pandas method chaining (.groupby().agg()), the mental model is the same.\ntidyr and dplyr together are R’s closest equivalent to pandas:\n\npivot_wider() ~ df.pivot()\nselect() ~ df[[\"col\"]]\nfilter() ~ df[df.x &gt; 0]\nmutate() ~ df[\"new\"] = ....",
-    "crumbs": [
-      "Lesson 1",
-      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Tasks (Lesson 1)</span>"
-    ]
+    "objectID": "lesson1.html#tabular-data",
+    "href": "lesson1.html#tabular-data",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Tabular data",
+    "text": "Tabular data\n\nWickham (2014): Tidy tabular data: Each variable is a column, each observation is a row, and each type of observational unit is a table.\nBelow is a dataset from Baltagi and Baltagi (2008)\nObservation is a state in a particular year\nVariable is a measured parameter (see below)\n\n\n\nStart with Wickham’s fundamental definition - this is the foundation\nEmphasize this is about data structure, not just organization\nThe Produc dataset is a classic econometric panel dataset - good for demonstrating concepts\nMake sure students understand what constitutes an “observation” vs a “variable”"
   },
   {
-    "objectID": "lesson1-tasks.html#task-3",
-    "href": "lesson1-tasks.html#task-3",
-    "title": "Tasks (Lesson 1)",
-    "section": "Task 3",
-    "text": "Task 3\nConvert the wide dataframe to a matrix",
-    "crumbs": [
-      "Lesson 1",
-      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Tasks (Lesson 1)</span>"
-    ]
+    "objectID": "lesson1.html#section-1",
+    "href": "lesson1.html#section-1",
+    "title": "Image Processing for Remote Sensing",
+    "section": "",
+    "text": "state\nyear\nunemp\nwater\nemp\nutil\n\n\n\n\nALABAMA\n1970\n4.7\n1655.68\n1010.5\n6051.20\n\n\nALABAMA\n1971\n5.2\n1721.02\n1021.9\n6254.98\n\n\nALABAMA\n1972\n4.7\n1764.75\n1072.3\n6442.23\n\n\nALABAMA\n1973\n3.9\n1742.41\n1135.5\n6756.19\n\n\nALABAMA\n1974\n5.5\n1734.85\n1169.8\n7002.29\n\n\nALABAMA\n1975\n7.7\n1752.27\n1155.4\n7405.76\n\n\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\nThis is considered a long table and is great for modelling and visualization.\nIt’s bad for memory (a lot of repetitions)\nparameters:\n\npcap: public capital stock\nhwy: highway and streets\nwater: water and sewer facilities\nutil: other public buildings and structures\npc: private capital stock\ngsp: gross state product\nemp: labor input measured by the employment in non–agricultural payrolls\nunemp: state unemployment rate"
   },
   {
-    "objectID": "lesson1-tasks.html#task-4",
-    "href": "lesson1-tasks.html#task-4",
-    "title": "Tasks (Lesson 1)",
-    "section": "Task 4",
-    "text": "Task 4\nCalculate mean unemployment first using the wide dataframe, then the matrix. Compare the speed.\n\n\n[1] 7.5s",
-    "crumbs": [
-      "Lesson 1",
-      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Tasks (Lesson 1)</span>"
-    ]
+    "objectID": "lesson1.html#long-tables-have-a-lot-of-repetitions",
+    "href": "lesson1.html#long-tables-have-a-lot-of-repetitions",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Long tables have a lot of repetitions:",
+    "text": "Long tables have a lot of repetitions:\n\nstate: 815 values, but only 48 unique states\nyear: 815 values, but only 17 unique years\nTotal: 8’150 values in the table\n\n\n\nWalk through the calculation step by step\n816 total entries for state, but only 48 unique states\nThis repetition is characteristic of long/tidy format\nGreat for analysis but wasteful of memory\nThis leads naturally to why we might want wide format for raster data"
   },
   {
-    "objectID": "lesson1-tasks.html#task-5",
-    "href": "lesson1-tasks.html#task-5",
-    "title": "Tasks (Lesson 1)",
-    "section": "Task 5",
-    "text": "Task 5\nThe following command returns the path to a GeoTIFF file on your hard drive:\n\n\n\n\n\n\nTipTip: terra vs rasterio / numpy\n\n\n\n\n\nterra is R’s primary raster package. If you have used rasterio or numpy arrays for raster data in Python, here is a rough mapping:\n\n\n\nPython\nR (terra)\n\n\n\n\nrasterio.open(\"f.tif\")\nrast(\"f.tif\")\n\n\nsrc.read() → numpy array\nvalues(r) → matrix\n\n\nsrc.meta\nprint the SpatRaster object\n\n\nsrc.crs\ncrs(r)\n\n\nsrc.transform / src.res\nres(r), ext(r)\n\n\n\nUnlike a raw numpy array, a SpatRaster keeps its spatial metadata (CRS, extent, resolution) attached at all times.\n\n\n\n\nsystem.file(\"ex/elev.tif\", package = \"terra\")\n\nUse this path to import the file using rast(), store it as r.",
-    "crumbs": [
-      "Lesson 1",
-      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Tasks (Lesson 1)</span>"
-    ]
+    "objectID": "lesson1.html#wide-tables-have-less-repetitions.",
+    "href": "lesson1.html#wide-tables-have-less-repetitions.",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Wide tables have less repetitions.",
+    "text": "Wide tables have less repetitions.\n\n\n\n\n\n\nALABAMA\nARIZONA\nARKANSAS\nCALIFORNIA\n\n\n\n\n1970\n4.7\n4.4\n5.0\n7.2\n\n\n1971\n5.2\nNA\n5.4\n8.8\n\n\n1972\n4.7\n4.2\n4.6\n7.6\n\n\n1973\n3.9\n4.1\n4.1\n7.0\n\n\n1974\n5.5\n5.6\n4.8\n7.7\n\n\n1975\n7.7\n12.0\n9.5\n9.9\n\n\n\n\n\n\n\n\n\n\n\n\nNote\n\n\nWe can either omit the column “year”, (since this is implicit knowledge, \\(row_i + 1970\\)), or use it as a rowname.\n\nThis is the key transition - from statistical/analysis format to raster format\nWide format is more memory efficient but less flexible for analysis\nThis mirrors how raster data is naturally stored"
   },
   {
-    "objectID": "lesson1-tasks.html#task-6",
-    "href": "lesson1-tasks.html#task-6",
-    "title": "Tasks (Lesson 1)",
-    "section": "Task 6",
-    "text": "Task 6\nExplore this object:\n\nDetermine the minimum and maximum elevation values\nMake a static map using base plot() and tmap\nMake an interactive map using tmap (tmap_mode(\"view\"))\nUsing tmap, explore different styles and palettes\n\n\n\nclass       : SpatRaster\nsize        : 90, 95, 1  (nrow, ncol, nlyr)\nresolution  : 0.008333333, 0.008333333  (x, y)\nextent      : 5.741667, 6.533333, 49.44167, 50.19167  (xmin, xmax, ymin, ymax)\ncoord. ref. : lon/lat WGS 84 (EPSG:4326)\nsource      : elev.tif\nname        : elevation\nmin value   :       141\nmax value   :       547",
-    "crumbs": [
-      "Lesson 1",
-      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Tasks (Lesson 1)</span>"
-    ]
+    "objectID": "lesson1.html#long-vs-wide-long-tidy",
+    "href": "lesson1.html#long-vs-wide-long-tidy",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Long vs Wide: Long / tidy:",
+    "text": "Long vs Wide: Long / tidy:\n\n\n\n\n\nstate\nyear\npcap\nhwy\nwater\n\n\n\n\nALABAMA\n1970\n15032.67\n7325.80\n1655.68\n\n\nALABAMA\n1971\n15501.94\n7525.94\n1721.02\n\n\nALABAMA\n1972\n15972.41\n7765.42\n1764.75\n\n\nALABAMA\n1973\n16406.26\n7907.66\n1742.41\n\n\nALABAMA\n1974\n16762.67\n8025.52\n1734.85"
   },
   {
-    "objectID": "lesson1-tasks.html#task-7",
-    "href": "lesson1-tasks.html#task-7",
-    "title": "Tasks (Lesson 1)",
-    "section": "Task 7",
-    "text": "Task 7\nImport the Landsat 7 image:\n\nsystem.file(\"tif/L7_ETMs.tif\", package = \"stars\")\n\nStore it as l7. Then rename its layers to c(\"B\", \"G\", \"R\", \"NIR\", \"SWIR\", \"MIR\") (see here).",
-    "crumbs": [
-      "Lesson 1",
-      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Tasks (Lesson 1)</span>"
-    ]
+    "objectID": "lesson1.html#long-vs-wide-wide-untidy",
+    "href": "lesson1.html#long-vs-wide-wide-untidy",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Long vs Wide: Wide / untidy:",
+    "text": "Long vs Wide: Wide / untidy:\n\n\n\n\n\n\nALABAMA\nARIZONA\nARKANSAS\nCALIFORNIA\nCOLORADO\n\n\n\n\n1970\n4.7\n4.4\n5.0\n7.2\n4.4\n\n\n1971\n5.2\nNA\n5.4\n8.8\n4.0\n\n\n1972\n4.7\n4.2\n4.6\n7.6\n3.6\n\n\n1973\n3.9\n4.1\n4.1\n7.0\n3.4\n\n\n1974\n5.5\n5.6\n4.8\n7.7\n3.8"
   },
   {
-    "objectID": "lesson1-tasks.html#task-8",
-    "href": "lesson1-tasks.html#task-8",
-    "title": "Tasks (Lesson 1)",
-    "section": "Task 8",
-    "text": "Task 8\nCompare r and l7:\n\nHow many layers does each have?\nWhat is the resolution of each?\nWhat is the extent of each?\nPlot all layers of l7 individually\n\n\n\n[1] 1\n\n\n[1] 6\n\n\n[1] 0.008333333 0.008333333\n\n\n[1] 28.5 28.5\n\n\nSpatExtent : 5.7416666666666663, 6.5333333333333332, 49.441666666666663, 50.191666666666663 (xmin, xmax, ymin, ymax)\n\n\nSpatExtent : 288776.25000080315, 298722.75000054995, 9110728.7500289921, 9120760.7500287369 (xmin, xmax, ymin, ymax)",
-    "crumbs": [
-      "Lesson 1",
-      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Tasks (Lesson 1)</span>"
-    ]
+    "objectID": "lesson1.html#dataframe-matrix",
+    "href": "lesson1.html#dataframe-matrix",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Dataframe → Matrix",
+    "text": "Dataframe → Matrix\nThe gain from converting to a matrix:\n\nA dataframe is a list of column vectors — each column is a separate object in memory\nA matrix stores all values in one contiguous block of memory\nAll values have the same type (dbl) → no per-column type metadata, enables vectorized operations\nRow/column names are stored once separately, not repeated"
   },
   {
-    "objectID": "lesson1-tasks.html#task-9",
-    "href": "lesson1-tasks.html#task-9",
-    "title": "Tasks (Lesson 1)",
-    "section": "Task 9",
-    "text": "Task 9\nSelect the Red, Green and Blue bands from l7 to create a true color composite using plotRGB() and tm_rgb().",
-    "crumbs": [
-      "Lesson 1",
-      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Tasks (Lesson 1)</span>"
-    ]
+    "objectID": "lesson1.html#images-are-rasters",
+    "href": "lesson1.html#images-are-rasters",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Images are Rasters",
+    "text": "Images are Rasters\n\nThe spatial raster data model represents the world with the continuous grid of cells (a.k.a. pixels)\nThis data model often refers to so-called regular grids, in which each cell has the same, constant size\nThrough its inherent model, this data naturally fits into the wide data structure\n\n\n\nThis connects directly to the previous lesson on wide vs long data\nEmphasize that raster data is inherently a grid/matrix structure\nEach pixel has a fixed location - this is why wide format makes sense\nRegular grids are the foundation of most remote sensing data\nWe will focus on the regular grids only. However, several other types of grids exist, including rotated, sheared, rectilinear, and curvilinear grids (see Chapter 1 of Pebesma and Bivand (2023))."
   },
   {
-    "objectID": "lesson1-tasks.html#task-10",
-    "href": "lesson1-tasks.html#task-10",
-    "title": "Tasks (Lesson 1)",
-    "section": "Task 10",
-    "text": "Task 10\nSelect the NIR, Green and Blue bands from l7 to create a false color composite.",
-    "crumbs": [
-      "Lesson 1",
-      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Tasks (Lesson 1)</span>"
-    ]
+    "objectID": "lesson1.html#types-of-raster-data",
+    "href": "lesson1.html#types-of-raster-data",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Types of raster data",
+    "text": "Types of raster data\n\nRaster datasets usually represent continuous phenomena such as elevation, temperature, population density or spectral data.\nDiscrete features such as soil or land-cover classes can also be represented in the raster data model\n\n\n\nDistinguish between continuous (elevation, temperature) and discrete (land cover classes) data\nBoth can be stored in raster format, but analysis approaches differ\nMost remote sensing applications deal with continuous spectral values\nDiscrete classifications often result from processing continuous data"
   },
   {
-    "objectID": "lesson1-tasks.html#task-11",
-    "href": "lesson1-tasks.html#task-11",
-    "title": "Tasks (Lesson 1)",
-    "section": "Task 11",
-    "text": "Task 11\nQuery the full metadata of r and l7:\n\nNumber of rows, columns, and layers\nSpatial extent\nPixel resolution\nCRS (use crs(..., describe = TRUE) for a readable summary)",
-    "crumbs": [
-      "Lesson 1",
-      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Tasks (Lesson 1)</span>"
-    ]
+    "objectID": "lesson1.html#a-simple-example-elevation",
+    "href": "lesson1.html#a-simple-example-elevation",
+    "title": "Image Processing for Remote Sensing",
+    "section": "A simple example: Elevation",
+    "text": "A simple example: Elevation\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n      [,1] [,2] [,3] [,4] [,5] [,6]\n [1,]  275  282  373  342  357  326\n [2,]  230  318  316  351  345  346\n [3,]  164  337  258  342  363  350\n [4,]  168  337  261  354  358  364\n [5,]  202  322  250  380  362  373\n [6,]   NA  310  270  361  370  363\n [7,]   NA  277  310  291  375  365\n [8,]   NA  181  325  264  381  373\n [9,]   NA   NA  313  264  370  384\n[10,]   NA   NA  298  285  370  380\n[11,]  402   NA  333  293  356  382"
   },
   {
-    "objectID": "lesson1-tasks.html#task-12",
-    "href": "lesson1-tasks.html#task-12",
-    "title": "Tasks (Lesson 1)",
-    "section": "Task 12",
-    "text": "Task 12\nCheck whether r uses a geographic or projected CRS. Reproject it to EPSG:2169 (Luxembourg national projection) and compare res() before and after.\n\n\n\n\n\n\nTipTip: CRS and reprojection\n\n\n\n\n\nIn Python you would use pyproj.CRS or geopandas/rasterio’s .to_crs(). In terra, project(r, \"EPSG:2169\") handles both the coordinate transform and the pixel resampling in one step. A geographic CRS (degrees) will show res() values around 0.008, while a projected CRS (metres) will show values in the hundreds — same pixel, different units.",
-    "crumbs": [
-      "Lesson 1",
-      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Tasks (Lesson 1)</span>"
-    ]
+    "objectID": "lesson1.html#a-more-complex-example-spectral-data",
+    "href": "lesson1.html#a-more-complex-example-spectral-data",
+    "title": "Image Processing for Remote Sensing",
+    "section": "A more complex example: Spectral data",
+    "text": "A more complex example: Spectral data\n\nTypically, RS imagery consists of more than 1 band\nIn this case, the data is stored in a 3 dimensional array (where band is the 3rd-dimension)\nA RS image can contain any number of bands.\nThe most well known type of RS imagery consists of 3 Bands from the red, blue and green spectrum\n\n\n\nMove from 2D (single band) to 3D (multi-band) concept\nEach band captures different wavelengths of electromagnetic spectrum\nRGB is familiar to students - good starting point\nModern satellites can have hundreds of bands (hyperspectral)"
   },
   {
-    "objectID": "lesson1-tasks.html#task-13",
-    "href": "lesson1-tasks.html#task-13",
-    "title": "Tasks (Lesson 1)",
-    "section": "Task 13",
-    "text": "Task 13\nCreate a masked version of r where all elevations below 300 m are set to NA. Visualize both the original and the masked raster side by side.",
-    "crumbs": [
-      "Lesson 1",
-      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Tasks (Lesson 1)</span>"
-    ]
+    "objectID": "lesson1.html#each-band-is-a-2d-matrix",
+    "href": "lesson1.html#each-band-is-a-2d-matrix",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Each band is a 2D matrix",
+    "text": "Each band is a 2D matrix\n\n\n\n\n\n\n\n\n\nFigure 6: Band values\n\n\n\n\n\n\n\n\n\n\n\nFigure 7: RGB True Color Image"
   },
   {
-    "objectID": "lesson1-tasks.html#task-14",
-    "href": "lesson1-tasks.html#task-14",
-    "title": "Tasks (Lesson 1)",
-    "section": "Task 14",
-    "text": "Task 14\nWrite the reprojected raster from Task 12 to disk as a GeoTIFF. Then read it back and verify that the CRS and resolution are preserved.",
-    "crumbs": [
-      "Lesson 1",
-      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Tasks (Lesson 1)</span>"
-    ]
+    "objectID": "lesson1.html#multispectral-datasets",
+    "href": "lesson1.html#multispectral-datasets",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Multispectral Datasets",
+    "text": "Multispectral Datasets\n\nMultiband datasets usually capture different parts of the EM spectrum\nE.g. the Landsat image from the previous example has 6 bands capturing the following wavelengths:\n\nBand 1: Blue (0.45 - 0.52 µm)\nBand 2: Green (0.52 - 0.60 µm)\nBand 3: Red (0.63 - 0.69 µm)\nBand 4: Near-Infrared (0.77 - 0.90 µm)\nBand 5: Short-wave Infrared (1.55 - 1.75 µm)\nBand 7: Mid-Infrared (2.08 - 2.35 µm)\n\n\n\n\nPoint out that Band 6 (thermal) is missing from this list - was not included in this dataset\nEach band serves different purposes: visible for true color, NIR for vegetation health, SWIR for moisture\nThese wavelength ranges are carefully chosen based on atmospheric windows and target phenomena\nStudents will learn to use different band combinations for different applications"
+  },
+  {
+    "objectID": "lesson1.html#nirgb-image",
+    "href": "lesson1.html#nirgb-image",
+    "title": "Image Processing for Remote Sensing",
+    "section": "NirGB Image",
+    "text": "NirGB Image\n\n\n\n\n\n\n\n\n\nFigure 8: Band values\n\n\n\n\n\n\n\n\n\n\n\nFigure 9: NIR-GB False Color Image"
+  },
+  {
+    "objectID": "lesson1.html#representations-of-multispectral-data",
+    "href": "lesson1.html#representations-of-multispectral-data",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Representations of multispectral data",
+    "text": "Representations of multispectral data\n\nA true color image is created by using the Red (3), Green (2) and Blue (1) Band and mapping these to RGB\nA false color image is created by mapping other bands to RGB\n\n\n\nTrue color: what our eyes would see if we were there\nFalse color: reveals information not visible to human eye\nNIR false color is very common - vegetation appears red because it reflects strongly in NIR\nDifferent false color combinations highlight different features (water, urban areas, etc.)\n\n\n\n\n\n\n\n\n\n\n\nFigure 10: The R, G and B bands mapped to RGB\n\n\n\n\n\n\n\n\n\n\n\nFigure 11: NIR, G and B bands mapped to RGB"
+  },
+  {
+    "objectID": "lesson1.html#what-makes-a-matrix-a-raster",
+    "href": "lesson1.html#what-makes-a-matrix-a-raster",
+    "title": "Image Processing for Remote Sensing",
+    "section": "What makes a matrix a raster?",
+    "text": "What makes a matrix a raster?\n\nWe established that a raster is a matrix of values\nBut a plain matrix has no spatial meaning — it does not know where on Earth it is"
+  },
+  {
+    "objectID": "lesson1.html#printing-a-spatraster-shows-all-metadata",
+    "href": "lesson1.html#printing-a-spatraster-shows-all-metadata",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Printing a SpatRaster shows all metadata",
+    "text": "Printing a SpatRaster shows all metadata\n\nr &lt;- rast(system.file(\"ex/elev.tif\", package = \"terra\"))\nr\n\nclass       : SpatRaster\nsize        : 90, 95, 1  (nrow, ncol, nlyr)\nresolution  : 0.008333333, 0.008333333  (x, y)\nextent      : 5.741667, 6.533333, 49.44167, 50.19167  (xmin, xmax, ymin, ymax)\ncoord. ref. : lon/lat WGS 84 (EPSG:4326)\nsource      : elev.tif\nname        : elevation\nmin value   :       141\nmax value   :       547\n\n\n\n\nWalk through each field: class, dimensions (nrow x ncol x nlyr), resolution, extent, CRS\n“sources” tells us the file on disk — if in memory only, this would say “memory”\nmin/max are the data value range, not the spatial extent"
+  },
+  {
+    "objectID": "lesson1.html#querying-individual-components",
+    "href": "lesson1.html#querying-individual-components",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Querying individual components",
+    "text": "Querying individual components\n\nnrow(r)   # rows (y dimension)\n\n[1] 90\n\nncol(r)   # columns (x dimension)\n\n[1] 95\n\nnlyr(r)   # number of layers / bands\n\n[1] 1\n\n\n\next(r)    # bounding box in CRS units\n\nSpatExtent : 5.7416666666666663, 6.5333333333333332, 49.441666666666663, 50.191666666666663 (xmin, xmax, ymin, ymax)\n\nres(r)    # pixel size (x, y) in CRS units\n\n[1] 0.008333333 0.008333333\n\n\n\n\nnrow × ncol = total number of pixels per band\next() and res() together define the raster grid — if you know three, you can derive the fourth\nHere, res() is in degrees because the CRS is geographic (WGS84)\nAsk students: if res() returns 0.00833 degrees, how large is a pixel in meters at the equator? (~930m)"
+  },
+  {
+    "objectID": "lesson1.html#what-is-a-crs",
+    "href": "lesson1.html#what-is-a-crs",
+    "title": "Image Processing for Remote Sensing",
+    "section": "What is a CRS?",
+    "text": "What is a CRS?\n\nA CRS defines how coordinates relate to real locations on Earth\nTwo broad families:\n\nGeographic CRS — coordinates in degrees (longitude, latitude) on a spherical Earth model Example: WGS84 (EPSG:4326), used by GPS\nProjected CRS — coordinates in meters (or feet) on a flat (2D) surface Example: EPSG:2169 (Luxembourg), UTM zones\n\nMost downloaded satellite data uses WGS84; spatial analysis often requires a projected CRS\n\n\n\nThe Earth is curved, so projecting it onto a flat surface always introduces distortion\nGeographic CRS is fine for storage and display; projected CRS is needed for distance/area calculations\nA focal window of 3×3 in degrees is not 3×3 meters — this is why CRS matters for map algebra"
+  },
+  {
+    "objectID": "lesson1.html#checking-the-crs",
+    "href": "lesson1.html#checking-the-crs",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Checking the CRS",
+    "text": "Checking the CRS\n\ncrs(r, describe = TRUE)   # human-readable summary\n\n    name authority code  area             extent\n1 WGS 84      EPSG 4326 World -180, 180, -90, 90\n\n\n\n\ndescribe = TRUE gives a concise one-line summary: name, authority, code\nThe full WKT is what gets embedded in file metadata — this is what other software reads\nIf CRS is missing (NA), spatial operations may silently give wrong results"
+  },
+  {
+    "objectID": "lesson1.html#reprojecting-with-project",
+    "href": "lesson1.html#reprojecting-with-project",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Reprojecting with project()",
+    "text": "Reprojecting with project()\n\nUse project() to reproject a raster to a different CRS\nThe raster is resampled so that pixels align to the new grid\n\n\nr_projected &lt;- project(r, \"EPSG:2169\")\n\nres(r)           # original: degrees\n\n[1] 0.008333333 0.008333333\n\nres(r_projected) # projected: meters\n\n[1] 771.9715 771.9715\n\n\n\n\nAfter projecting to EPSG:2169, res() returns meters (~927m here)\nThis is the same physical pixel size expressed in a different unit\nproject() involves interpolation, which slightly modifies values — only reproject when necessary\nWe will use this in Lesson 2 when we need focal windows in real-world units (meters)"
+  },
+  {
+    "objectID": "lesson1.html#why-crs-matters-for-analysis",
+    "href": "lesson1.html#why-crs-matters-for-analysis",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Why CRS matters for analysis",
+    "text": "Why CRS matters for analysis\n\n\nGeographic (degrees)\n\nResolution of 0.00833°\nA focal window of 3 cells ≈ 0.025°\nPixel “size” varies with latitude\n\n\nProjected (meters)\n\nResolution of ~927m\nA focal window of 3 cells = 2.8 km\nPixel size is constant everywhere\n\n\n\n\nThis difference becomes critical in Lesson 2 when we create focal windows\nfocalMat(r, d = 2000, \"circle\") requires the raster to be in meters to mean “2km radius”\nAlways check crs(r, describe = TRUE) and res(r) before doing spatial analysis"
+  },
+  {
+    "objectID": "lesson1.html#what-does-na-mean-in-a-raster",
+    "href": "lesson1.html#what-does-na-mean-in-a-raster",
+    "title": "Image Processing for Remote Sensing",
+    "section": "What does NA mean in a raster?",
+    "text": "What does NA mean in a raster?\n\nIn tabular data, NA means “value not recorded” for an observation\nIn raster data, NA has additional spatial meaning:\n\nOutside the study area — pixels beyond the boundary of interest\nOther, such as Sensor failure, Atmospheric effects etc.\n\nNA pixels are not skipped in raster algebra — they propagate: 5 + NA = NA\n\n\n\nThis propagation behavior is different from what students may expect from tabular workflows\nIn raster operations, NA cells stay NA unless explicitly handled (na.rm = TRUE, mask, ifel)\nStudents will encounter this immediately when working with real satellite data (cloud cover)"
+  },
+  {
+    "objectID": "lesson1.html#how-nas-arise-study-area-boundaries",
+    "href": "lesson1.html#how-nas-arise-study-area-boundaries",
+    "title": "Image Processing for Remote Sensing",
+    "section": "How NAs arise: study area boundaries",
+    "text": "How NAs arise: study area boundaries\nr &lt;- rast(system.file(\"ex/elev.tif\", package = \"terra\"))\nlux &lt;- vect(system.file(\"ex/lux.shp\", package = \"terra\"))\n\n# show the bounding box vs the actual data extent\nplot(r, main = \"Values within Luxembourg boundary\")\nplot(lux, add = TRUE)\n\n\n\n\n\n\nThe raw raster extent (bounding box)\n\n\n\n\n\n\n\nThe raster grid is always rectangular — but the real data often covers an irregular shape\nCells outside the country boundary are NA\nThe bounding box (ext()) covers the whole rectangle"
+  },
+  {
+    "objectID": "lesson1.html#working-with-na-is.na-and-mask",
+    "href": "lesson1.html#working-with-na-is.na-and-mask",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Working with NA: is.na() and mask()",
+    "text": "Working with NA: is.na() and mask()\n\n# identify where NAs are\nna_raster &lt;- is.na(r)\n\n\n# mask: set cells outside a vector boundary to NA\nr_masked &lt;- mask(r, lux)\n\n\n# replace NA with a specific value (e.g. 0)\nr_filled &lt;- ifel(is.na(r), 0, r)\n\n\n\nis.na() returns a Boolean raster: 1 where NA, 0 elsewhere\nmask() takes a vector or raster boundary and sets everything outside to NA\nifel() is the raster equivalent of ifelse() for cell-by-cell conditional replacement\nna.rm = TRUE in aggregation functions (mean, sum) ignores NAs, like in base R"
+  },
+  {
+    "objectID": "lesson1.html#edge-effects-in-focal-operations",
+    "href": "lesson1.html#edge-effects-in-focal-operations",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Edge effects in focal operations",
+    "text": "Edge effects in focal operations\n\nFocal operations require a neighborhood around each cell\nCells at the raster edge do not have a full neighborhood\nBy default, this produces NA in the output border\n\nr_foc     &lt;- focal(r, w = 3, fun = mean)\nr_foc_pad &lt;- focal(r, w = 3, fun = mean, fillNA = TRUE)\n\nplot(r_foc,     main = \"fillNA = FALSE (default)\")\nplot(r_foc_pad, main = \"fillNA = TRUE\")\n\n\n\n\n\n\n3×3 focal mean (note NA border)\n\n\n\n\n\n\n\n3×3 focal mean with fillNA = TRUE\n\n\n\n\n\n\n\nfillNA = TRUE pads the border with NAs before computing, so the output has the same extent as the input\nFor large windows the effect is more pronounced — a 11×11 window loses 5 cells on every side\nThis will matter in Lesson 2 when we compare focal window sizes"
+  },
+  {
+    "objectID": "lesson1.html#common-raster-file-formatscommon-raster",
+    "href": "lesson1.html#common-raster-file-formatscommon-raster",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Common raster file formatsCommon raster",
+    "text": "Common raster file formatsCommon raster\n\n\n\n\n\n\n\n\nFormat\nExtension\nNotes\n\n\n\n\nGeoTIFF\n.tif\nUniversal standard; stores CRS, extent, metadata\n\n\nJPEG2000\n.jp2\nUsed by Sentinel-2 (ESA); lossy or lossless\n\n\nNetCDF\n.nc\nCommon in climate science; supports time dimension\n\n\nHDF5\n.h5 / .he5\nUsed by MODIS, Landsat Collection 2\n\n\nCloud-Optimized GeoTIFF\n.tif (COG)\nGeoTIFF optimized for remote/cloud access\n\n\n\n\n\nStudents will encounter JP2 in Lesson 3 when working with Sentinel-2 SAFE files\nNetCDF is important for temporal datasets (e.g. ERA5 climate reanalysis)\nCOG is increasingly important for cloud workflows (reading subsets without downloading the whole file)\nGeoTIFF is the recommended format for most workflows\nAll formats are read/written by GDAL — terra uses GDAL under the hood"
+  },
+  {
+    "objectID": "lesson1.html#reading-rasters-from-disk",
+    "href": "lesson1.html#reading-rasters-from-disk",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Reading rasters from disk",
+    "text": "Reading rasters from disk\n\n# read a single-band GeoTIFF\nr &lt;- rast(\"data/elevation.tif\")\n\n# read a multi-band GeoTIFF\nl7 &lt;- rast(\"data/L7_ETMs.tif\")\n\n# read one specific band from a multi-band file\nband3 &lt;- rast(\"data/L7_ETMs.tif\", lyrs = 3)\n\n\nrast() reads all spatial metadata automatically (CRS, extent, resolution)\nThe data is not loaded into RAM by default — terra reads values on demand (lazy loading)\nUse values(r) or as.matrix(r) to force loading all values into memory\n\n\n\nLazy loading is critical for large rasters that don’t fit in RAM\nterra processes large rasters in chunks internally — students don’t need to manage this\nPrinting the object shows “source: …” confirming it’s backed by a file, not just in memory"
+  },
+  {
+    "objectID": "lesson1.html#writing-rasters-to-disk",
+    "href": "lesson1.html#writing-rasters-to-disk",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Writing rasters to disk",
+    "text": "Writing rasters to disk\n\n# write to GeoTIFF (all metadata is preserved automatically)\nwriteRaster(r, \"data-out/elevation_out.tif\")\n\n# overwrite an existing file\nwriteRaster(r, \"data-out/elevation_out.tif\", overwrite = TRUE)\n\n# specify the data type explicitly (default is Float32)\nwriteRaster(r, \"data-out/elevation_byte.tif\", datatype = \"INT1U\", overwrite = TRUE)\n\n\nCRS, extent, resolution, band names and data type are all written into the file\nAny software that reads GeoTIFF (QGIS, Python/rasterio, ArcGIS) will read the same metadata\nChoosing the right datatype matters for file size — covered in Lesson 3\n\n\n\nThis is intentionally brief — the datatype/scale/offset topic is fully developed in Lesson 3\nReinforce: the file stores everything needed to reconstruct the raster — students don’t need separate sidecar files\nWarn about overwrite = TRUE — it silently overwrites without a prompt\n\n\n\n\n\n\nBaltagi, Badi Hani, and Badi H Baltagi. 2008. Econometric Analysis of Panel Data. Vol. 4. Springer. https://bcs.wiley.com/he-bcs/Books?action=resource&bcsId=4338&itemId=1118672321&resourceId=13452.\n\n\nPebesma, Edzer, and Roger Bivand. 2023. Spatial Data Science: With Applications in R. Chapman; Hall/CRC. https://doi.org/10.1201/9780429459016.\n\n\nWickham, Hadley. 2014. “Tidy Data.” Journal of Statistical Software 59 (10): 1–23. https://doi.org/10.18637/jss.v059.i10."
+  },
+  {
+    "objectID": "lesson2.html#learning-objectives",
+    "href": "lesson2.html#learning-objectives",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Learning Objectives",
+    "text": "Learning Objectives\nBy the end of this lesson you will be able to:\n\nExplain the four sensor resolution types and their trade-offs\nDistinguish and apply the four map algebra operation types in R\nUnderstand why spectral indices are more robust than raw band values\nPerform raster–vector operations: crop, mask, and extract\nConnect focal operations to convolutions in image processing"
+  },
+  {
+    "objectID": "lesson2.html#the-four-resolutions",
+    "href": "lesson2.html#the-four-resolutions",
+    "title": "Image Processing for Remote Sensing",
+    "section": "The Four Resolutions",
+    "text": "The Four Resolutions\n\nSpatial: Ground size of one pixel\nTemporal: Revisit frequency\nSpectral: Number & width of bands\nRadiometric: Intensity levels (bit depth)\n\nTrade-off example: Sentinel-2: 10 m · 5 days · 13 bands vs. MODIS: 500 m · daily · 36 bands — higher resolution in one dimension typically comes at the cost of another.\n\n\nFlood mapping needs daily updates → MODIS; field-level crop mapping needs 10 m pixels → Sentinel-2\nHyperspectral sensors (EnMAP, AVIRIS) trade spatial resolution for hundreds of spectral bands\nRadiometric resolution: 16-bit captures far more detail than 8-bit"
+  },
+  {
+    "objectID": "lesson2.html#from-sensor-to-analysis",
+    "href": "lesson2.html#from-sensor-to-analysis",
+    "title": "Image Processing for Remote Sensing",
+    "section": "From Sensor to Analysis",
+    "text": "From Sensor to Analysis\nDN vs. Reflectance\n\nSensors record Digital Numbers (DN): raw detector output\nDN values depend on illumination angle, atmospheric conditions, and sensor calibration — not directly comparable across dates or sensors\n\nCalibration pipeline:\n\n\n\nStep\nCorrects for\n\n\n\n\nDN → Radiance\nSensor gain & offset\n\n\nRadiance → TOA Reflectance\nSolar illumination angle\n\n\nTOA → Surface Reflectance\nAtmospheric scattering & absorption\n\n\n\nSpectral indices are designed to work with reflectance: more sensor- and date-independent than raw DN.\n\n\nSentinel-2 Level-2A = surface reflectance (scaled ×10 000); Level-1C = TOA only — always check the product level\nComputing NDVI on raw Level-2A integers still gives the right ratio (the scale cancels), but matters when comparing across sensors\nHow each step works:\n\nDN → Radiance: per-band gain/offset scaling\nRadiance → TOA Reflectance: normalise by solar irradiance & zenith angle\nTOA → Surface Reflectance: radiative transfer model (e.g. Sen2Cor)"
+  },
+  {
+    "objectID": "lesson2.html#introduction",
+    "href": "lesson2.html#introduction",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Introduction",
+    "text": "Introduction\n\nMap algebra: operations that modify or summarize raster cell values\nFour subclasses, differing in spatial scope:\n\nLocal — per-cell operations\nFocal — central cell + neighborhood (typically 3×3)\nZonal — irregular regions defined by a second raster\nGlobal — entire raster(s)\n\n\n\n\nThe four types differ in spatial scope — how many cells contribute to each output value\nWhich type gives mean elevation per municipality? Which smooths noise in an image?"
+  },
+  {
+    "objectID": "lesson2.html#operation-types-illustrated",
+    "href": "lesson2.html#operation-types-illustrated",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Operation Types — Illustrated",
+    "text": "Operation Types — Illustrated\n\n\nFigure 1: Local (one cell), Focal (3×3 neighborhood), Zonal (coloured regions), Global (entire raster)"
+  },
+  {
+    "objectID": "lesson2.html#global-operation-1",
+    "href": "lesson2.html#global-operation-1",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Global Operation (1)",
+    "text": "Global Operation (1)\n\nThe most common global operations are descriptive statistics for the entire raster dataset such as the minimum, maximum or mean value.\nFor example: What is the mean elevation value for Luxembourg?\n\n\n\nCommon mistake: mean(r) computes a per-cell mean across bands (a local operation) — use global() for raster-wide statistics\n\n\n\n\nFigure 2: Elevation of Luxembourg\n\n# note: mean(r) does not work, since \"mean\" is used as a local operator\nmean_elev &lt;- global(r, mean, na.rm = TRUE)\n\nmean_elev\n\n              mean\nelevation 348.3366"
+  },
+  {
+    "objectID": "lesson2.html#global-operation-2",
+    "href": "lesson2.html#global-operation-2",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Global Operation (2)",
+    "text": "Global Operation (2)\n\nAnother type of “global” operation is distance\nThis function calculates the distance from each cell to a specific target cell\nFor example, what is the distance from each cell to Luxembourg City, the capital of Luxembourg?\n\n\n\nWhy global, not local? A local operation uses only the value at (i,j) to produce the output at (i,j). Distance requires knowledge of the entire raster’s spatial extent and cell coordinates — no cell can be computed in isolation."
+  },
+  {
+    "objectID": "lesson2.html#zonal",
+    "href": "lesson2.html#zonal",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Zonal",
+    "text": "Zonal\n\nZonal operations apply an aggregation function to multiple raster cells\nA second raster with categorical values define the “zones”\n\nWhat is the mean altitude per municipality?\n\n\nConceptually: spatial group_by + summarize\nThe zones raster must be integer/categorical — use rasterize() to convert vector polygons first\n\n\n\nmean_vals &lt;- zonal(r, zones, fun = mean, na.rm = TRUE)"
+  },
+  {
+    "objectID": "lesson2.html#zonal-result",
+    "href": "lesson2.html#zonal-result",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Zonal — Result",
+    "text": "Zonal — Result\n\n\nFigure 3\n\n\nThe global operation can be seen as a special case of a zonal operation, where the only “Zone” is the entire dataset"
+  },
+  {
+    "objectID": "lesson2.html#local-1",
+    "href": "lesson2.html#local-1",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Local (1)",
+    "text": "Local (1)\n\nLocal operations comprise all cell-by-cell operations in one or several layers.\nFor example, we can classify the elevation into values above and below a certain threshold\n\n\n\nAll arithmetic (+, -, *, /) and logical (&gt;, &lt;, &, |) operators work element-wise on rasters in terra\nBoolean rasters are the foundation of masking and multi-condition selection (e.g. the solar panel task)\n\n\n\n# first, create a boolean copy of the raster\nr_bool &lt;- as.logical(r)\n\nmean_elev &lt;- as.numeric(mean_elev)\nmean_elev\n\n[1] 348.3366\n\nr_bool[r &gt; mean_elev] &lt;- FALSE\nr_bool[r &lt;= mean_elev] &lt;- TRUE"
+  },
+  {
+    "objectID": "lesson2.html#local-1-1",
+    "href": "lesson2.html#local-1-1",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Local (1)",
+    "text": "Local (1)"
+  },
+  {
+    "objectID": "lesson2.html#local-2",
+    "href": "lesson2.html#local-2",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Local (2)",
+    "text": "Local (2)\n\nThis type of (re-) classification is a very common operation\nFor more than 2 categories, we can use classify\n\n\ncuts &lt;- global(r, quantile, probs = c(0, .33, .66, 1), na.rm = TRUE)\n\nr_classify &lt;- classify(r, as.numeric(cuts))\n\n# this next line just replaces the default labels with some custom ones\nlevels(r_classify) &lt;- data.frame(ID = 0:2, category = c(\"low\",\"mid\",\"high\"))"
+  },
+  {
+    "objectID": "lesson2.html#local-2-1",
+    "href": "lesson2.html#local-2-1",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Local (2)",
+    "text": "Local (2)"
+  },
+  {
+    "objectID": "lesson2.html#local-3",
+    "href": "lesson2.html#local-3",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Local (3)",
+    "text": "Local (3)\n\nLocal operations are often used with multiple bands\nFor example, we could calculate the mean intensity values of red, green and blue:\n\n\nl7 &lt;- rast(system.file(\"tif/L7_ETMs.tif\",package = \"stars\"))\n\nnames(l7) &lt;- c(\"B\", \"G\", \"R\", \"NIR\", \"SWIR\", \"MIR\")\n\nl7_rgb &lt;- l7[[c(\"R\",\"G\", \"B\")]]\n\nplot(l7_rgb, nr = 1)"
+  },
+  {
+    "objectID": "lesson2.html#local-3-1",
+    "href": "lesson2.html#local-3-1",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Local (3)",
+    "text": "Local (3)\n\nl7_rgb_mean &lt;- mean(l7_rgb)\n\nplot(l7_rgb_mean)"
+  },
+  {
+    "objectID": "lesson2.html#local-4",
+    "href": "lesson2.html#local-4",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Local (4)",
+    "text": "Local (4)\n\nLocal operations also work across bands — each output cell combines values from multiple input layers\nFor example, weighted brightness emphasises red over green and blue:\n\n\\[B = 0.5 \\times R + 0.3 \\times G + 0.2 \\times B\\]\n\nbrightness &lt;- 0.5 * l7[[\"R\"]] + 0.3 * l7[[\"G\"]] + 0.2 * l7[[\"B\"]]"
+  },
+  {
+    "objectID": "lesson2.html#local-4-1",
+    "href": "lesson2.html#local-4-1",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Local (4)",
+    "text": "Local (4)"
+  },
+  {
+    "objectID": "lesson2.html#spectral-indices-why-they-work",
+    "href": "lesson2.html#spectral-indices-why-they-work",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Spectral Indices: Why They Work",
+    "text": "Spectral Indices: Why They Work\nHealthy vegetation has a characteristic spectral signature:\n\nAbsorbs red (~650 nm): chlorophyll uses it for photosynthesis\nStrongly reflects NIR (~800 nm): leaf cell structure scatters infrared light\n\n\n\nWhy not just use NIR alone? NIR is not unique to vegetation — bare soil, sand, and snow also have moderate-to-high NIR reflectance. What is unique to healthy vegetation is high NIR combined with low Red. NDVI exploits this contrast: a sandy surface has high NIR and high Red → NDVI ≈ 0; healthy vegetation has high NIR but low Red → NDVI close to 1. The normalization by (NIR + Red) also reduces the influence of varying illumination and atmospheric haze.\n\n\n\nNumbers indicate Landsat TM bands: 1 Blue, 2 Green, 3 Red, 4 NIR, 5 SWIR1, 7 SWIR2 (band 6 thermal, off-chart). Source: seos-project.eu"
+  },
+  {
+    "objectID": "lesson2.html#normalized-difference-indices",
+    "href": "lesson2.html#normalized-difference-indices",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Normalized Difference Indices",
+    "text": "Normalized Difference Indices\n\\[\\text{Index} = \\frac{A - B}{A + B} \\in [-1,\\, +1]\\]\nNormalization reduces the effect of illumination differences.\n\n\n\nIndex\nFormula\nDetects\n\n\n\n\nNDVI\n(NIR − Red) / (NIR + Red)\nVegetation density\n\n\nNDWI\n(Green − NIR) / (Green + NIR)\nOpen water\n\n\nNDSI\n(Green − SWIR) / (Green + SWIR)\nSnow & ice\n\n\nNBR\n(NIR − SWIR) / (NIR + SWIR)\nBurn severity\n\n\n\n\n\nAll are local raster operations — same cell-by-cell arithmetic, different band combinations\nNormalization cancels much of the multiplicative effect of illumination\nNDWI has two conflicting definitions: Gao (1996) uses NIR/SWIR; McFeeters (1996) uses Green/NIR — always check which is cited\nNBR is widely used for post-fire damage assessment with Sentinel-2 or Landsat"
+  },
+  {
+    "objectID": "lesson2.html#sec-focal-1",
+    "href": "lesson2.html#sec-focal-1",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Focal",
+    "text": "Focal\n\nWhile local functions operate on one cell focal operations take into account a central (focal) cell and its neighbors.\nThe neighborhood (also named kernel, filter or moving window) under consideration is typically of size 3-by-3 cells (that is the central cell and its eight surrounding neighbors), but can take on any other size or shape as defined by the user.\nA focal operation applies an aggregation function to all cells within the specified neighborhood, uses the corresponding output as the new value for the central cell, and moves on to the next central cell\n\n\n\nKey trade-off: larger window → more smoothing but larger NA border (edge effect)\nfillNA = TRUE mitigates this by using whatever neighbors are available at the edges\n\n\n\n\n\n\n\n\nFigure 4: Note how, depending on the size of your moving window, NA’s are produced. Source: Lovelace et al. (2019)\n\n\n\n\nfocal3by3 &lt;- matrix(rep(1,9), ncol = 3)\n\n\nfocal11by11 &lt;- matrix(rep(1,121), ncol = 11)\n\n\nr_foc3 &lt;- focal(r, focal3by3, fun = mean, fillNA = TRUE)\n\nr_foc11 &lt;- focal(r, focal11by11, fun = mean, fillNA = TRUE)\n\n\n\n\n\n\n\n\n\nFigure 5\n\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\nNote how the output raster is smaller as the focal window is larger (edge effect)"
+  },
+  {
+    "objectID": "lesson2.html#focal-weights-1",
+    "href": "lesson2.html#focal-weights-1",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Focal weights (1)",
+    "text": "Focal weights (1)\n\nThe focal weights we used above were square and evenly weighted\n\n\nfocal3by3\n\n     [,1] [,2] [,3]\n[1,]    1    1    1\n[2,]    1    1    1\n[3,]    1    1    1\n\n\n\nfocal11by11  # same structure, 11×11"
+  },
+  {
+    "objectID": "lesson2.html#focal-weights-2",
+    "href": "lesson2.html#focal-weights-2",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Focal weights (2)",
+    "text": "Focal weights (2)\n\nHowever, we can also create uneven weights:\n\nFor example, a laplacian filter is commonly used for edge detection.\n\nlaplacian &lt;- matrix(c(0,1,0,1,-4,1,0,1,0), nrow=3) \n\nlaplacian\n\n     [,1] [,2] [,3]\n[1,]    0    1    0\n[2,]    1   -4    1\n[3,]    0    1    0\n\n\nSo are the sobel filters — shown on the next slide."
+  },
+  {
+    "objectID": "lesson2.html#focal-weights-2-sobel",
+    "href": "lesson2.html#focal-weights-2-sobel",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Focal weights (2) — Sobel",
+    "text": "Focal weights (2) — Sobel\n\nsobel_x &lt;- matrix(c(-1,-2,-1,0,0,0,1,2,1), nrow=3)\n\nsobel_x\n\n     [,1] [,2] [,3]\n[1,]   -1    0    1\n[2,]   -2    0    2\n[3,]   -1    0    1\n\nsobel_y &lt;- matrix(c(1,0,-1,2,0,-2,1,0,-1), nrow=3)\n\nsobel_y\n\n     [,1] [,2] [,3]\n[1,]    1    2    1\n[2,]    0    0    0\n[3,]   -1   -2   -1"
+  },
+  {
+    "objectID": "lesson2.html#focal-operations-convolutions",
+    "href": "lesson2.html#focal-operations-convolutions",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Focal Operations = Convolutions",
+    "text": "Focal Operations = Convolutions\nA focal operation with a weight matrix is a discrete convolution:\n\\[(\\text{output})_{i,j} = \\sum_{m}\\sum_{n} w_{m,n} \\cdot r_{i+m,\\, j+n}\\]\nThis is exactly the operation in convolutional neural networks (CNNs):\n\n\n\nHand-crafted kernel\nEquivalent CNN concept\n\n\n\n\nGaussian blur\nSmoothing / anti-aliasing layer\n\n\nSobel x/y\nEdge detection layer\n\n\nMean filter\nAverage pooling\n\n\n\nThe key difference: in deep learning, kernels are learned from data rather than designed manually.\n\n\nA CNN is essentially many stacked focal operations with learned kernels\nThe Sobel filter is exactly what a CNN’s first conv layer approximates when trained on natural images\nLarger kernels → more smoothing = more bias, less variance"
+  },
+  {
+    "objectID": "lesson2.html#from-cells-to-real-world-units-1",
+    "href": "lesson2.html#from-cells-to-real-world-units-1",
+    "title": "Image Processing for Remote Sensing",
+    "section": "From cells to real world units (1)",
+    "text": "From cells to real world units (1)\n\nWe have been specifying our focal weights in terms of cell units\nIn most cases, it is more reasonable to work with real world units\nThe resolution of our raster is 0.008333333 (see res(r)) and since our raster is in WGS84, the units is “degrees”.\nTo work with more managable units, we can convert the raster to a projected CRS that uses “meters”, e.g. EPSG 2169\n\n\n\n[1] 0.008333333 0.008333333\n\n\n\n# Reproject to a \"projected\" CRS\nr_2169 &lt;- project(r, \"EPSG:2169\")"
+  },
+  {
+    "objectID": "lesson2.html#from-cells-to-real-world-units-2",
+    "href": "lesson2.html#from-cells-to-real-world-units-2",
+    "title": "Image Processing for Remote Sensing",
+    "section": "From cells to real world units (2)",
+    "text": "From cells to real world units (2)\n\nThe resolution of our new raster is 771.9714782 meters.\nWe can resample this to 1 km to simplify things\n\n\nres(r_2169)\n\n[1] 771.9715 771.9715\n\n# first, create template raster with the same extent and 1km resolution\ntemplate &lt;- rast(res = 1000, ext = ext(r_2169))\n\n# then, resample to this template\nr_2169 &lt;- resample(r_2169, template)"
+  },
+  {
+    "objectID": "lesson2.html#focal-weights-with-focalmat",
+    "href": "lesson2.html#focal-weights-with-focalmat",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Focal weights with focalMat",
+    "text": "Focal weights with focalMat\n\nfocalMat creates focal matrices in real-world units (CRS units)\nShapes: circle (d = radius), rectangle (d = dimensions), Gauss (d = sigma)\nValues sum to 1; matrix size adapts to raster resolution\n\n\nfocal_circle &lt;- focalMat(x = r_2169, d = 2000, \"circle\")\n\nfocal_circle\n\n           [,1]       [,2]       [,3]\n[1,] 0.00000000 0.09090909 0.00000000\n[2,] 0.09090909 0.09090909 0.09090909\n[3,] 0.09090909 0.09090909 0.09090909\n[4,] 0.09090909 0.09090909 0.09090909\n[5,] 0.00000000 0.09090909 0.00000000\n\n\n\nCircle filter (2 km radius)"
+  },
+  {
+    "objectID": "lesson2.html#focal-weights-with-focalmat-gauss",
+    "href": "lesson2.html#focal-weights-with-focalmat-gauss",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Focal weights with focalMat — Gauss",
+    "text": "Focal weights with focalMat — Gauss\n\nfocal_gauss &lt;- focalMat(x = r_2169, d = 2000, \"Gauss\")\n\n\nGaussian filter (sigma = 2 km)"
+  },
+  {
+    "objectID": "lesson2.html#focal-functions-in-terrain-processing",
+    "href": "lesson2.html#focal-functions-in-terrain-processing",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Focal functions in terrain processing",
+    "text": "Focal functions in terrain processing\n\nFocal functions are used to calculate the slope of a specific location, e.g. using the algorithm by Horn (1981)\nSimilarly, calculating the aspect (azimuth) of a location is a very typical task when dealing with elevation data\nThese algorithms are used so often, that they are implemented in a dedicated function (terrain())\n\n\n\nterrain() is a convenience wrapper around a focal operation with a specific kernel\nHorn’s algorithm uses a 3×3 weighted neighborhood to estimate the x/y gradient, from which slope and aspect are derived"
+  },
+  {
+    "objectID": "lesson2.html#focal-functions-in-terrain-processing-1",
+    "href": "lesson2.html#focal-functions-in-terrain-processing-1",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Focal functions in terrain processing",
+    "text": "Focal functions in terrain processing\n\npar(mfrow = c(1, 2))\nterrain(r, \"slope\") |&gt; plot(main = \"Slope\")\nterrain(r, \"aspect\") |&gt; plot(main = \"Aspect\")\npar(mfrow = c(1, 1))\n\n\n\nFigure 7"
+  },
+  {
+    "objectID": "lesson2.html#rastervector-operations-1",
+    "href": "lesson2.html#rastervector-operations-1",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Raster–Vector Operations",
+    "text": "Raster–Vector Operations\nVector data represents discrete geometries: points, lines, polygons — each with a geometry and attributes.\nThree fundamental operations linking rasters and vectors:\n\n\n\n\n\n\n\n\nOperation\nFunction\nWhat it does\n\n\n\n\nCrop\ncrop()\nReduce raster extent to bounding box of vector\n\n\nMask\nmask()\nSet cells outside vector geometry to NA\n\n\nExtract\nextract()\nGet raster cell values at vector locations\n\n\n\n\n\ncrop() + mask() almost always used together: crop first (fast — clips extent), then mask (precise — removes cells outside geometry)\nextract() bridges to tabular analysis — returns a data frame, not a raster"
+  },
+  {
+    "objectID": "lesson2.html#crop-mask",
+    "href": "lesson2.html#crop-mask",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Crop & Mask",
+    "text": "Crop & Mask\n\none_muni &lt;- lux[5, ]           # one municipality polygon\n\nr_crop &lt;- crop(r, one_muni)\nr_mask &lt;- mask(r_crop, one_muni)"
+  },
+  {
+    "objectID": "lesson2.html#crop-mask-1",
+    "href": "lesson2.html#crop-mask-1",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Crop & Mask",
+    "text": "Crop & Mask\n\n\nFigure 8"
+  },
+  {
+    "objectID": "lesson2.html#extract",
+    "href": "lesson2.html#extract",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Extract",
+    "text": "Extract\n\n# Sample 20 random point locations\npts &lt;- spatSample(r, 20, as.points = TRUE, na.rm = TRUE)\n\n# Elevation value at each point\nextract(r, pts) |&gt; head(5)\n\n  ID elevation\n1  1       226\n2  2       278\n3  3       359\n4  4       380\n5  5       294\n\n\nextract() also accepts polygon geometries and an aggregation function:\n\n# Mean elevation per municipality polygon\nextract(r, lux, fun = mean, na.rm = TRUE) |&gt; head(3)\n\n  ID elevation\n1  1  467.1052\n2  2  333.8629\n3  3  377.3712\n\n\n\n\nPolygon extract with fun = is similar to zonal(), but works on vector geometry directly (no rasterizing)\nFor large datasets, rasterize() + zonal() is usually faster\nextract() without fun = returns every cell value per polygon — useful for building classification training data"
+  },
+  {
+    "objectID": "lesson2.html#summary",
+    "href": "lesson2.html#summary",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Summary",
+    "text": "Summary\n\n\n\nType\nScope\nKey functions\n\n\n\n\nGlobal\nEntire raster\nglobal(), distance()\n\n\nZonal\nDefined regions\nzonal(), rasterize()\n\n\nLocal\nPer cell\nclassify(), &gt;, &, spectral indices\n\n\nFocal\nMoving window\nfocal(), focalMat(), terrain()\n\n\nVector ops\nGeometry-based\ncrop(), mask(), extract()"
+  },
+  {
+    "objectID": "lesson2.html#refs",
+    "href": "lesson2.html#refs",
+    "title": "Image Processing for Remote Sensing",
+    "section": "References",
+    "text": "References\n\n\n\n\nHorn, Berthold KP. 1981. “Hill Shading and the Reflectance Map.” Proceedings of the IEEE 69 (1): 14–47.\n\n\nLovelace, Robin, Jakub Nowosad, and Jannes Muenchow. 2019. Geocomputation with r. Chapman; Hall/CRC."
+  },
+  {
+    "objectID": "lesson4-2-supervised-learning.html#introduction",
+    "href": "lesson4-2-supervised-learning.html#introduction",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Introduction",
+    "text": "Introduction\n\nThis lesson demonstrates supervised classification applied to remote sensing imagery\nWe’ll classify historic aerial imagery from 1961 to distinguish forest from non-forest areas in Ces, Ticino, Switzerland\nKey focus: The spatial data workflow using terra/sf, not basic ML concepts"
+  },
+  {
+    "objectID": "lesson4-2-supervised-learning.html#workflow-overview",
+    "href": "lesson4-2-supervised-learning.html#workflow-overview",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Workflow Overview",
+    "text": "Workflow Overview\n\nLoad ground truth polygons and generate point samples\nSpatial train/test split (⚠ autocorrelation)\nExtract raster features using extract()\nTrain classifier (CART for interpretability)\nPredict on entire raster\nEvaluate and compare approaches"
+  },
+  {
+    "objectID": "lesson4-2-supervised-learning.html#ground-truth-spatial-sampling",
+    "href": "lesson4-2-supervised-learning.html#ground-truth-spatial-sampling",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Ground Truth & Spatial Sampling",
+    "text": "Ground Truth & Spatial Sampling"
+  },
+  {
+    "objectID": "lesson4-2-supervised-learning.html#approach-1-single-band-classifier",
+    "href": "lesson4-2-supervised-learning.html#approach-1-single-band-classifier",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Approach 1: Single-Band Classifier",
+    "text": "Approach 1: Single-Band Classifier\nFeature extraction with terra::extract()\n\ntrain_features &lt;- terra::extract(ces1961, data_train, ID = FALSE)\n\ndata_train2 &lt;- cbind(data_train[,\"class\"], train_features) |&gt;\n  st_drop_geometry()\n\ndata_train2"
+  },
+  {
+    "objectID": "lesson4-2-supervised-learning.html#sec-spatial-context",
+    "href": "lesson4-2-supervised-learning.html#sec-spatial-context",
+    "title": "Image Processing for Remote Sensing",
+    "section": "The Spatial Context Problem",
+    "text": "The Spatial Context Problem\n\nAt pixel level, it is hard to distinguish forest from non-forest\nSpatial context is essential: Humans use spatial context (texture, patterns, neighbors) to classify land cover\n\n\n\nFigure 2\n\nThis is the core limitation of pixel-based classification.\nModern deep learning (CNNs) solves this automatically by processing image patches, but we’ll first show the manual approach to understand why spatial context matters."
+  },
+  {
+    "objectID": "lesson4-2-supervised-learning.html#sec-feature-engineering",
+    "href": "lesson4-2-supervised-learning.html#sec-feature-engineering",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Approach 2: Adding Spatial Features",
+    "text": "Approach 2: Adding Spatial Features\n\nFocal operations as feature extractors: Focal operations aggregate neighborhood values, providing spatial context\n\n\ni &lt;- 5\nfocal_window &lt;- matrix(rep(1, i^2), nrow = i)\n\n# Calculate standard deviation in each neighborhood\nces1961_focal_sd &lt;- focal(ces1961, focal_window, fun = \"sd\")\n\n\nPedagogical approach: Handcrafted focal features\nWhy we do this: - Explicit, understandable feature engineering - Shows what spatial context means (texture/variation) - Works with classical ML algorithms\nProduction approach: Convolutional Neural Networks (CNNs) - CNNs learn optimal spatial filters automatically during training - First layer convolution weights = learned focal operations - Can learn multi-scale features (equivalent to multiple focal window sizes) - State-of-the-art: U-Net, DeepLabV3+, Vision Transformers"
+  },
+  {
+    "objectID": "lesson4-2-supervised-learning.html#tasks",
+    "href": "lesson4-2-supervised-learning.html#tasks",
+    "title": "Image Processing for Remote Sensing",
+    "section": "Tasks",
+    "text": "Tasks\nCore exercises\n\nDownload datasets (ces_polygons.gpkg and TIF files for 1961-1995) from Moodle\nImplement the complete workflow:\n\nLoad and sample spatial ground truth\nTrain classifier (single band or with additional features)\nEvaluate with confusion matrix\n\nApply model temporally and analyze forest cover trends"
+  },
+  {
+    "objectID": "lesson4-2-supervised-learning.html#refs",
+    "href": "lesson4-2-supervised-learning.html#refs",
+    "title": "Image Processing for Remote Sensing",
+    "section": "References",
+    "text": "References\n\n\n\n\nBrenning, Alexander. 2023. Spatial ML Model Assessment and Interpretation. OpenGeoHub Summer School 2023. OpenGeoHub Foundation. https://doi.org/10.5446/63464.\n\n\nSchratz, Patrick, Marc Becker, Michel Lang, and Alexander Brenning. 2021. “Mlr3spatiotempcv: Spatiotemporal Resampling Methods for Machine Learning in r.” arXiv Preprint arXiv:2110.12674."
   }
 ]
