@@ -1,0 +1,11 @@
+.reveal .slide-background.titlepage,
+.reveal .slides section.titlepage,
+.reveal .slide-background.subtitle,
+.reveal .slides section.subtitle {
+  background-color: #1e3a5f !important;
+}
+.reveal section.titlepage h1,
+.reveal section.subtitle h1 {
+  color: white !important;
+  text-shadow: none;
+}

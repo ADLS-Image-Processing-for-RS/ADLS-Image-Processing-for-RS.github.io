@@ -7,6 +7,8 @@ project:
     - lesson1-tasks.qmd
     - lesson2.qmd
     - lesson2-tasks.qmd
+    - lesson3.qmd
+    - lesson3-tasks.qmd
     - lesson4-2-supervised-learning.qmd
     - references.qmd
 
@@ -16,15 +18,10 @@ website:
   sidebar:
     contents:
       - index.qmd
-      - section: Lesson 1
-        contents:
-          - lesson1-tasks.qmd
-      - section: Lesson 2
-        contents:
-          - lesson2-tasks.qmd
-      # - section: Lesson 4
-      #   contents:
-      #     - lesson4-2-supervised-learning.qmd
+      - lesson1-tasks.qmd
+      - lesson2-tasks.qmd
+      - lesson3-tasks.qmd
+      # - lesson4-2-supervised-learning.qmd
       - references.qmd
 
 format:

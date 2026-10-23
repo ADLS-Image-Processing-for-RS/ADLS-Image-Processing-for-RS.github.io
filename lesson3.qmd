@@ -1,0 +1,803 @@
+---
+format:
+  revealjs-clean:
+    css: misc/slides.css
+---
+
+```{r}
+#| echo: false
+
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(kableExtra)
+library(tidyr)
+library(scales)
+library(tibble)
+library(gt)
+library(terra)
+library(tmap)
+library(stringr)
+library(data.tree)
+
+```
+
+# Sentinel Data <br> Types, Signatures & Preprocessing {.r-fit-text .titlepage}
+
+## Learning Objectives
+
+By the end of this lesson you will be able to:
+
+- Explain GDAL **data types** and choose the right type for a given value range
+- Use **scale and offset** to store data compactly without loss of meaningful precision
+- Describe the **spectral signatures** of key land cover types and explain which bands discriminate them
+- Navigate the **Sentinel-2 SAFE format** and import bands in R
+- Convert raw **Digital Numbers (DN)** to surface reflectance values
+- Apply the **SCL band** to mask clouds and produce a cloud-free image
+- Apply a **data pipeline** from download to analysis-ready raster
+
+
+# Data Types, scale and offset {#sec-data-types .subtitle}
+
+
+
+## Raster data types
+
+- While R and Python have a variety of data types including character strings, raster data is always stored as numeric
+- However, there are quite a number of numeric data types that can be used to store raster data, depending on the range of values and the precision required
+- The choice of data type can have a significant impact on the size of the file and the precision of the data stored
+- Since raster data is powered by GDAL, most raster based software (including R and Python) use the same data types [when writing files to disk]{.underline}
+  - In memory, only the datatypes supported by the programming languages are supported
+- The numeric data types are supported by `gdal` are summarized in @tbl-datatypes
+
+
+:::{#tbl-datatypes}
+
+| Data type         | Minimum        | Maximum       | Size[^1]| Factor |
+|-------------------|---------------:|--------------:|--------:|-------:|
+| Byte              | 0              | 255           | 39M  	 |     1x |
+| UInt16            | 0              | 65,535        | 78M  	 |     2x |
+| Int16, CInt16     | -32,768        | 32,767        | 78M  	 |     2x |
+| UInt32            | 0              | 4,294,967,295 | 155M 	 |    ~4x |
+| Int32, CInt32     | -2,147,483,648 | 2,147,483,647 | 155M 	 |    ~4x |
+| Float32, CFloat32 | -3.4E38        | 3.4E38        | 155M 	 |    ~4x |
+| Float64, CFloat64 | -1.79E308      | 1.79E308      | 309M 	 |    ~8x |
+
+: The possible ranges of different datatypes in `gdal` (source: @amatulli2024)
+
+[^1]: Difference in file size using constant dataset (same values and resolution) and varying the datatype
+
+:::
+
+
+:::{.notes}
+
+
+- If you store categorical data, use integer datatype and store the corespondence in the metadata
+- Always be minimalistic about which datatype you need.
+- Question if you have a continuous value from 0 to 1, which datatype do you use?
+  - Not `Float32`! But Multiply by 100 and use `Byte` or by 1000 (if you need more precision) and use `UInt16`
+- Question: if you are measuring temperature, and your values are floating point ranging is -20 to +40 degrees, what datatype are you going to use?
+  - Not CFloat32!
+  - Multiply by 100 and use `CInt16`
+- Question: if you compute NDVI and have values in the range 0 - 1, what datatype do you use?
+  - Not `Float32`, but not `CInt16` either:
+  - Transform the values to 0 - 255
+
+:::
+
+
+
+
+## Choosing a data type
+
+- To minimize file size, it's important to choose the data type that best fits the range of values in the raster
+- At a first glance, it might seem that the numeric values we measured / calculated *determine* the datatype we use
+- However, we can transform the values to a different range to fit a different datatype
+- For example, if we have NDVI values ranging from -1 to 1, it might seem that we need to use `CFloat32` to store these values. However, we can *transform* (rescale) these values to the range 0 - 255 and store them as `Byte` datatype.
+
+
+
+
+## Rescaling / Transforming values to 0 - 255
+
+From [Wikipedia](https://en.wikipedia.org/wiki/Feature_scaling#Rescaling_(min-max_normalization)):
+
+> To rescale a range between an arbitrary set of values [a, b], the formula becomes:
+> $$x' = a + \frac{(x-min(x))\times(b - a)}{max(x)-min(x)}$$
+
+For our usecase, we can consider:
+
+ - $x'$ to be the *stored* value
+ - $x$ to be the measured value
+ - $a$ and $b$ to be the maximum, minimum value of `Byte` (0 and 255 respectively)
+ - $min(x)$ and $max(x)$ the maximum and minimum measured values (`-1` and `1` respectively)
+
+We can use these values and simplify the formula as follows:
+
+\begin{align}
+
+x' &= 0 + \frac{(x+1)\times 255}{2} \\
+
+x' &= \frac{255x+255}{2} \\
+
+x' &= 127.5x+127.5 \\
+
+\end{align}
+
+
+## Rescaling NDVI values
+
+- We can now use this formula $x' = 127.5x+127.5$ to rescale NDVI values to the range 0 - 255
+- So, rather than storing the NDVI value 0.2, for example, we store the value 153
+- This rescaling is determined by two values:
+  - `scale` and `offset`
+  - $x' = x \times \text{scale} + \text{offset}$
+  - In our NDVI example, scale is `127.5` and offset is `127.5` as well
+
+
+
+## Precision
+
+Note that this transformation to 255 values limits our precision:
+
+- Our values are now limited to in their precision, since we only have 255 possible values
+- We can calculate the available precision like so: $\frac{1}{\text{scale}}$
+- In our case this is $\frac{1}{127.5} = 0.0078$.
+- Any measured / calculated NDVI value will be rounded to a multiple of 0.0078.
+- We need to decide if this precision is enough for our use case
+
+
+## R Implementation for vectors
+
+- A generic way to implement this in R is as follows:
+
+```{r}
+#| echo: true
+
+scale_minmax <- function(
+    x,
+    a = 0,          # the minimum value of the new range (default 0)
+    b = 255         # the maximum value of the new range (default 255)
+    ){
+  min_x = min(x)
+  max_x = max(x)
+  a + (x - min_x) * (b - a) / (max_x - min_x)
+}
+
+```
+
+Take the following example:
+
+```{r}
+set.seed(552)
+```
+
+
+```{r}
+#| echo: true
+
+# this creates 100 random NDVI values between -1 and 1
+ndvi_measured <- runif(100, -1, 1)
+
+ndvi_stored <- scale_minmax(ndvi_measured)
+
+tibble(ndvi_measured, ndvi_stored) |>
+  ggplot(aes(ndvi_measured, ndvi_stored)) +
+  geom_line(col = "grey") +
+  geom_point() +
+  labs(x = "Measured NDVI (-1 to +1)", y = "Stored value (0 to 255)") +
+  theme_minimal()
+```
+
+## Restoring the original values
+
+- Imagine you stored the NDVI values in the range 0 - 255, stored these values in a Geotiff and sent it to a colleague.
+- To restore the original NDVI values the transformation ($x' = 127x+127.5$) needs to be known
+- More precisely, the `scale` and `offset` values need to be known
+- We can simply invert the transformation to get the original values back: $x = \frac{x'-127.5}{127.5}$
+
+
+## R implementation for rasters I
+
+- Since rescaling values is a common operation, it is supported by GDAL and therefore most raster libraries
+- Rather than transforming our values in memory, we can transform them when writing the raster to disk.
+- For this, we can use the arguments `scale = ` and `offset = ` in the `writeRaster` function
+- To use these arguments we need to calculate the `scale` and `offset` values first
+- Rewriting the formula above, we can calculate `scale` and `offset` as follows:
+
+
+\begin{align}
+\text{scale} &= \frac{b - a}{max(x)-min(x)} \\
+\text{offset} &= \frac{a \times max(x) - b \times min(x)}{max(x)-min(x)}
+\end{align}
+
+- To implement this in R, I use two functions: `get_scale` and `get_offset`:
+
+```{r}
+#| echo: true
+
+get_scale <- function(
+    x,
+    a = 0,          # the minimum value of the new range (default 0)
+    b = 255,         # the maximum value of the new range (default 255)
+    min_x = min(x),
+    max_x = max(x)
+    ){
+
+  scale <- (b - a) / (max_x - min_x)
+
+  scale
+}
+
+get_offset <- function(
+    x,
+    a = 0,
+    b = 255,
+    min_x = min(x),
+    max_x = max(x)
+    ){
+  offset <- (a * max_x - b * min_x) / (max_x - min_x)
+
+  offset
+}
+
+
+get_scale(ndvi_measured, min_x = -1, max_x = 1)
+get_offset(ndvi_measured, min_x = -1, max_x = 1)
+
+
+```
+
+
+## R implementation for rasters II
+
+- The new functions `get_scale()`, `get_offset()` work nicely with vectors, but not with rasters
+- The reason it does not work for raster is that `min(x)` (and `max(x)`) are *local* and not *global* functions
+  - They return the minimum / maximum value *per cell over all bands*, not the global minimum / maximum value
+  - To calculate the global minimum and maximum value, we can either use `global`, or the slightly faster `minmax` function
+- Additionally, the `writeRaster` function will *divide* by `scale` and *subtract* `offset` from the values (see `writeRaster`), so we need to invert the two values
+- This is how this is implemented in R:
+
+```{r}
+#| echo: true
+
+get_scale2 <- function(
+    x,
+    a = 0,
+    b = 255,
+    min_max = minmax(x)[,1]
+    ){
+      stopifnot(nlyr(x) == 1) # the function currently only works with 1 layer
+
+      min_x <- min_max[1]
+      max_x <- min_max[2]
+
+      scale <- (b - a) / (max_x - min_x)
+
+      1/scale           # invert the scale, since writeRaster divides by scale
+}
+
+
+get_offset2 <- function(
+    x,
+    a = 0,
+    b = 255,
+    min_max = minmax(x)[,1]
+    ){
+      stopifnot(nlyr(x) == 1) # the function currently only works with 1 layer
+
+      min_x <- min_max[1]
+      max_x <- min_max[2]
+
+      offset <- (a * max_x - b * min_x) / (max_x - min_x)
+
+      offset * -1       # invert the offset, since writeRaster subtracts the offset
+}
+
+
+```
+
+
+## R implementation for rasters: example
+
+- Let's import a raster, calculate the `scale` and `offset` values and use these values to write to disk
+
+```{r}
+#| echo: true
+
+elev <- rast(system.file("ex/elev.tif", package="terra"))
+
+plot(elev, main = paste(minmax(elev),collapse = "-"))
+```
+
+
+```{r}
+#| echo: true
+# write to disk with the minimum data type that fits the range
+# without transformation
+
+scale <- get_scale2(elev)
+offset <- get_offset2(elev)
+
+writeRaster(
+  elev,
+  "data-out/datatypes/INT1U.tif",
+  # datatype = "INT1U",
+  overwrite = TRUE,
+  scale = scale,
+  offset = offset
+  )
+```
+
+
+## R implementation for rasters: example
+
+- Since GDAL stores the `scale` and `offset` values in the metadata, any software powered by GDAL will restore the original values on import
+- In other words, if you run `rast("data-out/datatypes/INT1U.tif")` you will not notice the values were internally stored using 0 - 255. Instead, you will retrieve the original values.
+- To finish off, let's compare the file sizes of the raster stored as `INT1U` (Byte) and `FLT8S` (Float32)
+
+
+```{r}
+#| echo: true
+
+
+writeRaster(
+  elev,
+  "data-out/datatypes/FLT8S.tif",
+  datatype = "FLT8S",
+  overwrite = TRUE
+  )
+
+
+filesize_INT1U <- file.size("data-out/datatypes/INT1U.tif")
+filesize_FLT8S <- file.size("data-out/datatypes/FLT8S.tif")
+
+```
+
+```{r}
+
+val <- percent(1-filesize_INT1U/filesize_FLT8S)
+
+
+tibble(filesize = c(filesize_INT1U, filesize_FLT8S), files = c("INT1U", "FLT8S")) |>
+  ggplot(aes(files, filesize)) +
+  geom_col() +
+  theme_classic() +
+  scale_y_continuous("Filesize (in bytes)", sec.axis = sec_axis(\(x)x * 1e-6,name = "Filesize (in megabytes)")) +
+  labs(
+    title = "Difference in Filesize when saving with different datatypes",
+    subtitle = paste("INT1U reduces the filesize by", val)
+    ) +
+  theme(axis.title.x = element_blank())
+```
+
+
+# Spectral Signatures {#sec-spectral-signatures .subtitle}
+
+## What is reflectance?
+
+- When sunlight hits a surface, part of it is **absorbed**, part is **transmitted**, and part is **reflected**
+- **Reflectance** is the fraction of incoming radiation that is reflected, expressed as a value between 0 and 1 (or 0–100%)
+- Different materials reflect different amounts of radiation at different wavelengths
+- A **spectral signature** is the reflectance of a surface measured across a range of wavelengths — it is the "fingerprint" of a land cover type
+
+:::{.notes}
+- Emphasize: the sensor does not record colour as we see it — it records electromagnetic energy at specific wavelength ranges
+- Reflectance is dimensionless (a ratio) — this is why it is comparable across dates and sensors after calibration
+- The characteristic shape of the reflectance curve is what allows classification
+:::
+
+
+## Spectral signatures of key land cover types
+
+![](img/Reflexionskurven.jpg)
+
+:::{.notes}
+- Walk through each curve:
+  - **Vegetation**: low in red (chlorophyll absorbs red light for photosynthesis), dramatic rise at ~700nm (the "red edge"), high plateau in NIR (cell structure scattering), absorption dips at ~1.4µm and ~1.9µm (water in leaves), decline in SWIR
+  - **Soil**: broadly increasing from visible to SWIR — no strong absorption features, colour depends on moisture and mineral content
+  - **Water**: high in blue (scattering), rapidly decreasing, near-zero from NIR onwards — this is why water appears dark in NIR/SWIR bands
+- The band numbers (1–7) shown are Landsat bands — Sentinel-2 has a finer subdivision of the same spectral range
+- Ask students: which band would best distinguish vegetation from soil? (NIR — soil is much lower than vegetation there)
+:::
+
+
+## The red edge
+
+- One of the most diagnostic features in vegetation spectra
+- Between the red band (~665 nm) and NIR (~780 nm), healthy vegetation reflectance rises steeply from ~5% to ~50%
+- Caused by the transition from chlorophyll absorption (red) to leaf cell scattering (NIR)
+- **Sentinel-2 is specifically designed to capture this** with three dedicated red edge bands (B05, B06, B07 at 705, 740, 783 nm)
+- Sensitive to vegetation stress: a sick or sparse canopy shows a less steep red edge
+
+:::{.notes}
+- This is why Sentinel-2 is superior to Landsat for vegetation monitoring — Landsat jumps directly from red to NIR
+- The red edge position shifts with plant stress, phenological stage, and biomass density
+- Red edge bands are used in indices like the Red Edge NDVI and Chlorophyll Index
+:::
+
+
+## Sentinel-2 bands on the spectral curve
+
+```{r}
+#| echo: false
+#| label: fig-spectral-signature
+#| fig-cap: "Approximate spectral signatures for four land cover types at Sentinel-2 band positions. Note the gap on the x-axis between B8A (865 nm) and B11 (1610 nm)."
+
+bands <- tibble(
+  band       = c("B02", "B03", "B04", "B05", "B06", "B07", "B08", "B8A", "B11", "B12"),
+  wavelength = c(490,   560,   665,   705,   740,   783,   842,   865,  1610,  2190),
+  region     = c("Visible","Visible","Visible","Red Edge","Red Edge","Red Edge","NIR","NIR","SWIR","SWIR")
+)
+
+reflectance <- tribble(
+  ~cover,       ~B02, ~B03, ~B04, ~B05, ~B06, ~B07, ~B08, ~B8A, ~B11, ~B12,
+  "Vegetation", 0.03, 0.07, 0.04, 0.15, 0.35, 0.45, 0.48, 0.47, 0.20, 0.10,
+  "Water",      0.05, 0.04, 0.02, 0.01, 0.01, 0.01, 0.01, 0.01, 0.00, 0.00,
+  "Bare Soil",  0.10, 0.13, 0.15, 0.18, 0.22, 0.25, 0.27, 0.28, 0.35, 0.28,
+  "Urban",      0.10, 0.11, 0.12, 0.14, 0.17, 0.18, 0.20, 0.21, 0.28, 0.22
+)
+
+reflectance |>
+  pivot_longer(-cover, names_to = "band", values_to = "reflectance") |>
+  mutate(band = factor(band, levels = bands$band)) |>
+  left_join(bands, by = "band") |>
+  ggplot(aes(band, reflectance, color = cover, group = cover)) +
+  geom_line(linewidth = 0.8) +
+  geom_point(size = 2.5) +
+  scale_color_manual(
+    values = c("Vegetation" = "darkgreen", "Water" = "steelblue",
+               "Bare Soil" = "#8B6914", "Urban" = "grey40")
+  ) +
+  scale_y_continuous("Reflectance", labels = percent_format(accuracy = 1), limits = c(0, 0.55)) +
+  scale_x_discrete(
+    "Band (centre wavelength)",
+    labels = c("B02\n490nm","B03\n560nm","B04\n665nm","B05\n705nm","B06\n740nm",
+               "B07\n783nm","B08\n842nm","B8A\n865nm","B11\n1610nm","B12\n2190nm")
+  ) +
+  labs(color = NULL) +
+  theme_minimal(base_size = 14) +
+  theme(legend.position = "bottom", axis.text.x = element_text(size = 9))
+```
+
+:::{.notes}
+- The x-axis is discrete (band names), so the visual gap between B8A and B11 understates the true 750 nm gap in the spectrum
+- Vegetation's steep red-edge rise from B04 → B05 → B06 is clearly visible
+- Water drops to near-zero by B05 — any pixel with NIR reflectance > ~5% is probably not water
+- Soil and Urban are hard to distinguish in the visible range but diverge slightly in SWIR
+:::
+
+
+## Spectral separability
+
+- Two land cover types are **separable** in a band if their reflectance values are clearly different in that band
+- No single band separates all classes — classification uses **combinations** of bands
+
+| To distinguish … | Use … |
+|---|---|
+| Vegetation vs. everything | NIR (B08) or NDVI |
+| Water vs. land | NIR or SWIR (B11) |
+| Vegetation vs. bare soil | Red Edge (B05–B07) |
+| Urban vs. soil | SWIR ratio or texture |
+
+:::{.notes}
+- This table is a simplification — real separability depends on the specific scene and season
+- This is why indices like NDVI and NDWI work: they exploit known spectral relationships rather than relying on a single band
+- The limits of spectral separability motivate feature engineering (focal operations in Lesson 4) — when spectral alone is not enough, spatial context helps
+:::
+
+
+# Showcase: Importing Sentinel data {.subtitle}
+
+## Download data
+
+To download Sentinel data:
+
+1. Go to the [Copernicus Browser](https://browser.dataspace.copernicus.eu/) website
+2. Login using your credentials
+3. Go to your area of interest
+4. Click on the "Search" Tab in the left panel
+5. In Data Source, select *Sentinel 2* → *L2A*
+6. Choose your desired time frame
+7. Click on the "Search" button
+8. From the search results, download one or two scenes
+
+
+## Copernicus SAFE Format I
+
+
+- Sentinel 2 data is provided in SAFE format. This is a zipped file that contains the data in separate JP2 files
+- The Sentinel-SAFE format wraps a folder containing image data in a binary data format and product metadata in XML.
+- This includes:
+  - A 'manifest.safe' file which holds the general product information in XML.
+  - Subfolders for measurement datasets containing image data in various binary formats.
+  - A preview folder containing 'quicklooks' in PNG format, Google Earth overlays in KML format and HTML preview files.
+  - An annotation folder containing the product metadata in XML as well as calibration data.
+  - A support folder containing the XML schemes describing the product XML.
+
+
+
+## Copernicus SAFE Format II
+
+The SAFE folder above includes the following content:
+
+```{r}
+#| echo: false
+
+tibble(full = list.files("data-large/S2B_MSIL2A_20240915T102559_N0511_R108_T32TMS_20240915T131207.SAFE/", recursive = TRUE, full.names = TRUE)) |>
+  mutate(
+    basen = basename(full),
+    dirn = dirname(full)
+  ) |>
+  separate_wider_delim(basen,delim = "_", names = paste0("d",1:7),too_few = "align_start",cols_remove = FALSE) |>
+  group_by(dirn, d1,d2) |>
+  mutate(
+    n = row_number(),
+    basen = ifelse(n == 3, "... (etc)", basen)
+    ) |>
+  filter(n <= 3) |>
+  ungroup() |>
+  transmute(paths = paste(dirn, basen, sep = "/")) -> fi
+
+as.Node(fi,pathName = "paths")
+
+```
+
+
+The data we are interested in is in the `IMG_DATA` folder. This folder contains the data in three different resolutions, where each band is a separate file *jp2* File.
+
+```{r}
+#| echo: true
+
+s2_files <- list.files("data-large/S2B_MSIL2A_20240915T102559_N0511_R108_T32TMS_20240915T131207.SAFE/GRANULE/L2A_T32TMS_A039316_20240915T102803/IMG_DATA/R60m/", "\\.jp2$", full.names = TRUE)
+```
+
+
+- We can import all `jp2` files into a `rast` object in a singe `rast()` command.
+- Before we do this, let's filter the data for the bands we are interested in (`B01`...`B12`)
+- To add reasonable `names` to the SpatRaster object, we can use `str_split_fixed` to extract the relevant information from the file names.
+
+```{r}
+#| echo: true
+
+# selecting only the bands we are interested in:
+s2_files <- s2_files[str_detect(s2_files, "B\\d{2}")]
+
+s2 <- rast(s2_files)
+
+# Extracting the band names from the file names and adding these
+names(s2) <- str_split_fixed(names(s2), "_",4)[,3]
+
+names(s2)
+```
+
+- Test if the data is loaded correctly:
+
+```{r}
+#| echo: true
+plot(s2[[1]])
+```
+
+- Note how the values range from 0 to > 15000. It seems that the values are not scaled yet (see @sec-data-types)
+- If `scale` and `offset` values were set using `GDAL` flags, `terra` would automatically apply these values
+- However, it seems that we have to apply these values manually: [this website](https://sentinel.esa.int/en/web/sentinel/technical-guides/sentinel-2-msi/level-1c/product-formatting), writes the following:
+
+> The transformation of reflectances in 16 bit integers is performed according to the following equation:
+> $$\text{L1C\_DN} = \rho \times \text{QUANTIFICATION\_VALUE} - \text{RADIO\_ADD\_OFFSET}$$
+> The L1C product's metadata includes the values for the QUANTIFICATION_VALUE and RADIO_ADD_OFFSET.
+
+- This information is stored in the file `MTD_MSIL2A.xml`:
+- This file contains information about the bands, the scale factor, and the offset values.
+- If we search for `QUANTIFICATION_VALUE`, we find the following information:
+
+```{r}
+#| echo: false
+
+meta <- readLines("data-large/S2B_MSIL2A_20240915T102559_N0511_R108_T32TMS_20240915T131207.SAFE/MTD_MSIL2A.xml")
+
+cat(meta[str_detect(meta, "QUANTIFICATION_VALUE")], sep = "\n")
+```
+
+- If we search for `ADD_OFFSET`, we find the following information:
+
+
+```{r}
+#| echo: false
+
+cat(meta[str_detect(meta, "ADD_OFFSET")], sep = "\n")
+```
+
+- We can now use the `scale` (10'000) and `offset` (-1'000) values to convert the data to reflectance values.
+- We can then use `minmax` to see if our rescaling worked
+
+```{r}
+#| echo: true
+s2b <- (s2 - 1000)/10000
+
+minmax(s2b)
+```
+
+
+- Note that most bands have values > 1.
+  - We have to decide how to handle these values
+  - One option is to simply clip the values to the desired range
+
+
+
+```{r}
+#| echo: true
+# function to clip values to the desired range
+force_minmax <- \(x, min = 0, max = 1){
+  x[x<min] <- min
+  x[x>max] <- max
+  x
+}
+```
+
+To apply this function to all bands, we can use the `app` function.
+
+```{r}
+#| echo: true
+s2c <- app(s2b, force_minmax)
+
+# If we now check the min/max values, we see that all values are between 0 and 1
+minmax(s2c)
+```
+
+To test if we processed the data correctly, let's create a True Color image using the bands `B04`, `B03`, and `B02`.
+
+```{r}
+#| echo: true
+plotRGB(s2c,r = 4, g = 3, b = 2, stretch = "histogram", smooth = FALSE)
+```
+
+```{r}
+#| echo: true
+# To export the R,G,B bands to a True Color Geotiff:
+writeRaster(s2c[[c(4,3,2)]], "data-out/sentinel-rgb.tif", overwrite = TRUE)
+```
+
+
+To calculate NDVI, we can create our custom function and apply it to the `s2c` object using `app`:
+
+```{r}
+#| echo: true
+ndvi <- \(x){(x[5]-x[4])/(x[5]+x[4])}
+
+s2_ndvi <- app(s2c, ndvi)
+
+tm_shape(s2_ndvi) +
+  tm_raster(style = "cont",midpoint = 0) +
+  tm_layout(legend.outside = TRUE)
+```
+
+
+# Cloud Masking with the SCL Band {#sec-cloud-masking .subtitle}
+
+## Why clouds are a problem
+
+- Clouds reflect strongly across all bands — a cloudy pixel does **not** represent the surface below
+- Using cloudy pixels in analysis (e.g. NDVI, classification) introduces severe errors
+- Sentinel-2 L2A products include a **Scene Classification Layer (SCL)** — a per-pixel quality flag generated automatically during atmospheric correction
+
+:::{.notes}
+- Unlike thin haze, which affects values subtly, clouds completely obscure the surface — affected pixels must be excluded, not corrected
+- The SCL is generated by Sen2Cor (ESA's atmospheric correction processor) using spectral rules and auxiliary data
+- It is not perfect — thin cirrus and cloud shadows in complex terrain can be misclassified — but it is the standard starting point
+:::
+
+
+## The Scene Classification Layer (SCL)
+
+| Value | Class | Keep? |
+|---|---|---|
+| 0 | No Data | ✗ |
+| 1 | Saturated / Defective | ✗ |
+| 2 | Dark Area Pixels | ✗ |
+| 3 | Cloud Shadows | ✗ |
+| 4 | Vegetation | ✓ |
+| 5 | Bare Soils | ✓ |
+| 6 | Water | ✓ |
+| 7 | Unclassified | ~ |
+| 8 | Cloud, Medium Probability | ✗ |
+| 9 | Cloud, High Probability | ✗ |
+| 10 | Thin Cirrus | ✗ |
+| 11 | Snow or Ice | ✓ |
+
+:::{.notes}
+- Class 7 (Unclassified) is ambiguous — in practice, many workflows discard it to be safe, others keep it
+- Classes 8 and 9 are the main cloud mask; class 3 (shadow) is equally important and often missed by users
+- Class 2 (dark area) catches topographic shadows in mountainous terrain — relevant in Swiss scenes
+:::
+
+
+## Importing the SCL band
+
+- The SCL band is stored as a separate JP2 file in the `R20m` resolution folder (not `R10m`)
+- It follows the same naming convention as the spectral bands
+
+```{r}
+#| echo: true
+
+scl_file <- list.files(
+  "data-large/S2B_MSIL2A_20240915T102559_N0511_R108_T32TMS_20240915T131207.SAFE/GRANULE/L2A_T32TMS_A039316_20240915T102803/IMG_DATA/R20m/",
+  pattern = "SCL.*\\.jp2$",
+  full.names = TRUE
+)
+
+scl <- rast(scl_file)
+
+# resample SCL (20m) to match s2c (60m) — nearest-neighbour preserves class values
+scl <- resample(scl, s2c, method = "near")
+
+plot(scl, main = "Scene Classification Layer")
+```
+
+:::{.notes}
+- The SCL is only available at 20m and 60m resolution — it must be resampled to match the resolution of the band stack you are masking
+- `resample(scl, s2c, method = "near")` aligns it to the target grid — nearest-neighbour is correct here because SCL is categorical
+:::
+
+
+## Applying the cloud mask
+
+```{r}
+#| echo: true
+
+# define which SCL classes are valid (cloud-free surface)
+valid_classes <- c(4, 5, 6, 11)
+
+# create a binary mask: TRUE where pixel is valid
+cloud_mask <- scl %in% valid_classes
+
+# apply to the reflectance stack
+s2_masked <- mask(s2c, cloud_mask, maskvalues = FALSE)
+```
+
+- `%in%` tests membership cell-by-cell and returns a Boolean raster
+- `mask(..., maskvalues = FALSE)` sets cells to `NA` wherever the mask is `FALSE` (i.e. cloudy)
+
+:::{.notes}
+- Remind students that `mask()` was introduced in Lesson 1 — this is the same function, now applied for a real purpose
+- The result is a SpatRaster with the same bands as before but NA for all cloudy/shadowed pixels
+- Depending on cloud cover, this may remove a large portion of the image — this is expected, not an error
+:::
+
+
+## Before and after masking
+
+```{r}
+#| echo: false
+#| layout-ncol: 2
+#| fig-cap:
+#|   - "Before masking: full scene (RGB)"
+#|   - "After masking: clouds and shadows set to NA"
+
+plotRGB(s2c, r = 4, g = 3, b = 2, stretch = "histogram", smooth = FALSE, main = "Before")
+plotRGB(s2_masked, r = 4, g = 3, b = 2, stretch = "histogram", smooth = FALSE, main = "After")
+```
+
+
+## How much of the image is usable?
+
+```{r}
+#| echo: true
+
+# count valid (non-NA) pixels in band 1 as a fraction of total pixels
+n_total <- ncell(s2_masked)
+n_valid <- global(!is.na(s2_masked[[1]]), sum)[[1]]
+
+cat(sprintf("Valid pixels: %.1f%%\n", 100 * n_valid / n_total))
+```
+
+- If usable coverage is low, consider:
+  - **Choosing a different date** with less cloud cover
+  - **Mosaicking** multiple acquisitions from nearby dates
+  - **Seasonal compositing**: combine all cloud-free pixels from a season into one image
+
+:::{.notes}
+- A common rule of thumb: discard scenes with > 20% cloud cover over your study area
+- But study area cloud cover matters more than full scene cloud cover — a scene can be 80% cloudy globally but cloud-free over your area of interest
+- Seasonal composites (e.g. median of all July scenes) are very robust and widely used in land cover mapping
+:::
