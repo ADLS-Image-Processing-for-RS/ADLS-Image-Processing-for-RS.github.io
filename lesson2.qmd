@@ -1,8 +1,11 @@
 ---
-format: revealjs-clean
+format:
+  revealjs-clean:
+    css: misc/slides.css
 ---
 
-# Raster Operations / Map algebra
+
+# Raster Operations <br> Map algebra {.r-fit-text .titlepage}
 
 
 ## Learning Objectives
@@ -16,23 +19,27 @@ By the end of this lesson you will be able to:
 - Connect **focal operations** to convolutions in image processing
 
 
+# Sensor Concepts {.titlepage}
+
 ## The Four Resolutions
 
-| Resolution | Definition |
-|-----------|-----------|
-| **Spatial** | Ground size of one pixel |
-| **Temporal** | Revisit frequency |
-| **Spectral** | Number & width of bands |
-| **Radiometric** | Intensity levels (bit depth) |
+1. **Spatial**: Ground size of one pixel 
+2. **Temporal**: Revisit frequency 
+3. **Spectral**: Number & width of bands 
+4. **Radiometric**: Intensity levels (bit depth) 
 
 **Trade-off example:** Sentinel-2: 10 m · 5 days · 13 bands vs. MODIS: 500 m · daily · 36 bands — higher resolution in one dimension typically comes at the cost of another.
 
 ::: {.notes}
-For flood mapping you need daily updates → MODIS. For field-level crop mapping you need 10 m pixels → Sentinel-2. Hyperspectral sensors (EnMAP, AVIRIS) trade spatial resolution for hundreds of spectral bands. Radiometric resolution matters for detecting subtle reflectance differences — 16-bit data captures far more detail than 8-bit.
+- Flood mapping needs daily updates → MODIS; field-level crop mapping needs 10 m pixels → Sentinel-2
+- Hyperspectral sensors (EnMAP, AVIRIS) trade spatial resolution for hundreds of spectral bands
+- Radiometric resolution: 16-bit captures far more detail than 8-bit
 :::
 
 
-## From Sensor to Analysis: DN vs. Reflectance {.smaller}
+## From Sensor to Analysis{.smaller}
+
+**DN vs. Reflectance**
 
 - Sensors record **Digital Numbers (DN)**: raw detector output
 - DN values depend on illumination angle, atmospheric conditions, and sensor calibration — **not directly comparable** across dates or sensors
@@ -48,9 +55,17 @@ For flood mapping you need daily updates → MODIS. For field-level crop mapping
 Spectral indices are designed to work with reflectance: more **sensor- and date-independent** than raw DN.
 
 ::: {.notes}
-Sentinel-2 Level-2A = surface reflectance (values scaled ×10000). Level-1C = TOA only. Always check the product level. A common gotcha: computing NDVI on raw Level-2A integers (without dividing by 10000) still gives the right *ratio* because the scale cancels — but it matters when comparing across sensors.
+- Sentinel-2 Level-2A = surface reflectance (scaled ×10 000); Level-1C = TOA only — always check the product level
+- Computing NDVI on raw Level-2A integers still gives the right *ratio* (the scale cancels), but matters when comparing across sensors
+- How each step works: 
+  - DN → Radiance: per-band gain/offset scaling
+  - Radiance → TOA Reflectance: normalise by solar irradiance & zenith angle
+  - TOA → Surface Reflectance: radiative transfer model (e.g. Sen2Cor)
 :::
 
+
+
+# Map Algebra {.titlepage}
 
 ## Introduction
 
@@ -62,7 +77,8 @@ Sentinel-2 Level-2A = surface reflectance (values scaled ×10000). Level-1C = TO
   4. **Global** — entire raster(s)
 
 ::: {.notes}
-The four types differ in spatial scope — how many cells contribute to each output value. Ask students: if I want the mean elevation of each municipality, which type is that? If I want to smooth noise in a satellite image?
+- The four types differ in **spatial scope** — how many cells contribute to each output value
+- Which type gives mean elevation per municipality? Which smooths noise in an image?
 :::
 
 
@@ -138,7 +154,7 @@ tile_plot(m_local, "Local") + tile_plot(m_focal, "Focal") +
 - For example: What is the mean elevation value for Luxembourg?
 
 ::: {.notes}
-Common mistake: `mean(r)` computes a per-cell mean across bands (a local operation), not a raster-wide mean. `global()` is the correct function for whole-raster statistics.
+- Common mistake: `mean(r)` computes a per-cell mean across bands (a **local** operation) — use `global()` for raster-wide statistics
 :::
 
 
@@ -176,20 +192,20 @@ mean_elev
 - This function calculates the distance from each cell to a specific target cell
 - For example, what is the distance from each cell to *Luxembourg City*, the capital of Luxembourg?
 
+::: {.notes}
+- Why global, not local? A local operation uses only the value at (i,j) to produce the output at (i,j). Distance requires knowledge of the entire raster's spatial extent and cell coordinates — no cell can be computed in isolation.
+:::
+
 ```{r}
 luxembourg_city <- st_point(c(6.131944,49.611667)) |>
   st_sfc(crs = 4326) |>
   st_sf() |>
   mutate(text = "Luxembourg City")
 
-p0 +
-  tm_shape(luxembourg_city) +
-  tm_dots(shape = 4, size = 1.4)
-
 luxembourg_city <- vect(luxembourg_city)
 ```
 
-## Global Operation (2) — Result
+---
 
 ```{r}
 #| echo: true
@@ -197,6 +213,11 @@ luxembourg_city <- vect(luxembourg_city)
 r_dist <- distance(r, luxembourg_city)
 r_dist <- mask(r_dist, r)
 ```
+
+::: {.notes}
+- `distance()` computes straight-line (Euclidean) distance — not travel distance along roads or terrain.
+- Resistance can be incorporated via a **cost-distance** approach: supply a friction/resistance raster (e.g. slope, land cover) and use `terra::costDist()` to accumulate cost along the least-cost path. This is common in habitat connectivity and accessibility analysis.
+:::
 
 ```{r}
 
@@ -217,7 +238,8 @@ p0 +
 What is the mean altitude *per municipality*?
 
 ::: {.notes}
-Conceptually this is a spatial group_by + summarize. The zones raster must be integer/categorical — use `rasterize()` to convert vector polygons first. Global is a special case of zonal where the entire raster is a single zone.
+- Conceptually: spatial `group_by` + `summarize`
+- The zones raster must be integer/categorical — use `rasterize()` to convert vector polygons first
 :::
 
 
@@ -235,12 +257,8 @@ mean_vals <- zonal(r, zones, fun = mean, na.rm = TRUE)
 
 ```{r}
 #| label: fig-zonal
-#| column: page
-#| layout-nrow: 1
-#| fig-cap:
-#|   - The original Zones (E.g. municipalities of Luxembourg)
-#|   - Mean elevation per zone / per municipality
-
+#| fig-width: 10
+#| fig-height: 4.5
 
 mean_vals2 <- mean_vals |>
   mutate(ID = row_number()-1, .before = 0) |>
@@ -250,19 +268,19 @@ zones_int <- as.int(zones)
 
 zones_mean <- classify(zones_int, mean_vals2)
 
-p +
+p1 <- p +
   tm_shape(zones, is.master = TRUE) +
-  tm_raster(style = "cat",legend.show = TRUE, palette = "Set1")
+  tm_raster(style = "cat", legend.show = TRUE, palette = "Set1")
 
-p +
+p2 <- p +
   tm_shape(zones_mean) +
   tm_raster(style = "cont", palette = "viridis", title = "Mean Elevation")
+
+tmap_arrange(p1, p2, ncol = 2)
 ```
 
-:::{.callout-note collapse="true"}
-
+:::{.notes}
 - The global operation can be seen as a special case of a zonal operation, where the only "Zone" is the entire dataset
-
 :::
 
 ## Local (1)
@@ -271,7 +289,8 @@ p +
 - For example, we can classify the elevation into values above and below a certain threshold
 
 ::: {.notes}
-All arithmetic (+, -, *, /) and logical (>, <, &, |) operators work element-wise on rasters in terra. Boolean rasters are the foundation of masking and multi-condition selection (as in the solar panel example in the tasks).
+- All arithmetic (`+`, `-`, `*`, `/`) and logical (`>`, `<`, `&`, `|`) operators work element-wise on rasters in terra
+- Boolean rasters are the foundation of masking and multi-condition selection (e.g. the solar panel task)
 :::
 
 
@@ -357,14 +376,10 @@ plot(l7_rgb_mean)
 
 ## Local (4) {.smaller}
 
-- In a more complex usecase, we could use the R, G and B band to calculate a grayscale value ($L^*$) using the following formula (from [here](https://stackoverflow.com/a/689547/4139249)):
+- Local operations also work across bands — each output cell combines values from multiple input layers
+- For example, **weighted brightness** emphasises red over green and blue:
 
-$$\begin{aligned}
-\gamma &= 2.2 \\
-L^* &= 116 \times Y ^ {\frac{1}{3}} - 16\\
-Y &= 0.2126 \times R^\gamma+0.7152 \times G^\gamma+0.0722 \times B^\gamma \\
-\end{aligned}
-$$
+$$B = 0.5 \times R + 0.3 \times G + 0.2 \times B$$
 
 
 
@@ -374,13 +389,7 @@ $$
 #| echo: true
 #| output: false
 
-g <- 2.2
-
-l7 <- l7/255 # scale values to 0-1
-
-Y <- 0.2126 * l7[["R"]]^g + 0.7152 * l7[["G"]]^g + 0.0722 * l7[["B"]]^g
-
-L <- 116* Y^(1/3)-16
+brightness <- 0.5 * l7[["R"]] + 0.3 * l7[["G"]] + 0.2 * l7[["B"]]
 
 ```
 
@@ -388,48 +397,32 @@ L <- 116* Y^(1/3)-16
 
 ```{r}
 
-tm_shape(L) + tm_raster(style = "cont", palette = grey.colors(255)) +
+tm_shape(brightness) + tm_raster(style = "cont", palette = grey.colors(255)) +
   tm_layout(legend.show = FALSE)
 
 
 ```
 
 
-## Spectral Indices: Why They Work
+# Spectral Indices {.titlepage}
+
+::: {.notes}
+- Transition: we just saw that local operations can combine bands with arbitrary weights — spectral indices are exactly that, but the weights and formula are chosen to highlight a specific physical property of the surface. The weighted brightness example was arbitrary; spectral indices are grounded in how materials interact with light.
+:::
+
+## Spectral Indices: Why They Work {.smaller}
+
 
 Healthy vegetation has a characteristic spectral signature:
 
 - **Absorbs red** (~650 nm): chlorophyll uses it for photosynthesis
 - **Strongly reflects NIR** (~800 nm): leaf cell structure scatters infrared light
 
-```{r}
-#| label: fig-spectral-signature
-#| echo: false
-#| fig-height: 2.8
+::: {.notes}
+- Why not just use NIR alone? NIR is not unique to vegetation — bare soil, sand, and snow also have moderate-to-high NIR reflectance. What is unique to healthy vegetation is **high NIR combined with low Red**. NDVI exploits this contrast: a sandy surface has high NIR *and* high Red → NDVI ≈ 0; healthy vegetation has high NIR but low Red → NDVI close to 1. The normalization by (NIR + Red) also reduces the influence of varying illumination and atmospheric haze.
+:::
 
-library(ggplot2)
-
-wl   <- c(450, 500, 550, 600, 650, 700, 750, 800, 850, 900)
-veg  <- c(0.04, 0.05, 0.10, 0.05, 0.04, 0.09, 0.40, 0.47, 0.48, 0.47)
-soil <- c(0.07, 0.10, 0.13, 0.16, 0.18, 0.20, 0.22, 0.24, 0.25, 0.26)
-
-df <- data.frame(
-  wl   = rep(wl, 2),
-  ref  = c(veg, soil),
-  type = rep(c("Vegetation", "Bare soil"), each = length(wl))
-)
-
-ggplot(df, aes(wl, ref, color = type)) +
-  annotate("rect", xmin = 620, xmax = 700, ymin = 0, ymax = 0.55, alpha = 0.12, fill = "red") +
-  annotate("rect", xmin = 750, xmax = 900, ymin = 0, ymax = 0.55, alpha = 0.12, fill = "darkred") +
-  annotate("text", x = 660, y = 0.52, label = "Red", color = "red3", size = 3.5, fontface = "bold") +
-  annotate("text", x = 825, y = 0.52, label = "NIR",  color = "darkred", size = 3.5, fontface = "bold") +
-  geom_line(linewidth = 1.4) +
-  scale_color_manual(values = c("Vegetation" = "#2d7a4e", "Bare soil" = "#b5854a")) +
-  labs(x = "Wavelength (nm)", y = "Reflectance", color = NULL) +
-  theme_minimal(base_size = 11) +
-  theme(legend.position = "bottom")
-```
+![Numbers indicate Landsat TM bands: 1 Blue, 2 Green, 3 Red, 4 NIR, 5 SWIR1, 7 SWIR2 (band 6 thermal, off-chart). Source: [seos-project.eu](https://seos-project.eu/remotesensing/remotesensing-c01-p06.html)](img/Reflexionskurven.jpg)
 
 
 ## Normalized Difference Indices
@@ -445,12 +438,16 @@ Normalization reduces the effect of illumination differences.
 | **NDSI** | (Green − SWIR) / (Green + SWIR) | Snow & ice |
 | **NBR** | (NIR − SWIR) / (NIR + SWIR) | Burn severity |
 
-All are **local raster operations** — the same cell-by-cell arithmetic, different band combinations.
 
 ::: {.notes}
-The normalized difference structure cancels out much of the multiplicative effect of illumination. NDWI has two conflicting definitions — Gao (1996) uses NIR/SWIR, McFeeters (1996) uses Green/NIR. Always check which is cited. The NBR is widely used for post-fire damage assessment with Sentinel-2 or Landsat.
+- All are **local raster operations** — same cell-by-cell arithmetic, different band combinations
+- Normalization cancels much of the multiplicative effect of illumination
+- NDWI has two conflicting definitions: Gao (1996) uses NIR/SWIR; McFeeters (1996) uses Green/NIR — always check which is cited
+- NBR is widely used for post-fire damage assessment with Sentinel-2 or Landsat
 :::
 
+
+# Focal Operations {.titlepage}
 
 ## Focal {#sec-focal-1}
 
@@ -459,7 +456,8 @@ The normalized difference structure cancels out much of the multiplicative effec
 - A focal operation applies an aggregation function to all cells within the specified neighborhood, uses the corresponding output as the new value for the central cell, and moves on to the next central cell
 
 ::: {.notes}
-Key trade-off: larger window → more smoothing but larger NA border (edge effect). `fillNA = TRUE` mitigates this by using whatever neighbors are available at the edges rather than requiring the full window.
+- Key trade-off: larger window → more smoothing but larger NA border (edge effect)
+- `fillNA = TRUE` mitigates this by using whatever neighbors are available at the edges
 :::
 
 :::{#fig-focal}
@@ -490,25 +488,21 @@ r_foc11 <- focal(r, focal11by11, fun = mean, fillNA = TRUE)
 
 ```{r}
 #| label: fig-focal2
-#| layout-nrow: 1
-#| column: page
-#| fig-cap: 
-#|   - Original values
-#|   - Result of a 3x3 Focal Window
-#|   - Result of a 11x11 Focal Window
+#| fig-width: 10
+#| fig-height: 4.5
 
-
-p0 + tm_shape(r_boundaries) + tm_raster() + 
+pf0 <- p0 + tm_shape(r_boundaries) + tm_raster() +
   tm_layout(legend.show = FALSE)
 
-p + tm_shape(r_foc3) + tm_raster(style = "cont", palette = "viridis") +
+pf3 <- p + tm_shape(r_foc3) + tm_raster(style = "cont", palette = "viridis") +
     tm_layout(legend.show = FALSE, frame = FALSE) +
   tm_shape(r_boundaries) + tm_raster()
 
-p + tm_shape(r_foc11) + tm_raster(style = "cont", palette = "viridis") +
+pf11 <- p + tm_shape(r_foc11) + tm_raster(style = "cont", palette = "viridis") +
     tm_layout(legend.show = FALSE, frame = FALSE) +
     tm_shape(r_boundaries) + tm_raster()
 
+tmap_arrange(pf0, pf3, pf11, ncol = 3)
 ```
 
 :::{.callout-note collapse="true"}
@@ -569,18 +563,17 @@ sobel_y
 ```
 
 
+---
+
 ```{r}
 #| label: fig-edgedetection
-#| fig-cap: 
-#|   - Laplacian Filter
-#|   - Sobel (x-direction)
-#|   - SObel (y-direction)
-#| column: page
-#| layout-nrow: 1
-focal(r, laplacian) |> plot()
-focal(r, sobel_x) |> plot()
-focal(r, sobel_y) |> plot()
-
+#| fig-width: 10
+#| fig-height: 4.5
+par(mfrow = c(1, 3))
+focal(r, laplacian) |> plot(main = "Laplacian")
+focal(r, sobel_x) |> plot(main = "Sobel X")
+focal(r, sobel_y) |> plot(main = "Sobel Y")
+par(mfrow = c(1, 1))
 ```
 
 
@@ -601,7 +594,9 @@ This is exactly the operation in **convolutional neural networks (CNNs)**:
 **The key difference**: in deep learning, kernels are *learned from data* rather than designed manually.
 
 ::: {.notes}
-Worth emphasizing with DS students — a CNN is essentially many stacked focal operations with learned kernels. The Sobel filter they just saw is exactly what a CNN's first conv layer approximates when trained on natural images. The bias-variance tradeoff applies too: larger kernels → more smoothing = more bias, less variance.
+- A CNN is essentially many stacked focal operations with *learned* kernels
+- The Sobel filter is exactly what a CNN's first conv layer approximates when trained on natural images
+- Larger kernels → more smoothing = more bias, less variance
 :::
 
 
@@ -680,25 +675,25 @@ focal_gauss |> rast() |> plot()
 - These algorithms are used so often, that they are implemented in a dedicated function (`terrain()`)
 
 ::: {.notes}
-`terrain()` is just a convenience wrapper around a focal operation with a specific kernel. Horn's algorithm uses a 3×3 weighted neighborhood to estimate the gradient in x and y directions, from which slope and aspect are derived.
+- `terrain()` is a convenience wrapper around a focal operation with a specific kernel
+- Horn's algorithm uses a 3×3 weighted neighborhood to estimate the x/y gradient, from which slope and aspect are derived
 :::
 
 ## Focal functions in terrain processing
 
 ```{r}
 #| echo: true
-#| layout-nrow: 1
 #| label: fig-terrain
-#| column: page
-#| fig-cap:
-#|   - Calculating slope using a predefined algorithm
-#|   - Calculating aspect
-
-
-terrain(r, "slope") |> plot()
-terrain(r, "aspect") |> plot()
+#| fig-width: 10
+#| fig-height: 4.5
+par(mfrow = c(1, 2))
+terrain(r, "slope") |> plot(main = "Slope")
+terrain(r, "aspect") |> plot(main = "Aspect")
+par(mfrow = c(1, 1))
 ```
 
+
+# Raster–Vector Operations {.titlepage}
 
 ## Raster–Vector Operations {.smaller}
 
@@ -713,7 +708,8 @@ Three fundamental operations linking rasters and vectors:
 | **Extract** | `extract()` | Get raster cell values at vector locations |
 
 ::: {.notes}
-`crop()` + `mask()` is almost always used together: crop first (fast — just clips the extent), mask second (precise — removes cells outside the geometry). Extract bridges to tabular analysis — it returns a data frame, not a raster.
+- `crop()` + `mask()` almost always used together: crop first (fast — clips extent), then mask (precise — removes cells outside geometry)
+- `extract()` bridges to tabular analysis — returns a data frame, not a raster
 :::
 
 
@@ -733,16 +729,13 @@ r_mask <- mask(r_crop, one_muni)
 
 ```{r}
 #| label: fig-crop-mask
-#| fig-cap:
-#|   - Original raster with municipality boundary
-#|   - crop() — trims to bounding box
-#|   - mask() — outside cells set to NA
-#| layout-nrow: 1
-#| column: page
-
+#| fig-width: 10
+#| fig-height: 4.5
+par(mfrow = c(1, 3))
 plot(r,      main = "Original"); lines(one_muni)
 plot(r_crop, main = "crop()")
 plot(r_mask, main = "mask()")
+par(mfrow = c(1, 1))
 ```
 
 
@@ -768,7 +761,9 @@ extract(r, lux, fun = mean, na.rm = TRUE) |> head(3)
 ```
 
 ::: {.notes}
-Polygon extract with `fun =` is similar to `zonal()`, but works directly on vector geometry without rasterizing first. For large datasets, the `rasterize()` + `zonal()` approach is usually faster. `extract()` without `fun =` returns every cell value per polygon — useful for building training datasets for classification.
+- Polygon extract with `fun =` is similar to `zonal()`, but works on vector geometry directly (no rasterizing)
+- For large datasets, `rasterize()` + `zonal()` is usually faster
+- `extract()` without `fun =` returns every cell value per polygon — useful for building classification training data
 :::
 
 
@@ -782,3 +777,6 @@ Polygon extract with `fun =` is similar to `zonal()`, but works directly on vect
 | **Focal** | Moving window | `focal()`, `focalMat()`, `terrain()` |
 | **Vector ops** | Geometry-based | `crop()`, `mask()`, `extract()` |
 
+
+
+## References {#refs}

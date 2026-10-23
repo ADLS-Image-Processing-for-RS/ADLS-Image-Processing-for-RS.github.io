@@ -7,7 +7,7 @@ code-fold: true
 code-summary: "Sample Solution"
 ---
 
-# Raster Data — Tasks
+# Lesson 1: Raster Data
 
 [Open slides](lesson1.html){target="_blank" .btn .btn-outline-primary}
 

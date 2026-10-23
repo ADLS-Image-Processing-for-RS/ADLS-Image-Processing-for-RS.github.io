@@ -2,10 +2,14 @@
 format:
   revealjs-clean:
     css: misc/slides.css
+    smaller: true
+execute: 
+  cache: true
 ---
 
 ```{r}
 #| echo: false
+#| cache: false
 
 library(readr)
 library(dplyr)
@@ -24,7 +28,8 @@ library(data.tree)
 
 # Sentinel Data <br> Types, Signatures & Preprocessing {.r-fit-text .titlepage}
 
-## Learning Objectives
+
+## Learning Objectives {.smaller}
 
 By the end of this lesson you will be able to:
 
@@ -46,9 +51,13 @@ By the end of this lesson you will be able to:
 - While R and Python have a variety of data types including character strings, raster data is always stored as numeric
 - However, there are quite a number of numeric data types that can be used to store raster data, depending on the range of values and the precision required
 - The choice of data type can have a significant impact on the size of the file and the precision of the data stored
+
+## Raster data types
 - Since raster data is powered by GDAL, most raster based software (including R and Python) use the same data types [when writing files to disk]{.underline}
-  - In memory, only the datatypes supported by the programming languages are supported
+- In memory, only the datatypes supported by the programming languages are supported
 - The numeric data types are supported by `gdal` are summarized in @tbl-datatypes
+
+## Raster data types{.smaller}
 
 
 :::{#tbl-datatypes}
@@ -99,7 +108,7 @@ By the end of this lesson you will be able to:
 
 
 
-## Rescaling / Transforming values to 0 - 255
+## Rescaling / Transforming values
 
 From [Wikipedia](https://en.wikipedia.org/wiki/Feature_scaling#Rescaling_(min-max_normalization)):
 
@@ -112,6 +121,8 @@ For our usecase, we can consider:
  - $x$ to be the measured value
  - $a$ and $b$ to be the maximum, minimum value of `Byte` (0 and 255 respectively)
  - $min(x)$ and $max(x)$ the maximum and minimum measured values (`-1` and `1` respectively)
+
+---
 
 We can use these values and simplify the formula as follows:
 
@@ -133,15 +144,15 @@ x' &= 127.5x+127.5 \\
 - This rescaling is determined by two values:
   - `scale` and `offset`
   - $x' = x \times \text{scale} + \text{offset}$
-  - In our NDVI example, scale is `127.5` and offset is `127.5` as well
+  - In our example, scale and offset both are $127.5$
 
 
 
 ## Precision
 
-Note that this transformation to 255 values limits our precision:
+Note that this transformation to 255 values limits our *precision*:
 
-- Our values are now limited to in their precision, since we only have 255 possible values
+- Precision is limited, since we only have 255 possible values
 - We can calculate the available precision like so: $\frac{1}{\text{scale}}$
 - In our case this is $\frac{1}{127.5} = 0.0078$.
 - Any measured / calculated NDVI value will be rounded to a multiple of 0.0078.
@@ -167,6 +178,8 @@ scale_minmax <- function(
 
 ```
 
+---
+
 Take the following example:
 
 ```{r}
@@ -181,7 +194,9 @@ set.seed(552)
 ndvi_measured <- runif(100, -1, 1)
 
 ndvi_stored <- scale_minmax(ndvi_measured)
+```
 
+```{r}
 tibble(ndvi_measured, ndvi_stored) |>
   ggplot(aes(ndvi_measured, ndvi_stored)) +
   geom_line(col = "grey") +
@@ -198,13 +213,13 @@ tibble(ndvi_measured, ndvi_stored) |>
 - We can simply invert the transformation to get the original values back: $x = \frac{x'-127.5}{127.5}$
 
 
-## R implementation for rasters I
+## R implementation for rasters
 
 - Since rescaling values is a common operation, it is supported by GDAL and therefore most raster libraries
 - Rather than transforming our values in memory, we can transform them when writing the raster to disk.
 - For this, we can use the arguments `scale = ` and `offset = ` in the `writeRaster` function
 - To use these arguments we need to calculate the `scale` and `offset` values first
-- Rewriting the formula above, we can calculate `scale` and `offset` as follows:
+- Rewriting the formula from before, we can calculate `scale` and `offset` as follows:
 
 
 \begin{align}
@@ -212,126 +227,67 @@ tibble(ndvi_measured, ndvi_stored) |>
 \text{offset} &= \frac{a \times max(x) - b \times min(x)}{max(x)-min(x)}
 \end{align}
 
-- To implement this in R, I use two functions: `get_scale` and `get_offset`:
+---
+
+- To implement this in R, I use a function `scoff_params` that returns both values:
 
 ```{r}
 #| echo: true
 
-get_scale <- function(
-    x,
-    a = 0,          # the minimum value of the new range (default 0)
-    b = 255,         # the maximum value of the new range (default 255)
-    min_x = min(x),
-    max_x = max(x)
-    ){
-
-  scale <- (b - a) / (max_x - min_x)
-
-  scale
-}
-
-get_offset <- function(
-    x,
-    a = 0,
-    b = 255,
-    min_x = min(x),
-    max_x = max(x)
-    ){
+scoff_params <- function(x, a = 0, b = 255, min_x = min(x), max_x = max(x)) {
+  scale  <- (b - a) / (max_x - min_x)
   offset <- (a * max_x - b * min_x) / (max_x - min_x)
-
-  offset
+  c(scale = scale, offset = offset)
 }
 
-
-get_scale(ndvi_measured, min_x = -1, max_x = 1)
-get_offset(ndvi_measured, min_x = -1, max_x = 1)
-
-
+scoff_params(ndvi_measured, min_x = -1, max_x = 1)
 ```
 
 
-## R implementation for rasters II
+## R implementation for rasters
 
-- The new functions `get_scale()`, `get_offset()` work nicely with vectors, but not with rasters
-- The reason it does not work for raster is that `min(x)` (and `max(x)`) are *local* and not *global* functions
-  - They return the minimum / maximum value *per cell over all bands*, not the global minimum / maximum value
-  - To calculate the global minimum and maximum value, we can either use `global`, or the slightly faster `minmax` function
-- Additionally, the `writeRaster` function will *divide* by `scale` and *subtract* `offset` from the values (see `writeRaster`), so we need to invert the two values
-- This is how this is implemented in R:
+- `scoff_params()` works for vectors, but not for rasters
+- The reason: `min(x)` and `max(x)` are *local* for rasters — they return the min/max *per cell*, not the global min/max
+  - Use `minmax()` instead, which returns the global min and max per layer
+- Additionally, `writeRaster` *divides* by `scale` and *subtracts* `offset`, so both values must be inverted
+- The raster-compatible version of `scoff_params`:
 
 ```{r}
 #| echo: true
 
-get_scale2 <- function(
-    x,
-    a = 0,
-    b = 255,
-    min_max = minmax(x)[,1]
-    ){
-      stopifnot(nlyr(x) == 1) # the function currently only works with 1 layer
-
-      min_x <- min_max[1]
-      max_x <- min_max[2]
-
-      scale <- (b - a) / (max_x - min_x)
-
-      1/scale           # invert the scale, since writeRaster divides by scale
+scoff_params <- function(x, a = 0, b = 255) {
+  stopifnot(nlyr(x) == 1)
+  mm     <- minmax(x)[, 1]
+  scale  <- (b - a) / (mm[2] - mm[1])
+  offset <- (a * mm[2] - b * mm[1]) / (mm[2] - mm[1])
+  c(scale = 1 / scale, offset = -offset)
 }
-
-
-get_offset2 <- function(
-    x,
-    a = 0,
-    b = 255,
-    min_max = minmax(x)[,1]
-    ){
-      stopifnot(nlyr(x) == 1) # the function currently only works with 1 layer
-
-      min_x <- min_max[1]
-      max_x <- min_max[2]
-
-      offset <- (a * max_x - b * min_x) / (max_x - min_x)
-
-      offset * -1       # invert the offset, since writeRaster subtracts the offset
-}
-
-
 ```
 
 
-## R implementation for rasters: example
+## R implementation for rasters
 
 - Let's import a raster, calculate the `scale` and `offset` values and use these values to write to disk
 
 ```{r}
 #| echo: true
+#| cache: false
 
 elev <- rast(system.file("ex/elev.tif", package="terra"))
 
-plot(elev, main = paste(minmax(elev),collapse = "-"))
-```
-
-
-```{r}
-#| echo: true
-# write to disk with the minimum data type that fits the range
-# without transformation
-
-scale <- get_scale2(elev)
-offset <- get_offset2(elev)
+so <- scoff_params(elev)
 
 writeRaster(
   elev,
   "data-out/datatypes/INT1U.tif",
-  # datatype = "INT1U",
   overwrite = TRUE,
-  scale = scale,
-  offset = offset
+  scale  = so["scale"],
+  offset = so["offset"]
   )
 ```
 
 
-## R implementation for rasters: example
+## R implementation for rasters 
 
 - Since GDAL stores the `scale` and `offset` values in the metadata, any software powered by GDAL will restore the original values on import
 - In other words, if you run `rast("data-out/datatypes/INT1U.tif")` you will not notice the values were internally stored using 0 - 255. Instead, you will retrieve the original values.
@@ -339,8 +295,7 @@ writeRaster(
 
 
 ```{r}
-#| echo: true
-
+#| cache: false
 
 writeRaster(
   elev,
@@ -349,28 +304,60 @@ writeRaster(
   overwrite = TRUE
   )
 
+writeRaster(
+  elev,
+  "data-out/datatypes/INT1U_DEFLATE.tif",
+  overwrite = TRUE,
+  scale  = so["scale"],
+  offset = so["offset"],
+  gdal   = "COMPRESS=DEFLATE"
+  )
 
-filesize_INT1U <- file.size("data-out/datatypes/INT1U.tif")
-filesize_FLT8S <- file.size("data-out/datatypes/FLT8S.tif")
+filesize_INT1U        <- file.size("data-out/datatypes/INT1U.tif")
+filesize_INT1U_DEFLATE <- file.size("data-out/datatypes/INT1U_DEFLATE.tif")
+filesize_FLT8S        <- file.size("data-out/datatypes/FLT8S.tif")
 
 ```
 
 ```{r}
 
-val <- percent(1-filesize_INT1U/filesize_FLT8S)
-
-
-tibble(filesize = c(filesize_INT1U, filesize_FLT8S), files = c("INT1U", "FLT8S")) |>
+tibble(
+  filesize = c(filesize_FLT8S, filesize_INT1U, filesize_INT1U_DEFLATE),
+  files    = factor(
+    c("FLT8S", "INT1U", "INT1U\n+ DEFLATE"),
+    levels = c("FLT8S", "INT1U", "INT1U\n+ DEFLATE")
+  )
+) |>
   ggplot(aes(files, filesize)) +
   geom_col() +
   theme_classic() +
-  scale_y_continuous("Filesize (in bytes)", sec.axis = sec_axis(\(x)x * 1e-6,name = "Filesize (in megabytes)")) +
-  labs(
-    title = "Difference in Filesize when saving with different datatypes",
-    subtitle = paste("INT1U reduces the filesize by", val)
-    ) +
+  scale_y_continuous("Filesize (in bytes)", sec.axis = sec_axis(\(x) x * 1e-6, name = "Filesize (MB)")) +
+  labs(title = "Effect of datatype and compression on file size") +
   theme(axis.title.x = element_blank())
 ```
+
+
+## Lossless Compression
+
+- Even after choosing a compact datatype, files can be compressed further
+- **Lossless** compression reduces file size without changing any pixel values — the original data is perfectly recoverable
+- GeoTIFF supports several lossless algorithms via GDAL; **DEFLATE** is the most widely used
+
+```{r}
+#| echo: true
+#| eval: false
+writeRaster(r, "output.tif", gdal = "COMPRESS=DEFLATE")
+```
+
+- Compression is transparent to readers: any GDAL-based software (R, QGIS, Python) decompresses automatically on load
+- Combine with a small datatype for maximum effect: `INT1U + DEFLATE` can be 8× smaller than an uncompressed `FLT8S`
+
+:::{.notes}
+- DEFLATE is identical to the algorithm used in ZIP files — students will have intuition for it
+- LZW is an older alternative; ZSTD is newer and faster but less universally supported
+- Lossy compression (JPEG) exists for imagery but is rarely appropriate for analysis — pixel values change, which breaks indices and classification
+- "Transparent to readers" is the key selling point — no extra steps needed when loading the file
+:::
 
 
 # Spectral Signatures {#sec-spectral-signatures .subtitle}

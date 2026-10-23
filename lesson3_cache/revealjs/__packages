@@ -1,0 +1,12 @@
+readr
+dplyr
+ggplot2
+kableExtra
+tidyr
+scales
+tibble
+gt
+terra
+tmap
+stringr
+data.tree

@@ -1,5 +1,7 @@
 ---
-format: revealjs-clean
+format:
+  revealjs-clean:
+    css: misc/slides.css
 ---
 
 ```{r}
@@ -45,7 +47,7 @@ Research Associate at the Research Group for Geoinformatics
 
 ::::
 
-# From tabular data to raster {#sec-tidy-to-raster}
+# From tabular data to raster {#sec-tidy-to-raster .titlepage}
 
 
 ## Tabular data
@@ -229,7 +231,7 @@ autoplot(bm)
 
 
 
-# Imagery Data {#sec-imagery-data}
+# Imagery Data {#sec-imagery-data .titlepage}
 
 ## Images are Rasters
 
@@ -583,7 +585,7 @@ plotRGB(l7_full[[c(4,3,2)]], stretch = "histogram", smooth = FALSE)
 
 
 
-# The SpatRaster Object
+# The SpatRaster Object {.titlepage}
 
 ## What makes a matrix a raster?
 
@@ -642,7 +644,7 @@ res(r)    # pixel size (x, y) in CRS units
 
 
 
-# Coordinate Reference Systems
+# Coordinate Reference Systems {.titlepage}
 
 ## What is a CRS?
 
@@ -727,7 +729,7 @@ res(r_projected) # projected: meters
 
 
 
-# NoData in Raster Data
+# NoData in Raster Data {.titlepage}
 
 ## What does NA mean in a raster?
 
@@ -826,7 +828,7 @@ plot(r_foc_pad, main = "fillNA = TRUE")
 
 
 
-# Reading and Writing Rasters
+# Reading and Writing Rasters {.titlepage}
 
 ## Common raster file formatsCommon raster {.smaller}
 
