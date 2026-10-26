@@ -14,7 +14,7 @@
     "href": "lesson3-tasks.html",
     "title": "Lesson 3: Sentinel Data",
     "section": "",
-    "text": "Open slides\n\n\n\n\n\n\nImportant\n\n\n\n\nTry this without AI first — struggle builds understanding.\nAsk if you are stuck. Asking builds understanding too!\n\n\n\n\n\nDownload the Sentinel 2 Image from moodle (CW40 - Image Classification of Remote Sensing Data). Alternatively, download the data from the Copernicus browser.\nImport the bands R, B, G and NIR as a raster image in R (see Spectral Bands (Wikipedia)). Make sure to convert the digital numbers to surface reflectance values.",
+    "text": "Open slides\n\n\n\n\n\n\nImportant\n\n\n\n\nTry this without AI first — struggle builds understanding.\nAsk if you are stuck. Asking builds understanding too!\n\n\n\n\n\nDownload a Sentinel-2 L2A scene of your choice from the Copernicus Browser (follow the steps from the lesson slides). Extract the .zip archive and note the path to the resulting .SAFE folder.\nImport the Blue (B02), Green (B03), Red (B04), and NIR (B08) bands from the IMG_DATA/R10m/ subfolder (see Spectral Bands (Wikipedia)). Convert digital numbers to surface reflectance using scale and offset manually.\nAfter converting, plot a histogram of one band with hist() and inspect minmax(s2). What do you notice about the value range, and why does this happen? Clip all values to [0, 1] using app() and store the result back as s2.\n\n\n\nVisualize the Sentinel-2 image as a True Color composite (Red = B04, Green = B03, Blue = B02) and a False Color composite (Red = B08/NIR, Green = B04, Blue = B03). Use plotRGB() with stretch = \"histogram\".\nWhich land cover types appear bright red in the False Color image, and why?\n\n\n\nThe SCL band is not in R10m/ — find it in the IMG_DATA/R20m/ folder of your SAFE archive using list.files() with pattern = \"SCL\". Import it, resample to match s2, and apply a cloud mask keeping only pixels classified as vegetation (4), bare soils (5), water (6), or snow/ice (11).\nResample the SCL to match the resolution of s2 before masking (use method = \"near\"). Store the result as s2_masked and report what percentage of pixels are cloud-free.\n\n\n\nCompute NDVI from both s2 (unmasked) and s2_masked (cloud-masked):\n\\[\\text{NDVI} = \\frac{\\text{B08} - \\text{B04}}{\\text{B08} + \\text{B04}}\\]\nCompare the global mean NDVI of both images using global(..., mean, na.rm = TRUE). Why does the masked image have a higher mean NDVI?\n\n\n\nWrite the cloud-masked NDVI to disk in two ways:\n\nAs Float32 (full precision, no transformation)\nAs Byte (0–255) using scoff_params() to compute scale and offset, with DEFLATE compression\n\nCompare the file sizes using file.size(). Then read the Byte file back and compute the maximum absolute difference from the original NDVI using global(abs(...), max, na.rm = TRUE). How large is the precision loss?",
     "crumbs": [
       "Lesson 3: Sentinel Data"
     ]
@@ -24,7 +24,47 @@
     "href": "lesson3-tasks.html#task-1",
     "title": "Lesson 3: Sentinel Data",
     "section": "",
-    "text": "Download the Sentinel 2 Image from moodle (CW40 - Image Classification of Remote Sensing Data). Alternatively, download the data from the Copernicus browser.\nImport the bands R, B, G and NIR as a raster image in R (see Spectral Bands (Wikipedia)). Make sure to convert the digital numbers to surface reflectance values.",
+    "text": "Download a Sentinel-2 L2A scene of your choice from the Copernicus Browser (follow the steps from the lesson slides). Extract the .zip archive and note the path to the resulting .SAFE folder.\nImport the Blue (B02), Green (B03), Red (B04), and NIR (B08) bands from the IMG_DATA/R10m/ subfolder (see Spectral Bands (Wikipedia)). Convert digital numbers to surface reflectance using scale and offset manually.\nAfter converting, plot a histogram of one band with hist() and inspect minmax(s2). What do you notice about the value range, and why does this happen? Clip all values to [0, 1] using app() and store the result back as s2.",
+    "crumbs": [
+      "Lesson 3: Sentinel Data"
+    ]
+  },
+  {
+    "objectID": "lesson3-tasks.html#task-2",
+    "href": "lesson3-tasks.html#task-2",
+    "title": "Lesson 3: Sentinel Data",
+    "section": "",
+    "text": "Visualize the Sentinel-2 image as a True Color composite (Red = B04, Green = B03, Blue = B02) and a False Color composite (Red = B08/NIR, Green = B04, Blue = B03). Use plotRGB() with stretch = \"histogram\".\nWhich land cover types appear bright red in the False Color image, and why?",
+    "crumbs": [
+      "Lesson 3: Sentinel Data"
+    ]
+  },
+  {
+    "objectID": "lesson3-tasks.html#task-3",
+    "href": "lesson3-tasks.html#task-3",
+    "title": "Lesson 3: Sentinel Data",
+    "section": "",
+    "text": "The SCL band is not in R10m/ — find it in the IMG_DATA/R20m/ folder of your SAFE archive using list.files() with pattern = \"SCL\". Import it, resample to match s2, and apply a cloud mask keeping only pixels classified as vegetation (4), bare soils (5), water (6), or snow/ice (11).\nResample the SCL to match the resolution of s2 before masking (use method = \"near\"). Store the result as s2_masked and report what percentage of pixels are cloud-free.",
+    "crumbs": [
+      "Lesson 3: Sentinel Data"
+    ]
+  },
+  {
+    "objectID": "lesson3-tasks.html#task-4",
+    "href": "lesson3-tasks.html#task-4",
+    "title": "Lesson 3: Sentinel Data",
+    "section": "",
+    "text": "Compute NDVI from both s2 (unmasked) and s2_masked (cloud-masked):\n\\[\\text{NDVI} = \\frac{\\text{B08} - \\text{B04}}{\\text{B08} + \\text{B04}}\\]\nCompare the global mean NDVI of both images using global(..., mean, na.rm = TRUE). Why does the masked image have a higher mean NDVI?",
+    "crumbs": [
+      "Lesson 3: Sentinel Data"
+    ]
+  },
+  {
+    "objectID": "lesson3-tasks.html#task-5",
+    "href": "lesson3-tasks.html#task-5",
+    "title": "Lesson 3: Sentinel Data",
+    "section": "",
+    "text": "Write the cloud-masked NDVI to disk in two ways:\n\nAs Float32 (full precision, no transformation)\nAs Byte (0–255) using scoff_params() to compute scale and offset, with DEFLATE compression\n\nCompare the file sizes using file.size(). Then read the Byte file back and compute the maximum absolute difference from the original NDVI using global(abs(...), max, na.rm = TRUE). How large is the precision loss?",
     "crumbs": [
       "Lesson 3: Sentinel Data"
     ]

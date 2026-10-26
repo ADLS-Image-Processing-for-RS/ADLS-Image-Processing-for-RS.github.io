@@ -118,6 +118,35 @@ document.addEventListener('keydown', function(event) {
 });
 </script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="misc/book-style.css">
 </head>
@@ -385,8 +414,34 @@ Important
 </div>
 <section id="task-1" class="level2">
 <h2 class="anchored" data-anchor-id="task-1">Task 1</h2>
-<p>Download the Sentinel 2 Image from <a href="https://moodle.zhaw.ch/">moodle</a> (<em>CW40 - Image Classification of Remote Sensing Data</em>). Alternatively, download the data from the <a href="https://browser.dataspace.copernicus.eu/">Copernicus browser</a>.</p>
-<p>Import the bands R, B, G and NIR as a raster image in R (see <a href="https://en.wikipedia.org/wiki/Sentinel-2#Spectral_bands">Spectral Bands (Wikipedia)</a>). Make sure to convert the digital numbers to surface reflectance values.</p>
+<p>Download a Sentinel-2 <strong>L2A</strong> scene of your choice from the <a href="https://browser.dataspace.copernicus.eu/">Copernicus Browser</a> (follow the steps from the lesson slides). Extract the <code>.zip</code> archive and note the path to the resulting <code>.SAFE</code> folder.</p>
+<p>Import the Blue (B02), Green (B03), Red (B04), and NIR (B08) bands from the <code>IMG_DATA/R10m/</code> subfolder (see <a href="https://en.wikipedia.org/wiki/Sentinel-2#Spectral_bands">Spectral Bands (Wikipedia)</a>). Convert digital numbers to surface reflectance using scale and offset manually.</p>
+<p>After converting, plot a histogram of one band with <code>hist()</code> and inspect <code>minmax(s2)</code>. What do you notice about the value range, and why does this happen? Clip all values to [0, 1] using <code>app()</code> and store the result back as <code>s2</code>.</p>
+</section>
+<section id="task-2" class="level2">
+<h2 class="anchored" data-anchor-id="task-2">Task 2</h2>
+<p>Visualize the Sentinel-2 image as a <strong>True Color</strong> composite (Red = B04, Green = B03, Blue = B02) and a <strong>False Color</strong> composite (Red = B08/NIR, Green = B04, Blue = B03). Use <code>plotRGB()</code> with <code>stretch = "histogram"</code>.</p>
+<p>Which land cover types appear bright red in the False Color image, and why?</p>
+</section>
+<section id="task-3" class="level2">
+<h2 class="anchored" data-anchor-id="task-3">Task 3</h2>
+<p>The SCL band is not in <code>R10m/</code> — find it in the <code>IMG_DATA/R20m/</code> folder of your SAFE archive using <code>list.files()</code> with <code>pattern = "SCL"</code>. Import it, resample to match <code>s2</code>, and apply a cloud mask keeping only pixels classified as vegetation (4), bare soils (5), water (6), or snow/ice (11).</p>
+<p>Resample the SCL to match the resolution of <code>s2</code> before masking (use <code>method = "near"</code>). Store the result as <code>s2_masked</code> and report what percentage of pixels are cloud-free.</p>
+</section>
+<section id="task-4" class="level2">
+<h2 class="anchored" data-anchor-id="task-4">Task 4</h2>
+<p>Compute NDVI from both <code>s2</code> (unmasked) and <code>s2_masked</code> (cloud-masked):</p>
+<p><span class="math display">\[\text{NDVI} = \frac{\text{B08} - \text{B04}}{\text{B08} + \text{B04}}\]</span></p>
+<p>Compare the global mean NDVI of both images using <code>global(..., mean, na.rm = TRUE)</code>. Why does the masked image have a higher mean NDVI?</p>
+</section>
+<section id="task-5" class="level2">
+<h2 class="anchored" data-anchor-id="task-5">Task 5</h2>
+<p>Write the cloud-masked NDVI to disk in two ways:</p>
+<ol type="a">
+<li>As <code>Float32</code> (full precision, no transformation)</li>
+<li>As <code>Byte</code> (0–255) using <code>scoff_params()</code> to compute scale and offset, with <code>DEFLATE</code> compression</li>
+</ol>
+<p>Compare the file sizes using <code>file.size()</code>. Then read the Byte file back and compute the maximum absolute difference from the original NDVI using <code>global(abs(...), max, na.rm = TRUE)</code>. How large is the precision loss?</p>
 
 
 </section>

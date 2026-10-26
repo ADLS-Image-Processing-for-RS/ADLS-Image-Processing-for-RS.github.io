@@ -903,18 +903,15 @@ max  1.5155</code></pre>
 
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a></a><span class="fu">plotRGB</span>(s2b, <span class="at">r =</span> <span class="dv">4</span>, <span class="at">g =</span> <span class="dv">3</span>, <span class="at">b =</span> <span class="dv">2</span>, <span class="at">stretch =</span> <span class="st">"histogram"</span>, <span class="at">smooth =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display">
-<div>
-<figure>
-<p><img data-src="lesson3_files/figure-revealjs/unnamed-chunk-20-1.png" width="960"></p>
-</figure>
+
 </div>
-</div>
-</div>
-<div class="cell">
+<img data-src="lesson3_files/figure-revealjs/unnamed-chunk-20-1.png" width="960" class="r-stretch"><div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a></a><span class="co"># To export the R,G,B bands to a True Color Geotiff:</span></span>
 <span id="cb21-2"><a></a><span class="fu">writeRaster</span>(s2b[[<span class="fu">c</span>(<span class="dv">4</span>,<span class="dv">3</span>,<span class="dv">2</span>)]], <span class="st">"data-out/sentinel-rgb.tif"</span>, <span class="at">overwrite =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
+</section>
+<section class="slide level2">
+
 <p>To calculate NDVI, we can create our custom function and apply it to the <code>s2b</code> object using <code>app</code>:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a>ndvi <span class="ot">&lt;-</span> \(x){(x[<span class="dv">5</span>]<span class="sc">-</span>x[<span class="dv">4</span>])<span class="sc">/</span>(x[<span class="dv">5</span>]<span class="sc">+</span>x[<span class="dv">4</span>])}</span>
@@ -925,15 +922,9 @@ max  1.5155</code></pre>
 <span id="cb22-6"><a></a><span class="fu">tm_shape</span>(s2_ndvi) <span class="sc">+</span></span>
 <span id="cb22-7"><a></a>  <span class="fu">tm_raster</span>(<span class="at">style =</span> <span class="st">"cont"</span>,<span class="at">midpoint =</span> <span class="dv">0</span>) <span class="sc">+</span></span>
 <span id="cb22-8"><a></a>  <span class="fu">tm_layout</span>(<span class="at">legend.outside =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display">
-<div>
-<figure>
-<p><img data-src="lesson3_files/figure-revealjs/unnamed-chunk-22-1.png" width="960"></p>
-</figure>
+
 </div>
-</div>
-</div>
-</section></section>
+<img data-src="lesson3_files/figure-revealjs/unnamed-chunk-22-1.png" width="960" class="r-stretch"></section></section>
 <section>
 <section id="sec-cloud-masking" class="title-slide slide level1 subtitle center">
 <h1>Cloud Masking with the SCL Band</h1>
