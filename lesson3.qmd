@@ -35,7 +35,7 @@ By the end of this lesson you will be able to:
 
 - Explain GDAL **data types** and choose the right type for a given value range
 - Use **scale and offset** to store data compactly without loss of meaningful precision
-- Describe the **spectral signatures** of key land cover types and explain which bands discriminate them
+<!-- - Describe the **spectral signatures** of key land cover types and explain which bands discriminate them -->
 - Navigate the **Sentinel-2 SAFE format** and import bands in R
 - Convert raw **Digital Numbers (DN)** to surface reflectance values
 - Apply the **SCL band** to mask clouds and produce a cloud-free image
@@ -46,8 +46,9 @@ By the end of this lesson you will be able to:
 
 
 
-## Why this matters: Sentinel-2
+## Why this matters
 
+- Storage space!
 - Sentinel-2 bands are stored as **raw integers** (UInt16, values ~0–15000)
 - The conversion to surface reflectance requires a **scale and offset** — documented in a separate XML file
 - GDAL reads individual JP2 files, not the full product → **the conversion is never applied automatically**
@@ -64,8 +65,8 @@ By the end of this lesson you will be able to:
 
 - Raster data is always stored as **numeric**
 - GDAL defines the supported types — shared by R, Python, QGIS
-- Choice of type affects **file size** and **precision**
 - In memory: R/Python types; on disk: GDAL types
+- Choice of type affects **file size** and **precision**
 
 ## Raster data types {.smaller}
 
@@ -131,7 +132,7 @@ For NDVI ∈ [−1, 1] rescaled to [0, 255]:
 
 ---
 
-We can use these values and simplify the formula as follows:
+- We can use these values and simplify the formula as follows:
 
 \begin{align}
 
@@ -144,8 +145,6 @@ x' &= 127.5x+127.5 \\
 \end{align}
 
 
-## Rescaling NDVI values
-
 - Formula: $x' = 127.5x + 127.5$
 - Example: NDVI $0.2$ → stored as $153$
 - Two parameters describe the rescaling:
@@ -153,7 +152,7 @@ x' &= 127.5x+127.5 \\
 
 
 
-## Precision
+## Precision (and lack thereof)
 
 - Only 255 distinct values → limited precision
 - Precision = $\frac{1}{\text{scale}} = \frac{1}{127.5} \approx 0.008$
@@ -189,9 +188,7 @@ set.seed(552)
 
 ```{r}
 #| echo: true
-
-# this creates 100 random NDVI values between -1 and 1
-ndvi_measured <- runif(100, -1, 1)
+ndvi_measured <- runif(10, -1, 1)
 
 ndvi_stored <- scale_minmax(ndvi_measured)
 ```
@@ -210,18 +207,26 @@ tibble(ndvi_measured, ndvi_stored) |>
 - A colleague receiving your file needs to know how to get back the original values
 - Invert the transformation using `scale` and `offset`:
 $$x = \frac{x' - 127.5}{127.5}$$
-- Both values are stored in the file metadata — GDAL reads them automatically
+<!-- - Both values can be stored in the file metadata for GDAL to read them automatically -->
 
 
 ## R implementation for rasters
 
-- GDAL supports scale/offset natively → pass directly to `writeRaster()`
+- GDAL supports scale/offset natively (pass directly to `writeRaster()`)
+- Values are stored in file metadata and recognized during import
 - Formulas to derive them from the value range:
 
 \begin{align}
 \text{scale} &= \frac{b - a}{\max(x)-\min(x)} \\
+\\
 \text{offset} &= \frac{a \times \max(x) - b \times \min(x)}{\max(x)-\min(x)}
 \end{align}
+
+
+Note:
+
+- $a$ and $b$ refer to the target range
+- min and max could either be the *theoretical* or *practical* extremes: **What are pros / cons of using either?**
 
 ---
 
@@ -233,6 +238,9 @@ scoff_params <- function(x, a = 0, b = 255, min_x = min(x), max_x = max(x)) {
   offset <- (a * max_x - b * min_x) / (max_x - min_x)
   c(scale = scale, offset = offset)
 }
+
+scoff_params(ndvi_measured)
+
 
 scoff_params(ndvi_measured, min_x = -1, max_x = 1)
 ```
@@ -259,7 +267,7 @@ scoff_params <- function(x, a = 0, b = 255) {
 
 ## R implementation for rasters
 
-- Let's import a raster, calculate the `scale` and `offset` values and use these values to write to disk
+Let's import a raster, calculate the `scale` and `offset` values and use these values to write to disk
 
 ```{r}
 #| echo: true
@@ -352,6 +360,7 @@ writeRaster(r, "output.tif", gdal = "COMPRESS=DEFLATE")
 - "Transparent to readers" is the key selling point — no extra steps needed when loading the file
 :::
 
+<!--
 
 # Spectral Signatures {#sec-spectral-signatures .subtitle}
 
@@ -468,6 +477,8 @@ reflectance |>
 - The limits of spectral separability motivate feature engineering (focal operations in Lesson 4) — when spectral alone is not enough, spatial context helps
 :::
 
+--> 
+
 
 # Showcase: Importing Sentinel data {.subtitle}
 
@@ -522,6 +533,7 @@ as.Node(fi,pathName = "paths")
 
 ```
 
+---
 
 The bands are in `IMG_DATA/` — one JP2 per band, at 10m, 20m, and 60m.
 
@@ -536,6 +548,7 @@ s2_files <- list.files("data-large/S2B_MSIL2A_20240915T102559_N0511_R108_T32TMS_
 
 ```{r}
 #| echo: true
+#| cache: false
 
 # selecting only the bands we are interested in:
 s2_files <- s2_files[str_detect(s2_files, "B\\d{2}")]
@@ -548,20 +561,29 @@ names(s2) <- str_split_fixed(names(s2), "_",4)[,3]
 names(s2)
 ```
 
+---
+
 - Test if the data is loaded correctly:
 
 ```{r}
 #| echo: true
+#| cache: false
 plot(s2[[1]])
 ```
+
+---
 
 - Values range 0–15000 → **not yet reflectance** (see @sec-data-types)
 - GDAL hasn't applied scale/offset automatically → we must do it manually
 - The conversion formula is documented in `MTD_MSIL2A.xml`:
 
-> $$\text{L1C\_DN} = \rho \times \text{QUANTIFICATION\_VALUE} - \text{RADIO\_ADD\_OFFSET}$$
+$$DN = \rho \times Q - O$$
 
-Searching for `QUANTIFICATION_VALUE`:
+where $Q$ = quantification value and $O$ = radiometric add offset — let's extract them:
+
+---
+
+Searching for `QUANTIFICATION_VALUE` in `SAFE/MTD_MSIL2A.xml`:
 
 ```{r}
 #| echo: false
@@ -571,7 +593,9 @@ meta <- readLines("data-large/S2B_MSIL2A_20240915T102559_N0511_R108_T32TMS_20240
 cat(meta[str_detect(meta, "QUANTIFICATION_VALUE")], sep = "\n")
 ```
 
-Searching for `ADD_OFFSET`:
+---
+
+Searching for `ADD_OFFSET`  in `SAFE/MTD_MSIL2A.xml`:
 
 ```{r}
 #| echo: false
@@ -579,60 +603,67 @@ Searching for `ADD_OFFSET`:
 cat(meta[str_detect(meta, "ADD_OFFSET")], sep = "\n")
 ```
 
-- `scale` = 10'000, `offset` = −1'000 → apply: `(DN − 1000) / 10000`
-- Check with `minmax()` — some bands still exceed 1.0 → clip to [0, 1]
+---
+
+- $Q$ = 10'000, $O$ = −1'000 → $\rho = (DN - 1000) / 10000$
+- But are the resulting values physically plausible?
 
 ```{r}
 #| echo: true
+#| cache: false
 s2b <- (s2 - 1000)/10000
 
 minmax(s2b)
 ```
 
 
-- Note that most bands have values > 1.
-  - We have to decide how to handle these values
-  - One option is to simply clip the values to the desired range
-
-
+## Out-of-range reflectance values
 
 ```{r}
 #| echo: true
-# function to clip values to the desired range
-force_minmax <- \(x, min = 0, max = 1){
-  x[x<min] <- min
-  x[x>max] <- max
-  x
-}
+#| cache: false
+hist(s2b)
+```
+
+- Reflectance is bounded by definition: 0 (no reflection) to 1 (perfect reflection)
+- Yet the histogram shows values both **below 0** and **above 1**
+
+## Why are values out of range?
+
+- **Below 0** — ESA intentionally introduced a −1000 DN offset (processing baseline 04.00)
+  - Dark surfaces (deep water, shadows) can have slightly negative reflectance after atmospheric correction
+  - The offset shifts all DNs up to keep them positive on disk; subtracting it back out exposes those negatives
+  - These values are **physically meaningful** — clipping them to 0 alters real data
+- **Above 1** — clouds and saturated pixels exceed the calibration reference; these are true artefacts
+- The proper fix for both is **SCL masking**: clouds (8, 9), shadows (3), and water (6) are flagged and excluded
+- After masking, residual out-of-range values are rare; clipping is then a safe fallback
+
+---
+
+```{r}
+#| echo: true
+#| cache: false
+plotRGB(s2b, r = 4, g = 3, b = 2, stretch = "histogram", smooth = FALSE)
 ```
 
 ```{r}
 #| echo: true
-s2c <- app(s2b, force_minmax)
-
-# If we now check the min/max values, we see that all values are between 0 and 1
-minmax(s2c)
-```
-
-```{r}
-#| echo: true
-plotRGB(s2c,r = 4, g = 3, b = 2, stretch = "histogram", smooth = FALSE)
-```
-
-```{r}
-#| echo: true
+#| cache: false
 # To export the R,G,B bands to a True Color Geotiff:
-writeRaster(s2c[[c(4,3,2)]], "data-out/sentinel-rgb.tif", overwrite = TRUE)
+writeRaster(s2b[[c(4,3,2)]], "data-out/sentinel-rgb.tif", overwrite = TRUE)
 ```
 
+---
 
-To calculate NDVI, we can create our custom function and apply it to the `s2c` object using `app`:
+To calculate NDVI, we can create our custom function and apply it to the `s2b` object using `app`:
 
 ```{r}
 #| echo: true
+#| cache: false
 ndvi <- \(x){(x[5]-x[4])/(x[5]+x[4])}
 
-s2_ndvi <- app(s2c, ndvi)
+s2_ndvi <- app(s2b, ndvi)
+s2_ndvi[!is.finite(s2_ndvi)] <- NA
 
 tm_shape(s2_ndvi) +
   tm_raster(style = "cont",midpoint = 0) +
@@ -686,7 +717,8 @@ tm_shape(s2_ndvi) +
 - It follows the same naming convention as the spectral bands
 
 ```{r}
-#| echo: true
+#| echo: false
+#| cache: false
 
 scl_file <- list.files(
   "data-large/S2B_MSIL2A_20240915T102559_N0511_R108_T32TMS_20240915T131207.SAFE/GRANULE/L2A_T32TMS_A039316_20240915T102803/IMG_DATA/R20m/",
@@ -696,15 +728,23 @@ scl_file <- list.files(
 
 scl <- rast(scl_file)
 
-# resample SCL (20m) to match s2c (60m) — nearest-neighbour preserves class values
-scl <- resample(scl, s2c, method = "near")
+# resample SCL (20m) to match s2b (60m) — nearest-neighbour preserves class values
+scl <- resample(scl, s2b, method = "near")
+
+levels(scl) <- data.frame(
+  value = 0:11,
+  label = c("No Data", "Saturated/Defective", "Dark Area",
+            "Cloud Shadow", "Vegetation", "Bare Soil", "Water",
+            "Unclassified", "Cloud (med.)", "Cloud (high)",
+            "Thin Cirrus", "Snow/Ice")
+)
 
 plot(scl, main = "Scene Classification Layer")
 ```
 
 :::{.notes}
 - The SCL is only available at 20m and 60m resolution — it must be resampled to match the resolution of the band stack you are masking
-- `resample(scl, s2c, method = "near")` aligns it to the target grid — nearest-neighbour is correct here because SCL is categorical
+- `resample(scl, s2b, method = "near")` aligns it to the target grid — nearest-neighbour is correct here because SCL is categorical
 :::
 
 
@@ -712,6 +752,7 @@ plot(scl, main = "Scene Classification Layer")
 
 ```{r}
 #| echo: true
+#| cache: false
 
 # define which SCL classes are valid (cloud-free surface)
 valid_classes <- c(4, 5, 6, 11)
@@ -720,7 +761,11 @@ valid_classes <- c(4, 5, 6, 11)
 cloud_mask <- scl %in% valid_classes
 
 # apply to the reflectance stack
-s2_masked <- mask(s2c, cloud_mask, maskvalues = FALSE)
+s2_masked <- mask(s2b, cloud_mask, maskvalues = FALSE)
+
+# clip residual out-of-range values after masking
+force_minmax <- \(x, min = 0, max = 1){ x[x < min] <- min; x[x > max] <- max; x }
+s2_masked <- app(s2_masked, force_minmax)
 ```
 
 - `%in%` tests membership cell-by-cell and returns a Boolean raster
@@ -737,12 +782,13 @@ s2_masked <- mask(s2c, cloud_mask, maskvalues = FALSE)
 
 ```{r}
 #| echo: false
+#| cache: false
 #| layout-ncol: 2
 #| fig-cap:
 #|   - "Before masking: full scene (RGB)"
 #|   - "After masking: clouds and shadows set to NA"
 
-plotRGB(s2c, r = 4, g = 3, b = 2, stretch = "histogram", smooth = FALSE, main = "Before")
+plotRGB(s2b, r = 4, g = 3, b = 2, stretch = "histogram", smooth = FALSE, main = "Before")
 plotRGB(s2_masked, r = 4, g = 3, b = 2, stretch = "histogram", smooth = FALSE, main = "After")
 ```
 
@@ -751,6 +797,7 @@ plotRGB(s2_masked, r = 4, g = 3, b = 2, stretch = "histogram", smooth = FALSE, m
 
 ```{r}
 #| echo: true
+#| cache: false
 
 # count valid (non-NA) pixels in band 1 as a fraction of total pixels
 n_total <- ncell(s2_masked)
@@ -769,3 +816,6 @@ cat(sprintf("Valid pixels: %.1f%%\n", 100 * n_valid / n_total))
 - But study area cloud cover matters more than full scene cloud cover — a scene can be 80% cloudy globally but cloud-free over your area of interest
 - Seasonal composites (e.g. median of all July scenes) are very robust and widely used in land cover mapping
 :::
+
+
+## References {#refs}

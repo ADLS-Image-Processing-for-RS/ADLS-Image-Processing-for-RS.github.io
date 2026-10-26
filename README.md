@@ -78,6 +78,11 @@ Slides are included in `project: render:` but excluded from the sidebar. Student
 - **Accuracy assessment** (add to L4)
   - Systematic treatment: confusion matrix, producer/user accuracy, area-adjusted estimates, sampling design
 
+- **Multispectral classification in L4** (next session)
+  - Current L4 uses single-band greyscale aerial imagery (1961)
+  - Extend to RGB and ideally multispectral (Sentinel-2) data for land cover classification
+  - Connects L3 (S2 import, cloud masking) directly to L4 (classification)
+
 ### Refactoring (2027)
 
 - **L1: Long → Wide → Matrix → Raster chain** — shorten drastically (too many slides before anything visual)

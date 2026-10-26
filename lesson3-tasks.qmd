@@ -17,23 +17,139 @@ code-summary: "Sample Solution"
 
 ## Task 1
 
-Download the Sentinel 2 Image from [moodle](https://moodle.zhaw.ch/) (*CW40 - Image Classification of Remote Sensing Data*). Alternatively, download the data from the [Copernicus browser](https://browser.dataspace.copernicus.eu/).
+Download a Sentinel-2 **L2A** scene of your choice from the [Copernicus Browser](https://browser.dataspace.copernicus.eu/) (follow the steps from the lesson slides). Extract the `.zip` archive and note the path to the resulting `.SAFE` folder.
 
-Import the bands R, B, G and NIR as a raster image in R (see [Spectral Bands (Wikipedia)](https://en.wikipedia.org/wiki/Sentinel-2#Spectral_bands)). Make sure to convert the digital numbers to surface reflectance values.
+Import the Blue (B02), Green (B03), Red (B04), and NIR (B08) bands from the `IMG_DATA/R10m/` subfolder (see [Spectral Bands (Wikipedia)](https://en.wikipedia.org/wiki/Sentinel-2#Spectral_bands)). Convert digital numbers to surface reflectance using scale and offset manually.
+
+After converting, plot a histogram of one band with `hist()` and inspect `minmax(s2)`. What do you notice about the value range, and why does this happen? Clip all values to [0, 1] using `app()` and store the result back as `s2`.
 
 ```{r}
 library(terra)
 library(stringr)
 
-s2_files <- list.files("data/Sentinel2_Data", full.names = TRUE)
+img_dir <- "data-large/S2B_MSIL2A_20240915T102559_N0511_R108_T32TMS_20240915T131207.SAFE/GRANULE/L2A_T32TMS_A039316_20240915T102803/IMG_DATA/R10m/"
 
-names(s2_files) <- str_match(s2_files, "B.{2}")[,1]
+s2_files <- list.files(img_dir, "\\.jp2$", full.names = TRUE)
+s2_files <- s2_files[str_detect(s2_files, "B0[2348]")]
 
-s2_select <- s2_files[names(s2_files) %in% c("B02", "B03","B04","B08")]
-
-s2 <- rast(s2_select)
-
-names(s2) <- names(s2_select)
+s2 <- rast(s2_files)
+names(s2) <- str_split_fixed(names(s2), "_", 4)[, 3]
 
 s2 <- (s2 - 1000) / 10000
+
+# Values below 0 (dark pixels, ESA offset artefact) and above 1 (bright surfaces)
+hist(s2[[1]])
+minmax(s2)
+
+force_minmax <- \(x, min = 0, max = 1) {
+  x[x < min] <- min
+  x[x > max] <- max
+  x
+}
+
+s2 <- app(s2, force_minmax)
+```
+
+## Task 2
+
+Visualize the Sentinel-2 image as a **True Color** composite (Red = B04, Green = B03, Blue = B02) and a **False Color** composite (Red = B08/NIR, Green = B04, Blue = B03). Use `plotRGB()` with `stretch = "histogram"`.
+
+Which land cover types appear bright red in the False Color image, and why?
+
+```{r}
+# True Color: R=B04, G=B03, B=B02
+plotRGB(s2, r = 3, g = 2, b = 1, stretch = "histogram", main = "True Color")
+
+# False Color: R=B08(NIR), G=B04(Red), B=B03(Green)
+# healthy vegetation reflects strongly in NIR → bright red
+plotRGB(s2, r = 4, g = 3, b = 2, stretch = "histogram", main = "False Color (NIR)")
+```
+
+## Task 3
+
+The SCL band is not in `R10m/` — find it in the `IMG_DATA/R20m/` folder of your SAFE archive using `list.files()` with `pattern = "SCL"`. Import it, resample to match `s2`, and apply a cloud mask keeping only pixels classified as vegetation (4), bare soils (5), water (6), or snow/ice (11).
+
+Resample the SCL to match the resolution of `s2` before masking (use `method = "near"`). Store the result as `s2_masked` and report what percentage of pixels are cloud-free.
+
+```{r}
+scl_file <- list.files(
+  "data-large/S2B_MSIL2A_20240915T102559_N0511_R108_T32TMS_20240915T131207.SAFE/GRANULE/L2A_T32TMS_A039316_20240915T102803/IMG_DATA/R20m/",
+  pattern = "SCL.*\\.jp2$",
+  full.names = TRUE
+)
+scl <- rast(scl_file)
+
+# Resample SCL to match s2 — nearest-neighbour preserves class values
+scl <- resample(scl, s2, method = "near")
+
+valid_classes <- c(4, 5, 6, 11)
+cloud_mask <- scl %in% valid_classes
+s2_masked <- mask(s2, cloud_mask, maskvalues = FALSE)
+
+n_valid <- global(!is.na(s2_masked[[1]]), sum)[[1]]
+cat(sprintf("Valid pixels: %.1f%%\n", 100 * n_valid / ncell(s2_masked)))
+```
+
+## Task 4
+
+Compute NDVI from both `s2` (unmasked) and `s2_masked` (cloud-masked):
+
+$$\text{NDVI} = \frac{\text{B08} - \text{B04}}{\text{B08} + \text{B04}}$$
+
+Compare the global mean NDVI of both images using `global(..., mean, na.rm = TRUE)`. Why does the masked image have a higher mean NDVI?
+
+```{r}
+ndvi        <- (s2[["B08"]] - s2[["B04"]]) / (s2[["B08"]] + s2[["B04"]])
+ndvi_masked <- (s2_masked[["B08"]] - s2_masked[["B04"]]) / (s2_masked[["B08"]] + s2_masked[["B04"]])
+
+global(ndvi,        mean, na.rm = TRUE)
+global(ndvi_masked, mean, na.rm = TRUE)
+
+# Clouds reflect strongly and nearly equally across all bands → NDVI ≈ 0 or negative.
+# Removing cloud pixels reveals the true surface signal.
+```
+
+## Task 5
+
+Write the cloud-masked NDVI to disk in two ways:
+
+a) As `Float32` (full precision, no transformation)
+b) As `Byte` (0–255) using `scoff_params()` to compute scale and offset, with `DEFLATE` compression
+
+Compare the file sizes using `file.size()`. Then read the Byte file back and compute the maximum absolute difference from the original NDVI using `global(abs(...), max, na.rm = TRUE)`. How large is the precision loss?
+
+```{r}
+dir.create("data-out", showWarnings = FALSE)
+
+# a) Float32
+writeRaster(ndvi_masked, "data-out/ndvi_float32.tif", datatype = "FLT4S", overwrite = TRUE)
+
+# b) Byte with scoff_params
+scoff_params <- function(x, a = 0, b = 255) {
+  stopifnot(nlyr(x) == 1)
+  mm     <- minmax(x)[, 1]
+  scale  <- (b - a) / (mm[2] - mm[1])
+  offset <- (a * mm[2] - b * mm[1]) / (mm[2] - mm[1])
+  c(scale = 1 / scale, offset = -offset)
+}
+
+so <- scoff_params(ndvi_masked)
+
+writeRaster(
+  ndvi_masked,
+  "data-out/ndvi_byte.tif",
+  datatype  = "INT1U",
+  scale     = so["scale"],
+  offset    = so["offset"],
+  gdal      = "COMPRESS=DEFLATE",
+  overwrite = TRUE
+)
+
+# Compare file sizes
+cat(sprintf("Float32: %.0f KB\n", file.size("data-out/ndvi_float32.tif") / 1024))
+cat(sprintf("Byte:    %.0f KB\n", file.size("data-out/ndvi_byte.tif")    / 1024))
+
+# Check precision loss
+ndvi_restored <- rast("data-out/ndvi_byte.tif")
+global(abs(ndvi_restored - ndvi_masked), max, na.rm = TRUE)
 ```
