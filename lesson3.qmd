@@ -46,18 +46,28 @@ By the end of this lesson you will be able to:
 
 
 
+## Why this matters: Sentinel-2
+
+- Sentinel-2 bands are stored as **raw integers** (UInt16, values ~0–15000)
+- The conversion to surface reflectance requires a **scale and offset** — documented in a separate XML file
+- GDAL reads individual JP2 files, not the full product → **the conversion is never applied automatically**
+- To work with S2 data correctly, we need to understand what scale and offset are and how to apply them
+
+:::{.notes}
+- ESA's design assumes the full SAFE product is used with their toolchain (SNAP, Sen2Cor) — scale/offset lives at the product level (MTD_MSIL2A.xml), not the file level
+- GDAL reads files, not products — so there is no mechanism for it to auto-apply the conversion
+- This is the motivating problem for this entire section
+:::
+
+
 ## Raster data types
 
-- While R and Python have a variety of data types including character strings, raster data is always stored as numeric
-- However, there are quite a number of numeric data types that can be used to store raster data, depending on the range of values and the precision required
-- The choice of data type can have a significant impact on the size of the file and the precision of the data stored
+- Raster data is always stored as **numeric**
+- GDAL defines the supported types — shared by R, Python, QGIS
+- Choice of type affects **file size** and **precision**
+- In memory: R/Python types; on disk: GDAL types
 
-## Raster data types
-- Since raster data is powered by GDAL, most raster based software (including R and Python) use the same data types [when writing files to disk]{.underline}
-- In memory, only the datatypes supported by the programming languages are supported
-- The numeric data types are supported by `gdal` are summarized in @tbl-datatypes
-
-## Raster data types{.smaller}
+## Raster data types {.smaller}
 
 
 :::{#tbl-datatypes}
@@ -100,27 +110,24 @@ By the end of this lesson you will be able to:
 
 ## Choosing a data type
 
-- To minimize file size, it's important to choose the data type that best fits the range of values in the raster
-- At a first glance, it might seem that the numeric values we measured / calculated *determine* the datatype we use
-- However, we can transform the values to a different range to fit a different datatype
-- For example, if we have NDVI values ranging from -1 to 1, it might seem that we need to use `CFloat32` to store these values. However, we can *transform* (rescale) these values to the range 0 - 255 and store them as `Byte` datatype.
+- Naively: value range determines the datatype
+- Better: **transform values** to fit a smaller type
+- Example: NDVI ∈ [−1, 1] → rescale to [0, 255] → store as `Byte`
 
 
 
 
 ## Rescaling / Transforming values
 
-From [Wikipedia](https://en.wikipedia.org/wiki/Feature_scaling#Rescaling_(min-max_normalization)):
+Min-max normalization maps any range $[\min(x), \max(x)]$ to a target range $[a, b]$:
 
-> To rescale a range between an arbitrary set of values [a, b], the formula becomes:
-> $$x' = a + \frac{(x-min(x))\times(b - a)}{max(x)-min(x)}$$
+$$x' = a + \frac{(x-\min(x))\times(b - a)}{\max(x)-\min(x)}$$
 
-For our usecase, we can consider:
+For NDVI ∈ [−1, 1] rescaled to [0, 255]:
 
- - $x'$ to be the *stored* value
- - $x$ to be the measured value
- - $a$ and $b$ to be the maximum, minimum value of `Byte` (0 and 255 respectively)
- - $min(x)$ and $max(x)$ the maximum and minimum measured values (`-1` and `1` respectively)
+- $x$ — measured value, $x'$ — stored value
+- $a = 0$, $b = 255$ — target range
+- $\min(x) = -1$, $\max(x) = 1$
 
 ---
 
@@ -139,29 +146,24 @@ x' &= 127.5x+127.5 \\
 
 ## Rescaling NDVI values
 
-- We can now use this formula $x' = 127.5x+127.5$ to rescale NDVI values to the range 0 - 255
-- So, rather than storing the NDVI value 0.2, for example, we store the value 153
-- This rescaling is determined by two values:
-  - `scale` and `offset`
-  - $x' = x \times \text{scale} + \text{offset}$
-  - In our example, scale and offset both are $127.5$
+- Formula: $x' = 127.5x + 127.5$
+- Example: NDVI $0.2$ → stored as $153$
+- Two parameters describe the rescaling:
+  - $x' = x \times \underbrace{127.5}_{\text{scale}} + \underbrace{127.5}_{\text{offset}}$
 
 
 
 ## Precision
 
-Note that this transformation to 255 values limits our *precision*:
-
-- Precision is limited, since we only have 255 possible values
-- We can calculate the available precision like so: $\frac{1}{\text{scale}}$
-- In our case this is $\frac{1}{127.5} = 0.0078$.
-- Any measured / calculated NDVI value will be rounded to a multiple of 0.0078.
-- We need to decide if this precision is enough for our use case
+- Only 255 distinct values → limited precision
+- Precision = $\frac{1}{\text{scale}} = \frac{1}{127.5} \approx 0.008$
+- Every stored NDVI is rounded to the nearest $0.008$
+- Is this enough? → depends on the use case
 
 
 ## R Implementation for vectors
 
-- A generic way to implement this in R is as follows:
+- `scale_minmax()` applies the formula to a numeric vector:
 
 ```{r}
 #| echo: true
@@ -179,8 +181,6 @@ scale_minmax <- function(
 ```
 
 ---
-
-Take the following example:
 
 ```{r}
 set.seed(552)
@@ -207,29 +207,23 @@ tibble(ndvi_measured, ndvi_stored) |>
 
 ## Restoring the original values
 
-- Imagine you stored the NDVI values in the range 0 - 255, stored these values in a Geotiff and sent it to a colleague.
-- To restore the original NDVI values the transformation ($x' = 127x+127.5$) needs to be known
-- More precisely, the `scale` and `offset` values need to be known
-- We can simply invert the transformation to get the original values back: $x = \frac{x'-127.5}{127.5}$
+- A colleague receiving your file needs to know how to get back the original values
+- Invert the transformation using `scale` and `offset`:
+$$x = \frac{x' - 127.5}{127.5}$$
+- Both values are stored in the file metadata — GDAL reads them automatically
 
 
 ## R implementation for rasters
 
-- Since rescaling values is a common operation, it is supported by GDAL and therefore most raster libraries
-- Rather than transforming our values in memory, we can transform them when writing the raster to disk.
-- For this, we can use the arguments `scale = ` and `offset = ` in the `writeRaster` function
-- To use these arguments we need to calculate the `scale` and `offset` values first
-- Rewriting the formula from before, we can calculate `scale` and `offset` as follows:
-
+- GDAL supports scale/offset natively → pass directly to `writeRaster()`
+- Formulas to derive them from the value range:
 
 \begin{align}
-\text{scale} &= \frac{b - a}{max(x)-min(x)} \\
-\text{offset} &= \frac{a \times max(x) - b \times min(x)}{max(x)-min(x)}
+\text{scale} &= \frac{b - a}{\max(x)-\min(x)} \\
+\text{offset} &= \frac{a \times \max(x) - b \times \min(x)}{\max(x)-\min(x)}
 \end{align}
 
 ---
-
-- To implement this in R, I use a function `scoff_params` that returns both values:
 
 ```{r}
 #| echo: true
@@ -246,11 +240,9 @@ scoff_params(ndvi_measured, min_x = -1, max_x = 1)
 
 ## R implementation for rasters
 
-- `scoff_params()` works for vectors, but not for rasters
-- The reason: `min(x)` and `max(x)` are *local* for rasters — they return the min/max *per cell*, not the global min/max
-  - Use `minmax()` instead, which returns the global min and max per layer
-- Additionally, `writeRaster` *divides* by `scale` and *subtracts* `offset`, so both values must be inverted
-- The raster-compatible version of `scoff_params`:
+- `scoff_params()` works for vectors, but needs two adjustments for rasters:
+  1. `min()`/`max()` return per-cell values → use `minmax()` for global min/max
+  2. `writeRaster()` divides by `scale` and subtracts `offset` → both must be inverted
 
 ```{r}
 #| echo: true
@@ -287,11 +279,11 @@ writeRaster(
 ```
 
 
-## R implementation for rasters 
+## R implementation for rasters
 
-- Since GDAL stores the `scale` and `offset` values in the metadata, any software powered by GDAL will restore the original values on import
-- In other words, if you run `rast("data-out/datatypes/INT1U.tif")` you will not notice the values were internally stored using 0 - 255. Instead, you will retrieve the original values.
-- To finish off, let's compare the file sizes of the raster stored as `INT1U` (Byte) and `FLT8S` (Float32)
+- GDAL embeds `scale` and `offset` in the file metadata
+- On import, any GDAL-based software restores the original values automatically
+- The stored `INT1U` bytes are invisible — you always get back the original range
 
 
 ```{r}
@@ -350,7 +342,8 @@ writeRaster(r, "output.tif", gdal = "COMPRESS=DEFLATE")
 ```
 
 - Compression is transparent to readers: any GDAL-based software (R, QGIS, Python) decompresses automatically on load
-- Combine with a small datatype for maximum effect: `INT1U + DEFLATE` can be 8× smaller than an uncompressed `FLT8S`
+- Combine datatype + compression for maximum savings:
+  `INT1U + DEFLATE` can be **8× smaller** than uncompressed `FLT8S`
 
 :::{.notes}
 - DEFLATE is identical to the algorithm used in ZIP files — students will have intuition for it
@@ -367,7 +360,8 @@ writeRaster(r, "output.tif", gdal = "COMPRESS=DEFLATE")
 - When sunlight hits a surface, part of it is **absorbed**, part is **transmitted**, and part is **reflected**
 - **Reflectance** is the fraction of incoming radiation that is reflected, expressed as a value between 0 and 1 (or 0–100%)
 - Different materials reflect different amounts of radiation at different wavelengths
-- A **spectral signature** is the reflectance of a surface measured across a range of wavelengths — it is the "fingerprint" of a land cover type
+- A **spectral signature** is reflectance measured across wavelengths
+  → the unique "fingerprint" of a land cover type
 
 :::{.notes}
 - Emphasize: the sensor does not record colour as we see it — it records electromagnetic energy at specific wavelength ranges
@@ -393,9 +387,9 @@ writeRaster(r, "output.tif", gdal = "COMPRESS=DEFLATE")
 ## The red edge
 
 - One of the most diagnostic features in vegetation spectra
-- Between the red band (~665 nm) and NIR (~780 nm), healthy vegetation reflectance rises steeply from ~5% to ~50%
+- Healthy vegetation: reflectance rises steeply from ~5% → ~50% between 665–780 nm
 - Caused by the transition from chlorophyll absorption (red) to leaf cell scattering (NIR)
-- **Sentinel-2 is specifically designed to capture this** with three dedicated red edge bands (B05, B06, B07 at 705, 740, 783 nm)
+- **Sentinel-2 captures this** with three dedicated red edge bands: B05, B06, B07
 - Sensitive to vegetation stress: a sick or sparse canopy shows a less steep red edge
 
 :::{.notes}
@@ -493,15 +487,12 @@ To download Sentinel data:
 
 ## Copernicus SAFE Format I
 
-
-- Sentinel 2 data is provided in SAFE format. This is a zipped file that contains the data in separate JP2 files
-- The Sentinel-SAFE format wraps a folder containing image data in a binary data format and product metadata in XML.
-- This includes:
-  - A 'manifest.safe' file which holds the general product information in XML.
-  - Subfolders for measurement datasets containing image data in various binary formats.
-  - A preview folder containing 'quicklooks' in PNG format, Google Earth overlays in KML format and HTML preview files.
-  - An annotation folder containing the product metadata in XML as well as calibration data.
-  - A support folder containing the XML schemes describing the product XML.
+- Downloaded scenes come as a **SAFE** folder (distributed as `.zip`)
+- Contains image bands as individual **JP2** files + metadata in XML
+- Key contents:
+  - `IMG_DATA/` — band images at 10m, 20m, 60m resolution
+  - `GRANULE/` — scene-level data and annotations
+  - `manifest.safe` — general product info
 
 
 
@@ -532,7 +523,7 @@ as.Node(fi,pathName = "paths")
 ```
 
 
-The data we are interested in is in the `IMG_DATA` folder. This folder contains the data in three different resolutions, where each band is a separate file *jp2* File.
+The bands are in `IMG_DATA/` — one JP2 per band, at 10m, 20m, and 60m.
 
 ```{r}
 #| echo: true
@@ -540,10 +531,8 @@ The data we are interested in is in the `IMG_DATA` folder. This folder contains 
 s2_files <- list.files("data-large/S2B_MSIL2A_20240915T102559_N0511_R108_T32TMS_20240915T131207.SAFE/GRANULE/L2A_T32TMS_A039316_20240915T102803/IMG_DATA/R60m/", "\\.jp2$", full.names = TRUE)
 ```
 
-
-- We can import all `jp2` files into a `rast` object in a singe `rast()` command.
-- Before we do this, let's filter the data for the bands we are interested in (`B01`...`B12`)
-- To add reasonable `names` to the SpatRaster object, we can use `str_split_fixed` to extract the relevant information from the file names.
+- Filter to spectral bands only (`B01`–`B12`)
+- Extract band names from filenames with `str_split_fixed()`
 
 ```{r}
 #| echo: true
@@ -566,17 +555,13 @@ names(s2)
 plot(s2[[1]])
 ```
 
-- Note how the values range from 0 to > 15000. It seems that the values are not scaled yet (see @sec-data-types)
-- If `scale` and `offset` values were set using `GDAL` flags, `terra` would automatically apply these values
-- However, it seems that we have to apply these values manually: [this website](https://sentinel.esa.int/en/web/sentinel/technical-guides/sentinel-2-msi/level-1c/product-formatting), writes the following:
+- Values range 0–15000 → **not yet reflectance** (see @sec-data-types)
+- GDAL hasn't applied scale/offset automatically → we must do it manually
+- The conversion formula is documented in `MTD_MSIL2A.xml`:
 
-> The transformation of reflectances in 16 bit integers is performed according to the following equation:
 > $$\text{L1C\_DN} = \rho \times \text{QUANTIFICATION\_VALUE} - \text{RADIO\_ADD\_OFFSET}$$
-> The L1C product's metadata includes the values for the QUANTIFICATION_VALUE and RADIO_ADD_OFFSET.
 
-- This information is stored in the file `MTD_MSIL2A.xml`:
-- This file contains information about the bands, the scale factor, and the offset values.
-- If we search for `QUANTIFICATION_VALUE`, we find the following information:
+Searching for `QUANTIFICATION_VALUE`:
 
 ```{r}
 #| echo: false
@@ -586,8 +571,7 @@ meta <- readLines("data-large/S2B_MSIL2A_20240915T102559_N0511_R108_T32TMS_20240
 cat(meta[str_detect(meta, "QUANTIFICATION_VALUE")], sep = "\n")
 ```
 
-- If we search for `ADD_OFFSET`, we find the following information:
-
+Searching for `ADD_OFFSET`:
 
 ```{r}
 #| echo: false
@@ -595,8 +579,8 @@ cat(meta[str_detect(meta, "QUANTIFICATION_VALUE")], sep = "\n")
 cat(meta[str_detect(meta, "ADD_OFFSET")], sep = "\n")
 ```
 
-- We can now use the `scale` (10'000) and `offset` (-1'000) values to convert the data to reflectance values.
-- We can then use `minmax` to see if our rescaling worked
+- `scale` = 10'000, `offset` = −1'000 → apply: `(DN − 1000) / 10000`
+- Check with `minmax()` — some bands still exceed 1.0 → clip to [0, 1]
 
 ```{r}
 #| echo: true
@@ -622,8 +606,6 @@ force_minmax <- \(x, min = 0, max = 1){
 }
 ```
 
-To apply this function to all bands, we can use the `app` function.
-
 ```{r}
 #| echo: true
 s2c <- app(s2b, force_minmax)
@@ -631,8 +613,6 @@ s2c <- app(s2b, force_minmax)
 # If we now check the min/max values, we see that all values are between 0 and 1
 minmax(s2c)
 ```
-
-To test if we processed the data correctly, let's create a True Color image using the bands `B04`, `B03`, and `B02`.
 
 ```{r}
 #| echo: true
@@ -666,7 +646,8 @@ tm_shape(s2_ndvi) +
 
 - Clouds reflect strongly across all bands — a cloudy pixel does **not** represent the surface below
 - Using cloudy pixels in analysis (e.g. NDVI, classification) introduces severe errors
-- Sentinel-2 L2A products include a **Scene Classification Layer (SCL)** — a per-pixel quality flag generated automatically during atmospheric correction
+- Sentinel-2 L2A includes a **Scene Classification Layer (SCL)**
+  → per-pixel quality flag generated automatically during atmospheric correction
 
 :::{.notes}
 - Unlike thin haze, which affects values subtly, clouds completely obscure the surface — affected pixels must be excluded, not corrected
