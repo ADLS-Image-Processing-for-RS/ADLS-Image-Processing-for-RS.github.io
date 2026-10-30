@@ -16,7 +16,7 @@ code-summary: "Sample Solution"
 - Ask if you are stuck. Asking builds understanding too!
 :::
 
-**Data**: Download the Ces aerial imagery (TIF files for 1961–1995) from Moodle and place them in `data-large/ces/`. The ground truth polygons (`data/ces_polygons.gpkg`) are already in the repository.
+**Data**: Download the Ces aerial imagery (TIF files for 1961–1995, 2021, 2024) from Moodle and place them in `data-large/ces/`. The ground truth polygons (`data/ces_polygons.gpkg`) are already in the repository.
 
 ## Task 1
 
@@ -182,4 +182,128 @@ accuracy_multi <- sum(diag(conf_mat_multi)) / sum(conf_mat_multi)
 
 cat(sprintf("Single-band accuracy:  %.1f%%\n", 100 * accuracy))
 cat(sprintf("Multi-feature accuracy: %.1f%%\n", 100 * accuracy_multi))
+```
+
+---
+
+## Part 2: RGB Classification (2021)
+
+The 2021 swissimage data covers the same study area in colour (red, green, blue bands at 2 m resolution). Your task is to repeat the classification workflow — this time using RGB instead of grayscale.
+
+The ground truth polygons for 2021 are already prepared in `data/ces_polygons.gpkg` under the layer `ces_polygons_2021` (same Forest / Non-forest structure as before).
+
+## Task 6
+
+Load `data-large/ces/2021_rgb.tif`. The raw values are in [0, 255] — normalise to [0, 1] and name the three bands `c("red", "green", "blue")`.
+
+Load the `ces_polygons_2021` layer from `data/ces_polygons.gpkg`. Sample 1000 points, attach class labels, drop `jahr` and `area`, convert `class` to a factor, then do a 70/30 train/test split with `set.seed(42)`.
+
+How are Forest and Non-forest distributed in the training set? Is the class balance similar to the 1961 split?
+
+```{r}
+library(terra)
+library(sf)
+
+ces2021 <- rast("data-large/ces/2021_rgb.tif") / 255
+names(ces2021) <- c("red", "green", "blue")
+
+ces_polygons_2021 <- read_sf("data/ces_polygons.gpkg", layer = "ces_polygons_2021")
+
+set.seed(42)
+sample_pts <- st_sample(ces_polygons_2021, 1000) |> st_sf()
+labelled   <- st_join(sample_pts, ces_polygons_2021) |>
+  select(-jahr, -area)
+labelled$class <- factor(labelled$class)
+
+idx        <- sample(nrow(labelled), floor(0.7 * nrow(labelled)))
+train_2021 <- labelled[ idx, ]
+test_2021  <- labelled[-idx, ]
+
+table(train_2021$class)
+```
+
+## Task 7
+
+Extract pixel values from all three bands at the training points. Train a CART model using all available features (`class ~ .`). Plot the decision tree — which band(s) does the model use?
+
+Predict on the full 2021 raster, set categorical levels, and plot the result. Evaluate on the test set with a confusion matrix and overall accuracy.
+
+:::{.callout-tip}
+The `classes_df` lookup should list levels in the same order R assigns them — **alphabetical** by default. Use `levels(train_df$class)` to check.
+:::
+
+```{r}
+library(rpart)
+library(rpart.plot)
+
+train_feat <- terra::extract(ces2021, train_2021, ID = FALSE)
+train_df   <- cbind(train_2021["class"], train_feat) |> st_drop_geometry()
+
+cart_2021 <- rpart(class ~ ., data = train_df)
+rpart.plot(cart_2021)
+
+pred_prob_2021  <- predict(ces2021, cart_2021, type = "prob")
+pred_class_2021 <- which.max(pred_prob_2021)
+
+classes_df_2021 <- data.frame(id = 1:2, class = levels(train_df$class))
+levels(pred_class_2021) <- classes_df_2021
+
+plot(pred_class_2021, col = c("palegreen4", "orange"), main = "2021 RGB classification")
+
+test_feat    <- terra::extract(pred_class_2021, test_2021, ID = FALSE)
+test_results <- cbind(test_2021["class"], test_feat) |> st_drop_geometry()
+names(test_results) <- c("actual", "predicted")
+
+conf_mat_2021  <- table(predicted = test_results$predicted, actual = test_results$actual)
+accuracy_2021  <- sum(diag(conf_mat_2021)) / sum(conf_mat_2021)
+print(conf_mat_2021)
+cat(sprintf("2021 RGB accuracy: %.1f%%\n", 100 * accuracy_2021))
+```
+
+## Task 8
+
+Compare the two classifications to quantify forest change between 1961 and 2021.
+
+**Step 1** — Compute total forest area (in hectares) for each year. The pixel area in m² is `prod(res(raster))`.
+
+**Step 2** — Create a change map. The two rasters have different resolutions (0.5 m vs 2 m), so resample the 1961 result to 2 m first with `resample(..., method = "near")`. Then classify each pixel as: stable forest, stable non-forest, forest gained, or forest lost.
+
+:::{.callout-tip}
+`terra::ifel(condition, yes, no)` is the raster equivalent of `ifelse()`. You can nest calls to encode multiple categories.
+:::
+
+What does the change map tell you? Where did forest gain or loss occur?
+
+```{r}
+# Step 1: forest area in hectares
+pixel_ha_1961 <- prod(res(pred_class_multi)) / 1e4
+pixel_ha_2021 <- prod(res(pred_class_2021))  / 1e4
+
+area_forest_1961 <- sum(values(pred_class_multi) == "Forest", na.rm = TRUE) * pixel_ha_1961
+area_forest_2021 <- sum(values(pred_class_2021)  == "Forest", na.rm = TRUE) * pixel_ha_2021
+
+cat(sprintf("Forest area 1961: %.0f ha\n", area_forest_1961))
+cat(sprintf("Forest area 2021: %.0f ha\n", area_forest_2021))
+cat(sprintf("Change:          %+.0f ha\n", area_forest_2021 - area_forest_1961))
+
+# Step 2: pixel-level change map (resample 1961 → 2 m)
+pred_1961_2m <- resample(pred_class_multi, pred_class_2021, method = "near")
+
+# Encode: 1 = stable non-forest, 2 = forest lost, 3 = forest gained, 4 = stable forest
+f1 <- pred_1961_2m  == "Forest"
+f2 <- pred_class_2021 == "Forest"
+
+change <- ifel( f1 &  f2, 4L,   # stable forest
+         ifel( f1 & !f2, 2L,   # forest lost
+         ifel(!f1 &  f2, 3L,   # forest gained
+                         1L))) # stable non-forest
+
+levels(change) <- data.frame(
+  id    = 1:4,
+  class = c("Stable non-forest", "Forest lost", "Forest gained", "Stable forest")
+)
+
+plot(change,
+     col  = c("lightyellow", "firebrick", "chartreuse3", "palegreen4"),
+     main = "Forest change 1961 → 2021")
 ```
