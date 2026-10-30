@@ -83,20 +83,10 @@ Slides are included in `project: render:` but excluded from the sidebar. Student
   - Extend to RGB and ideally multispectral (Sentinel-2) data for land cover classification
   - Connects L3 (S2 import, cloud masking) directly to L4 (classification)
 
-### Refactoring (2027)
+
+### Refactoring Todo for 2027
 
 - **L1: Long → Wide → Matrix → Raster chain** — shorten drastically (too many slides before anything visual)
 - **L2/L3 overlap** — remove duplicate DN → reflectance / spectral indices pipeline
-
-## Notes to self
-
-- Switching the theme activates the presenter mode (dark = presenter, shows speaker notes in browser console)
-
-## Role of Slides
-
-**Slides serve three key functions in the classroom:**
-
-1. **Navigation**: They provide structure and orientation for both instructors and students, clearly indicating the current topic and learning progression
-2. **Reference material**: They serve as a study resource for students to review content and prepare for assessments
-3. **Teaching prompts**: They include instructor notes highlighting key points and concepts that require emphasis
+- **L3: SAFE import scaffolding** — students struggle with navigating the SAFE folder structure and basic R file operations (e.g. `list.files()`). The tasks currently jump straight to the full import pattern. Add a guided walk-through: (1) show the folder structure, (2) `list.files()` step-by-step with intermediate prints to build intuition, (3) only then introduce the filtering/naming pattern. Consider providing a starter script with blanks to fill in rather than a pure open task.
 
