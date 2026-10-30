@@ -2,6 +2,7 @@
 execute:
   echo: false                 # ← set to true to show sample solution
   collapse: true
+  eval: false
 code-fold: true
 code-summary: "Sample Solution"
 ---
