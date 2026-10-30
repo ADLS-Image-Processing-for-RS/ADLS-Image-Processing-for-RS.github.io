@@ -118,7 +118,7 @@ sample_points <- st_sample(ces_polygons, 1000) |>
 []{}
 
 ```{r}
-# Extract class per sample
+# Attach class label to each point
 labelled_data <- st_join(sample_points, ces_polygons) |>
   select(-jahr)
 
@@ -131,14 +131,19 @@ labelled_data$class <- factor(labelled_data$class)
 
 ---
 
-**`st_sample()`**
+**`st_sample()`** draws random points *within* each polygon geometry.
 
-- Ensures spatial coverage across polygon extents
-- Creates balanced datasets
-- Simple random sampling across the entire study region (more sophisticated strategies exist)
+**`st_join()`** does a spatial left join — for each point it finds the polygon that contains it and copies over the attributes (`class`, etc.).
+
+Result: an `sf` data frame where every row is a labelled point with known coordinates.
+
+:::{.notes}
+`st_join()` is a spatial equivalent of `dplyr::left_join()`. Instead of matching on a key column it matches on spatial containment/intersection.
+
+The `-jahr` drop is just to keep the data frame clean — `jahr` is the digitizing year, not useful as a feature.
+:::
 
 ---
-
 
 ## Train/test split: The spatial autocorrelation problem
 
@@ -156,19 +161,38 @@ labelled_data$class <- factor(labelled_data$class)
 - More realistic performance estimates
 :::
 
+---
+
+```{r}
+set.seed(42)
+idx        <- sample(nrow(labelled_data), floor(0.7 * nrow(labelled_data)))
+data_train <- labelled_data[ idx, ]
+data_test  <- labelled_data[-idx, ]
+```
+
+- 70 / 30 split is a common heuristic
+- `set.seed()` makes the result reproducible
+- Both sets **retain their geometries** — we still know where each point is on the map
+
 
 # Approach 1: Single-Band Classifier {.subtitle}
 
 ## Feature extraction {#sec-feature-extraction1}
+
+`terra::extract()` samples raster values at each point location:
 
 ```{r}
 train_features <- terra::extract(ces1961, data_train, ID = FALSE)
 
 data_train2 <- cbind(data_train[,"class"], train_features) |>
   st_drop_geometry()
-
-data_train2
 ```
+
+:::{.notes}
+`ID = FALSE` drops the row index column that terra adds by default.
+
+`st_drop_geometry()` removes the spatial geometry — the ML model doesn't need coordinates, only the feature values.
+:::
 
 ---
 
@@ -180,6 +204,20 @@ load("data/data_train.Rda")
 head(data_train2)
 ```
 
+---
+
+## From spatial to tabular
+
+After `extract()`, the spatial complexity is gone — we have a plain data frame:
+
+| class | luminosity |
+|---|---|
+| Forest | 0.38 |
+| Non-forest | 0.74 |
+| Forest | 0.41 |
+| … | … |
+
+From here, **any standard ML algorithm applies**. The spatial awareness is only needed again at prediction time, when we apply the model back to the full raster.
 
 ---
 
@@ -221,7 +259,6 @@ rpart.plot(cart_model)
 
 ## Raster prediction
 
-
 ```{r}
 # Predict probability per class for all pixels
 ces1961_predict <- predict(ces1961, cart_model, type = "prob")
@@ -232,11 +269,61 @@ ces1961_predict2 <- which.max(ces1961_predict)
 
 ---
 
+## How `terra::predict()` works
+
+Conceptually: iterate over every pixel, build a one-row data frame of its values, call `predict(model, newdata = ...)`, write the result back.
+
+```
+for each pixel (i, j):
+    features <- extract value(s) at (i, j)
+    probs    <- predict(model, newdata = features, type = "prob")
+    output[i, j] <- probs
+```
+
+- Output of `predict(raster, model, type = "prob")`: one **layer per class**, values = probabilities
+- `which.max()` returns an integer raster: which layer has the highest probability?
+
+---
+
+## Setting categorical levels
+
+`which.max()` returns **integers** (1, 2, …). To get meaningful labels:
+
+```{r}
+classes_df <- data.frame(id = 1:2, class = levels(data_train2$class))
+levels(ces1961_predict2) <- classes_df
+```
+
+- The layer order matches the **alphabetical order** of factor levels in the training data
+- Without this step the result raster only contains 1s and 2s
+
+---
+
 ![Classification result — single band approach](img/ces-predict.png)
 
 ---
 
 ## Evaluation {#sec-model-evaluation-1}
+
+Before showing the numbers: **how to read a confusion matrix**
+
+|  | Actual: Forest | Actual: Non-forest |
+|---|:---:|:---:|
+| **Predicted: Forest** | TP | FP |
+| **Predicted: Non-forest** | FN | TN |
+
+- **Overall accuracy** = (TP + TN) / total
+- **Producer's accuracy** (recall) = TP / (TP + FN) — "of actual forest, how much did we catch?"
+- **User's accuracy** (precision) = TP / (TP + FP) — "when we predict forest, how often is it right?"
+
+:::{.notes}
+Overall accuracy is misleading when classes are imbalanced (e.g. 90% non-forest): a model that always predicts non-forest gets 90% accuracy.
+
+Producer's accuracy matters for the map-maker ("is my map complete?").
+User's accuracy matters for the map-user ("can I trust this label?").
+:::
+
+---
 
 
 ```{r}
@@ -310,9 +397,12 @@ Modern deep learning (CNNs) solves this automatically by processing image patche
 i <- 5
 focal_window <- matrix(rep(1, i^2), nrow = i)
 
-# Calculate standard deviation in each neighborhood
+# Standard deviation within each 5×5 neighborhood
 ces1961_focal_sd <- focal(ces1961, focal_window, fun = "sd")
 ```
+
+- **High SD** → heterogeneous neighborhood → likely a forest edge or textured canopy
+- **Low SD** → uniform neighborhood → likely open field or dense uniform forest
 
 :::{.notes}
 **Pedagogical approach**: Handcrafted focal features
@@ -335,7 +425,7 @@ ces1961_focal_sd <- focal(ces1961, focal_window, fun = "sd")
 :::{#fig-zoom-comparison layout-ncol=2}
 ![Original raster](img/ces-crop.png)
 
-![After focal SD filter (shows texture/variation)](img/ces-focal-crop.png)
+![After focal SD filter — bright = high texture](img/ces-focal-crop.png)
 :::
 
 
@@ -355,16 +445,21 @@ minmax_normalization <- function(x){
 
 ces1961_focal_sd <- minmax_normalization(ces1961_focal_sd)
 
-# Combine original and focal features
+# Stack: now a 2-band raster
 ces_multi <- c(ces1961, ces1961_focal_sd)
 names(ces_multi) <- c("luminosity", "focal_sd")
 ```
+
+Why normalize? Decision trees are invariant to scale, but other algorithms (SVM, KNN, neural networks) are not. It's good practice regardless.
 
 ---
 
 ## Training with spatial features
 
+The call is identical — `rpart` just sees more columns now:
+
 ```{r}
+# Same workflow, but data_train2_multi has two feature columns
 cart_model_multi <- rpart(class ~ ., data = data_train2_multi)
 ```
 
@@ -406,6 +501,18 @@ kable(confusion_matrix2_multi, col.names = col_names_multi) |>
 
 **Overall accuracy**: `r acc_multi_str` (vs. `r acc_basic_str` without spatial features)
 
+---
+
+## What did we gain?
+
+| | Features | Overall accuracy |
+|---|---|:---:|
+| Approach 1 | luminosity | `r acc_basic_str` |
+| Approach 2 | luminosity + focal SD | `r acc_multi_str` |
+
+The texture feature captures **local variation** — forest canopy looks rougher at 0.5 m resolution than agricultural fields or roads.
+
+**One extra `focal()` call nearly free-rides on the existing workflow** — same model, same `extract()`, same `predict()`.
 
 ---
 
@@ -413,11 +520,11 @@ kable(confusion_matrix2_multi, col.names = col_names_multi) |>
 
 For advanced applications, consider:
 
-- **More focal features**: mean, variance, edge detection filters
-- **Multi-scale features**: focal operations at different window sizes
-- **Deep learning**: CNNs naturally capture spatial context
-- **Object-based classification**: segment first, then classify
-- **Proper spatial CV**: use spatial blocking for more realistic evaluation
+- **More focal features**: mean, local range, edge-detection filters (Sobel, Laplacian)
+- **Multi-scale features**: focal operations at different window sizes (5×5, 15×15, 31×31)
+- **Deep learning**: CNNs learn optimal spatial filters automatically — no manual feature engineering
+- **Object-based classification**: segment the image first, then classify segments rather than pixels
+- **Proper spatial CV**: use spatial blocking for more realistic accuracy estimates
 
 
 
