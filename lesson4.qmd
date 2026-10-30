@@ -28,12 +28,12 @@ library(purrr)
 
 By the end of this lesson you will be able to:
 
-- Describe what makes **remote sensing classification** different from standard ML
-- Convert **spatial polygons** to labelled point samples with `st_sample()` and `st_join()`
-- Use `terra::extract()` to build a **feature matrix** at labelled locations
-- Train a **CART classifier** and predict land cover classes on a full raster
-- Explain the **spatial autocorrelation** problem and why random splits overestimate accuracy
-- Use **focal operations** as spatial features to improve classification accuracy
+- Describe the **supervised classification pipeline**: from labelled ground truth polygons to a full raster map
+- Explain why **ground truth in remote sensing comes as polygons**, and what this implies for sampling
+- Explain the **spatial autocorrelation problem** and why it makes standard accuracy estimates misleading
+- Explain the role of **feature extraction** as the bridge between raster data and any ML algorithm
+- Explain why **pixel brightness alone** often fails, and how **spatial texture** addresses this limitation
+- Distinguish **overall accuracy, producer's accuracy, and user's accuracy** — and what each tells a map-maker
 
 
 # Introduction {.subtitle}
@@ -208,7 +208,7 @@ head(data_train2)
 
 ## From spatial to tabular
 
-After `extract()`, the spatial complexity is gone — we have a plain data frame:
+After feature extraction, the spatial complexity is gone — we have a plain data frame:
 
 | class | luminosity |
 |---|---|
@@ -512,7 +512,7 @@ kable(confusion_matrix2_multi, col.names = col_names_multi) |>
 
 The texture feature captures **local variation** — forest canopy looks rougher at 0.5 m resolution than agricultural fields or roads.
 
-**One extra `focal()` call nearly free-rides on the existing workflow** — same model, same `extract()`, same `predict()`.
+**One extra focal operation nearly free-rides on the existing workflow** — same model, same extraction, same prediction step.
 
 ---
 
