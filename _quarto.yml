@@ -9,7 +9,8 @@ project:
     - lesson2-tasks.qmd
     - lesson3.qmd
     - lesson3-tasks.qmd
-    - lesson4-2-supervised-learning.qmd
+    - lesson4.qmd
+    - lesson4-tasks.qmd
     - references.qmd
 
 website:
@@ -21,7 +22,7 @@ website:
       - lesson1-tasks.qmd
       - lesson2-tasks.qmd
       - lesson3-tasks.qmd
-      # - lesson4-2-supervised-learning.qmd
+      - lesson4-tasks.qmd
       - references.qmd
 
 format:

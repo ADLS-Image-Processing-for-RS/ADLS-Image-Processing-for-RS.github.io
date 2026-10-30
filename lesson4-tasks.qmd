@@ -1,0 +1,185 @@
+---
+execute:
+  echo: false                 # ← set to true to show sample solution
+  collapse: true
+  eval: false
+code-fold: true
+code-summary: "Sample Solution"
+---
+
+# Lesson 4: Supervised Classification
+
+[Open slides](lesson4.html){target="_blank" .btn .btn-outline-primary}
+
+:::{.callout-important}
+- **Try this without AI first** — struggle builds understanding.
+- Ask if you are stuck. Asking builds understanding too!
+:::
+
+**Data**: Download the Ces aerial imagery (TIF files for 1961–1995) from Moodle and place them in `data-large/ces/`. The ground truth polygons (`data/ces_polygons.gpkg`) are already in the repository.
+
+## Task 1
+
+Load the 1961 aerial image (`data-large/ces/1961.tif`). The raw pixel values are in the range [0, 255] — normalize them to [0, 1] by dividing by 255, then rename the layer `"luminosity"`.
+
+Load the ground truth polygons from `data/ces_polygons.gpkg`. Inspect the available layers with `st_layers()`. Load both the `ces_polygons` layer (forest / non-forest polygons) and the `study_area` layer. Inspect the `ces_polygons` attribute table — what classes are present?
+
+Plot the image and overlay the polygons with `plot(st_geometry(...), add = TRUE)`.
+
+```{r}
+library(terra)
+library(sf)
+
+ces1961 <- rast("data-large/ces/1961.tif")
+ces1961 <- ces1961 / 255
+names(ces1961) <- "luminosity"
+
+st_layers("data/ces_polygons.gpkg")
+
+ces_polygons <- read_sf("data/ces_polygons.gpkg", layer = "ces_polygons")
+study_area   <- read_sf("data/ces_polygons.gpkg", layer = "study_area")
+
+# Inspect classes
+table(ces_polygons$class)
+
+# Plot
+plot(ces1961, col = grey.colors(255), main = "Ces 1961")
+plot(st_geometry(ces_polygons), add = TRUE, col = NA, border = "red", lwd = 1.5)
+```
+
+## Task 2
+
+Use `st_sample()` to draw 1000 random points from the forest/non-forest polygons. Convert the result to an `sf` object with `st_sf()`, then use `st_join()` to attach the `class` column from `ces_polygons`. Drop the `jahr` column and convert `class` to a factor.
+
+Split the points into a **70 % training** set and a **30 % test** set. Use `set.seed(42)` and `sample()` on the row indices.
+
+How many points ended up in each class in the training set?
+
+```{r}
+set.seed(42)
+sample_points <- st_sample(ces_polygons, 1000) |> st_sf()
+
+labelled_data <- st_join(sample_points, ces_polygons) |>
+  select(-jahr)
+labelled_data$class <- factor(labelled_data$class)
+
+idx        <- sample(nrow(labelled_data), size = floor(0.7 * nrow(labelled_data)))
+data_train <- labelled_data[ idx, ]
+data_test  <- labelled_data[-idx, ]
+
+table(data_train$class)
+```
+
+## Task 3
+
+Extract the pixel values from `ces1961` at the training points using `terra::extract()` (set `ID = FALSE`). Combine the class column with the extracted values using `cbind()`, then drop the geometry with `st_drop_geometry()`.
+
+Train a CART classifier with `rpart(class ~ luminosity, data = ...)`. Plot the decision tree with `rpart.plot()`. What luminosity threshold separates forest from non-forest?
+
+```{r}
+library(rpart)
+library(rpart.plot)
+
+train_features <- terra::extract(ces1961, data_train, ID = FALSE)
+data_train2    <- cbind(data_train["class"], train_features) |> st_drop_geometry()
+
+cart_model <- rpart(class ~ luminosity, data = data_train2)
+rpart.plot(cart_model)
+```
+
+## Task 4
+
+Predict land cover for the full raster using `predict(ces1961, cart_model, type = "prob")`. This returns one probability layer per class. Use `which.max()` to get a single-layer raster with the most probable class index.
+
+Set the categorical levels on the result using `levels()`:
+
+```{r}
+#| echo: true
+#| code-fold: false
+classes_df <- data.frame(id = 1:2, class = levels(data_train2$class))
+levels(pred_class) <- classes_df
+```
+
+Plot the predicted classes. Then evaluate your model:
+
+1. Extract predictions at the **test points** with `terra::extract()`
+2. Build a confusion matrix using `table(predicted = ..., actual = ...)`
+3. Compute overall accuracy as `sum(diag(...)) / sum(...)`
+
+```{r}
+# Predict on full raster
+pred_prob  <- predict(ces1961, cart_model, type = "prob")
+pred_class <- which.max(pred_prob)
+
+classes_df <- data.frame(id = 1:2, class = levels(data_train2$class))
+levels(pred_class) <- classes_df
+
+plot(pred_class, col = c("palegreen4", "orange"), main = "Single-band classification")
+
+# Evaluate on test set
+test_features  <- terra::extract(pred_class, data_test, ID = FALSE)
+test_results   <- cbind(data_test["class"], test_features) |> st_drop_geometry()
+names(test_results) <- c("actual", "predicted")
+
+conf_mat <- table(predicted = test_results$predicted, actual = test_results$actual)
+print(conf_mat)
+
+accuracy <- sum(diag(conf_mat)) / sum(conf_mat)
+cat(sprintf("Overall accuracy: %.1f%%\n", 100 * accuracy))
+```
+
+## Task 5
+
+The single-band classifier uses only brightness to distinguish forest from non-forest. Add a **texture feature** using a focal standard deviation filter over a 5×5 window:
+
+```{r}
+#| echo: true
+#| code-fold: false
+i <- 5
+focal_window <- matrix(rep(1, i^2), nrow = i)
+ces1961_focal_sd <- focal(ces1961, focal_window, fun = "sd")
+```
+
+Before combining features, normalize the focal layer to [0, 1] using min-max scaling (see slides). Stack it with the original raster and name the layers `c("luminosity", "focal_sd")`.
+
+Extract features from the multi-band raster at the training points, retrain the CART model on both features, predict on the full raster, and compute accuracy on the test set.
+
+How much does the texture feature improve accuracy? Look at the decision tree — does the model actually use `focal_sd`?
+
+```{r}
+minmax_normalization <- function(x) {
+  mm <- minmax(x)[, 1]
+  (x - mm[1]) / (mm[2] - mm[1])
+}
+
+ces1961_focal_sd <- focal(ces1961, focal_window, fun = "sd")
+ces1961_focal_sd <- minmax_normalization(ces1961_focal_sd)
+
+ces_multi <- c(ces1961, ces1961_focal_sd)
+names(ces_multi) <- c("luminosity", "focal_sd")
+
+# Re-extract features with both bands
+train_features_multi <- terra::extract(ces_multi, data_train, ID = FALSE)
+data_train2_multi    <- cbind(data_train["class"], train_features_multi) |>
+  st_drop_geometry()
+
+cart_model_multi <- rpart(class ~ ., data = data_train2_multi)
+rpart.plot(cart_model_multi, type = 3)
+
+# Predict and evaluate
+pred_prob_multi  <- predict(ces_multi, cart_model_multi, type = "prob")
+pred_class_multi <- which.max(pred_prob_multi)
+levels(pred_class_multi) <- classes_df
+
+test_features_multi <- terra::extract(pred_class_multi, data_test, ID = FALSE)
+test_results_multi  <- cbind(data_test["class"], test_features_multi) |>
+  st_drop_geometry()
+names(test_results_multi) <- c("actual", "predicted")
+
+conf_mat_multi <- table(predicted = test_results_multi$predicted,
+                        actual    = test_results_multi$actual)
+accuracy_multi <- sum(diag(conf_mat_multi)) / sum(conf_mat_multi)
+
+cat(sprintf("Single-band accuracy:  %.1f%%\n", 100 * accuracy))
+cat(sprintf("Multi-feature accuracy: %.1f%%\n", 100 * accuracy_multi))
+```
