@@ -29,7 +29,7 @@ library(purrr)
 By the end of this lesson you will be able to:
 
 - Describe the **supervised classification pipeline**: from labelled ground truth polygons to a full raster map
-- Explain why **ground truth in remote sensing comes as polygons**, and what this implies for sampling
+- Explain the **polygon-to-point sampling step**: why it is needed in this workflow and what it implies for class balance and spatial autocorrelation
 - Explain the **spatial autocorrelation problem** and why it makes standard accuracy estimates misleading
 - Explain the role of **feature extraction** as the bridge between raster data and any ML algorithm
 - Explain why **pixel brightness alone** often fails, and how **spatial texture** addresses this limitation
