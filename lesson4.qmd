@@ -63,7 +63,7 @@ The spatial workflow (`terra`/`sf` packages) and understanding spatial autocorre
 
 ## {background-iframe="https://map.geo.admin.ch/#/map?lang=de&center=2706292.97,1144053.16&z=9.82&topic=ech&layers=ch.swisstopo.swissimage-product_1946,f;ch.swisstopo.swissimage-product@year=1961&bgLayer=ch.swisstopo.pixelkarte-farbe" background-interactive=true}
 
-
+<button onclick="Reveal.next()" style="position:fixed;bottom:1.2rem;right:1.2rem;z-index:999;padding:.5em 1.2em;font-size:1.1em;background:rgba(0,0,0,.55);color:#fff;border:none;border-radius:6px;cursor:pointer;">→</button>
 
 ---
 
