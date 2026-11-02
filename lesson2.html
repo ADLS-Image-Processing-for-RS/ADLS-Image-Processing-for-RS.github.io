@@ -116,7 +116,7 @@
     div.csl-indent {
       margin-left: 2em;
     }  </style>
-  <link rel="stylesheet" href="site_libs/revealjs/dist/theme/quarto-2740581606dc327e82f18f789b69d8a0.css">
+  <link rel="stylesheet" href="site_libs/revealjs/dist/theme/quarto-b2736e9fcda83c748fd63b6e579550ef.css">
   <link rel="stylesheet" href="misc/slides.css">
   <link href="site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
@@ -211,6 +211,7 @@
   </style>
 </head>
 <body class="quarto-light">
+<script src="mathjax-config.js"></script>
   <div class="reveal">
     <div class="slides">
 
@@ -922,12 +923,12 @@ Figure&nbsp;6
 <span id="cb27-2"><a></a></span>
 <span id="cb27-3"><a></a>focal_circle</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>           [,1]       [,2]       [,3]
-[1,] 0.00000000 0.09090909 0.00000000
-[2,] 0.09090909 0.09090909 0.09090909
-[3,] 0.09090909 0.09090909 0.09090909
-[4,] 0.09090909 0.09090909 0.09090909
-[5,] 0.00000000 0.09090909 0.00000000</code></pre>
+<pre><code>           [,1]       [,2]       [,3]       [,4]       [,5]
+[1,] 0.00000000 0.00000000 0.07692308 0.00000000 0.00000000
+[2,] 0.00000000 0.07692308 0.07692308 0.07692308 0.00000000
+[3,] 0.07692308 0.07692308 0.07692308 0.07692308 0.07692308
+[4,] 0.00000000 0.07692308 0.07692308 0.07692308 0.00000000
+[5,] 0.00000000 0.00000000 0.07692308 0.00000000 0.00000000</code></pre>
 </div>
 </div>
 
@@ -1057,11 +1058,11 @@ Figure&nbsp;8
 <span id="cb32-5"><a></a><span class="fu">extract</span>(r, pts) <span class="sc">|&gt;</span> <span class="fu">head</span>(<span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  ID elevation
-1  1       226
-2  2       278
-3  3       359
-4  4       380
-5  5       294</code></pre>
+1  1       280
+2  2       316
+3  3       304
+4  4       272
+5  5       356</code></pre>
 </div>
 </div>
 <p><code>extract()</code> also accepts polygon geometries and an aggregation function:</p>
@@ -1201,7 +1202,7 @@ Lovelace, Robin, Jakub Nowosad, and Jannes Muenchow. 2019. <em>Geocomputation wi
         progress: true,
 
         // Display the page number of the current slide
-        slideNumber: false,
+        slideNumber: 'c/t',
 
         // 'all', 'print', or 'speaker'
         showSlideNumber: 'all',
@@ -1334,7 +1335,7 @@ Lovelace, Robin, Jakub Nowosad, and Jannes Muenchow. 2019. <em>Geocomputation wi
         margin: 0.1,
 
         math: {
-          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js',
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js',
           config: 'TeX-AMS_HTML-full',
           tex2jax: {
             inlineMath: [['\\(','\\)']],
