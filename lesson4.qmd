@@ -194,14 +194,13 @@ data_train2 <- cbind(data_train[,"class"], train_features) |>
 `st_drop_geometry()` removes the spatial geometry — the ML model doesn't need coordinates, only the feature values.
 :::
 
----
 
 ```{r}
 #| eval: true
 #| echo: false
 load("data/data_train.Rda")
 
-head(data_train2)
+head(data_train2, 10)
 ```
 
 ---
@@ -395,7 +394,7 @@ Modern deep learning (CNNs) solves this automatically by processing image patche
 
 ```{r}
 i <- 5
-focal_window <- matrix(rep(1, i^2), nrow = i)
+focal_window <- focalMat(ces1961, d = (i-1)/2 * res(ces1961)[1], type = "rectangle")
 
 # Standard deviation within each 5×5 neighborhood
 ces1961_focal_sd <- focal(ces1961, focal_window, fun = "sd")

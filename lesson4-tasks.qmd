@@ -136,7 +136,7 @@ The single-band classifier uses only brightness to distinguish forest from non-f
 #| echo: true
 #| code-fold: false
 i <- 5
-focal_window <- matrix(rep(1, i^2), nrow = i)
+focal_window <- focalMat(ces1961, d = (i-1)/2 * res(ces1961)[1], type = "rectangle")
 ces1961_focal_sd <- focal(ces1961, focal_window, fun = "sd")
 ```
 

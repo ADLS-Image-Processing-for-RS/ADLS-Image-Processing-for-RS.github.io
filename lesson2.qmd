@@ -1,6 +1,6 @@
 ---
 format:
-  revealjs-clean:
+  clean-revealjs:
     css: misc/slides.css
 ---
 
